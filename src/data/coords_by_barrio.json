@@ -1,0 +1,127 @@
+{
+  "cambulos": {
+    "lat": 3.4215,
+    "lng": -76.5412,
+    "comuna": "19"
+  },
+  "villa del prado": {
+    "lat": 3.4789,
+    "lng": -76.5054,
+    "comuna": "5"
+  },
+  "las vegas de comfandi": {
+    "lat": 3.398,
+    "lng": -76.522,
+    "comuna": "17"
+  },
+  "ingenio": {
+    "lat": 3.385,
+    "lng": -76.536,
+    "comuna": "17"
+  },
+  "nuevo tequendama": {
+    "lat": 3.415,
+    "lng": -76.542,
+    "comuna": "19"
+  },
+  "valle del lili": {
+    "lat": 3.372,
+    "lng": -76.528,
+    "comuna": "17"
+  },
+  "la flora": {
+    "lat": 3.485,
+    "lng": -76.525,
+    "comuna": "2"
+  },
+  "menga": {
+    "lat": 3.498,
+    "lng": -76.52,
+    "comuna": "2"
+  },
+  "campiña": {
+    "lat": 3.479,
+    "lng": -76.528,
+    "comuna": "2"
+  },
+  "bretaña": {
+    "lat": 3.438,
+    "lng": -76.538,
+    "comuna": "9"
+  },
+  "colseguros": {
+    "lat": 3.429,
+    "lng": -76.526,
+    "comuna": "10"
+  },
+  "morichal": {
+    "lat": 3.412,
+    "lng": -76.502,
+    "comuna": "13"
+  },
+  "ciudad melendez": {
+    "lat": 3.365,
+    "lng": -76.535,
+    "comuna": "17"
+  },
+  "la ceiba": {
+    "lat": 3.452,
+    "lng": -76.508,
+    "comuna": "7"
+  },
+  "noriente de cali": {
+    "lat": 3.465,
+    "lng": -76.502,
+    "comuna": "6"
+  },
+  "san fernando": {
+    "lat": 3.431,
+    "lng": -76.545,
+    "comuna": "19"
+  },
+  "cali centro": {
+    "lat": 3.4516,
+    "lng": -76.532,
+    "comuna": "3"
+  },
+  "san antonio": {
+    "lat": 3.447,
+    "lng": -76.541,
+    "comuna": "3"
+  },
+  "granada": {
+    "lat": 3.458,
+    "lng": -76.534,
+    "comuna": "2"
+  },
+  "el peñon": {
+    "lat": 3.449,
+    "lng": -76.545,
+    "comuna": "3"
+  },
+  "limonar": {
+    "lat": 3.405,
+    "lng": -76.538,
+    "comuna": "17"
+  },
+  "ciudad cordoba": {
+    "lat": 3.408,
+    "lng": -76.512,
+    "comuna": "15"
+  },
+  "mariano ramos": {
+    "lat": 3.415,
+    "lng": -76.516,
+    "comuna": "16"
+  },
+  "santa elena": {
+    "lat": 3.435,
+    "lng": -76.522,
+    "comuna": "10"
+  },
+  "alameda": {
+    "lat": 3.44,
+    "lng": -76.535,
+    "comuna": "9"
+  }
+}

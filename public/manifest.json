@@ -1,0 +1,21 @@
+{
+  "name": "Red Mascotas Cali Sismo",
+  "short_name": "Mascotas Cali",
+  "description": "Red de Rescate y Búsqueda de Mascotas durante la Emergencia en Cali",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0c",
+  "theme_color": "#0a0a0c",
+  "icons": [
+    {
+      "src": "/photos/Cartel Bonic Perro.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/photos/Cartel Bonic Perro.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
