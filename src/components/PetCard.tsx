@@ -1,18 +1,21 @@
 "use client";
 
 import { PetReport } from "@/lib/types";
-import { MapPin, MessageCircle, ZoomIn, Info, Sparkles, Shield } from "lucide-react";
+import { MapPin, MessageCircle, ZoomIn, Info, Sparkles, Shield, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import ContactGateModal from "./ContactGateModal";
+import CloseCaseModal from "./CloseCaseModal";
 
 interface PetCardProps {
   pet: PetReport;
   onFindMatches?: (pet: PetReport) => void;
+  onCloseCase?: (petId: string) => void;
 }
 
-export default function PetCard({ pet, onFindMatches }: PetCardProps) {
+export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProps) {
   const [showGate, setShowGate] = useState<boolean>(false);
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
+  const [showCloseModal, setShowCloseModal] = useState<boolean>(false);
 
   const isLost = pet.report_type === "LOST";
   const badgeColor = isLost ? "bg-red-500/20 text-red-400 border-red-500/30" : "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
@@ -74,9 +77,19 @@ export default function PetCard({ pet, onFindMatches }: PetCardProps) {
                   )}
                 </div>
               </div>
-              <span className="text-xs bg-neutral-800/90 text-neutral-300 font-mono font-bold px-2.5 py-1 rounded-md border border-neutral-700">
-                {pet.id}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs bg-neutral-800/90 text-neutral-300 font-mono font-bold px-2.5 py-1 rounded-md border border-neutral-700">
+                  {pet.id}
+                </span>
+                <button
+                  onClick={() => setShowCloseModal(true)}
+                  title="Cerrar reporte / Marcar como reunido"
+                  className="text-[11px] bg-neutral-800/60 hover:bg-emerald-950/60 text-neutral-400 hover:text-emerald-300 border border-neutral-700/60 hover:border-emerald-700/60 px-2 py-1 rounded-md flex items-center gap-1 transition"
+                >
+                  <CheckCircle className="w-3 h-3 text-emerald-400" />
+                  <span className="hidden sm:inline">Cerrar</span>
+                </button>
+              </div>
             </div>
 
             {/* Ubicación: Protegida para rescatados contra extorsiones / Abierta para perdidos */}
@@ -217,6 +230,19 @@ export default function PetCard({ pet, onFindMatches }: PetCardProps) {
 
       {/* Modal de Gate Fotográfico */}
       {showGate && <ContactGateModal pet={pet} onClose={() => setShowGate(false)} />}
+
+      {/* Modal de Cerrar Caso */}
+      {showCloseModal && (
+        <CloseCaseModal
+          pet={pet}
+          onClose={() => setShowCloseModal(false)}
+          onSuccess={(petId) => {
+            if (onCloseCase) {
+              onCloseCase(petId);
+            }
+          }}
+        />
+      )}
     </>
   );
 }

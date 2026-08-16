@@ -2,9 +2,8 @@
 
 import { PetReport } from "@/lib/types";
 import { findBestMatches, MatchResult } from "@/lib/matching-engine";
-import { Sparkles, MapPin, X, ShieldCheck, CheckCircle2, Compass, ZoomIn } from "lucide-react";
+import { Sparkles, MapPin, X, Send, CheckCircle2, Compass, ZoomIn, MessageSquare, Loader2, AlertCircle } from "lucide-react";
 import { useState } from "react";
-import ContactGateModal from "./ContactGateModal";
 
 interface MatchingModalProps {
   targetPet: PetReport;
@@ -13,11 +12,52 @@ interface MatchingModalProps {
 }
 
 export default function MatchingModal({ targetPet, allPets, onClose }: MatchingModalProps) {
-  const [selectedMatch, setSelectedMatch] = useState<PetReport | null>(null);
+  const [selectedMatch, setSelectedMatch] = useState<MatchResult | null>(null);
   const [zoomedPhoto, setZoomedPhoto] = useState<{ url: string; name: string; id: string } | null>(null);
-  const matches: MatchResult[] = findBestMatches(targetPet, allPets, 5);
+  const [userNote, setUserNote] = useState<string>("");
+  const [senderContact, setSenderContact] = useState<string>("");
+  const [sending, setSending] = useState<boolean>(false);
+  const [sendSuccess, setSendSuccess] = useState<boolean>(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
+  const matches: MatchResult[] = findBestMatches(targetPet, allPets, 5);
   const isLost = targetPet.report_type === "LOST";
+
+  const handleSendCommunicate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedMatch) return;
+
+    setSending(true);
+    setSendError(null);
+
+    try {
+      const res = await fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "MATCH_CONTACT",
+          data: {
+            targetPet,
+            candidatePet: selectedMatch.pet,
+            score: selectedMatch.score,
+            reasons: selectedMatch.reasons,
+            userMessage: `Contacto: ${senderContact || "No especificado"} | Nota: ${userNote || "Solicitud de conexión directa"}`,
+          },
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "No se pudo enviar la notificación");
+      }
+
+      setSendSuccess(true);
+    } catch (err: any) {
+      setSendError(err.message || "Error al enviar la solicitud.");
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <>
@@ -182,14 +222,20 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                         )}
                       </div>
 
-                      {/* Botón de Contactar Triaje */}
+                      {/* Botón Comunícate! */}
                       <div className="pt-2">
                         <button
-                          onClick={() => setSelectedMatch(m.pet)}
-                          className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-950/40 transition"
+                          onClick={() => {
+                            setSelectedMatch(m);
+                            setUserNote("");
+                            setSenderContact("");
+                            setSendSuccess(false);
+                            setSendError(null);
+                          }}
+                          className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs py-2.5 px-5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40 transition hover:scale-[1.02]"
                         >
-                          <ShieldCheck className="w-4 h-4" />
-                          Validar con Triaje Central
+                          <Send className="w-4 h-4" />
+                          <span>¡Comunícate!</span>
                         </button>
                       </div>
                     </div>
@@ -241,12 +287,116 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
         </div>
       )}
 
-      {/* Trigger para el Gate de Seguridad si el usuario elige validar */}
+      {/* Modal Comunícate! para Enviar Notificación al Correo */}
       {selectedMatch && (
-        <ContactGateModal
-          pet={selectedMatch}
-          onClose={() => setSelectedMatch(null)}
-        />
+        <div className="fixed inset-0 bg-black/85 z-[60] flex items-center justify-center p-4 backdrop-blur-md animate-fade-in">
+          <div className="bg-[#141417] border border-neutral-800 rounded-2xl max-w-lg w-full p-6 text-white overflow-hidden shadow-2xl relative">
+            <button
+              onClick={() => setSelectedMatch(null)}
+              className="absolute top-4 right-4 p-2 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 border-b border-neutral-800 pb-4 mb-4">
+              <div className="p-2.5 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-base text-white">¡Conectar Mascotas!</h3>
+                <p className="text-xs text-neutral-400">Notificación directa al equipo de Búsqueda Animal Cali</p>
+              </div>
+            </div>
+
+            {sendSuccess ? (
+              <div className="text-center py-6 space-y-3 animate-fade-in">
+                <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/30">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <h4 className="font-extrabold text-base text-white">¡Notificación Enviada!</h4>
+                <p className="text-xs text-neutral-300 max-w-sm mx-auto leading-relaxed">
+                  Se ha enviado un correo a <strong className="text-amber-400">busquedanimalcali@gmail.com</strong> con los detalles de <strong>{targetPet.name}</strong> y <strong>{selectedMatch.pet.name}</strong> para coordinar el contacto.
+                </p>
+                <div className="pt-2">
+                  <button
+                    onClick={() => setSelectedMatch(null)}
+                    className="bg-neutral-800 hover:bg-neutral-700 text-white font-bold py-2.5 px-6 rounded-xl text-xs"
+                  >
+                    Aceptar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSendCommunicate} className="space-y-4">
+                {sendError && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{sendError}</span>
+                  </div>
+                )}
+
+                <div className="bg-neutral-900/80 p-3.5 rounded-xl border border-neutral-800 text-xs space-y-2">
+                  <div className="flex items-center justify-between text-neutral-300 font-bold border-b border-neutral-800 pb-2">
+                    <span>Mascota 1: {targetPet.name} ({targetPet.id})</span>
+                    <span className="text-emerald-400">{selectedMatch.score}% Match</span>
+                  </div>
+                  <div className="text-neutral-400">
+                    <span>Mascota 2: {selectedMatch.pet.name} ({selectedMatch.pet.id})</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-neutral-300 mb-1.5">
+                    Tu Teléfono o WhatsApp de Contacto:
+                  </label>
+                  <input
+                    type="tel"
+                    value={senderContact}
+                    onChange={(e) => setSenderContact(e.target.value)}
+                    placeholder="Ej: 315 123 4567"
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-neutral-300 mb-1.5">
+                    Mensaje o Información Adicional (opcional):
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={userNote}
+                    onChange={(e) => setUserNote(e.target.value)}
+                    placeholder="Ej: Creo que esta es mi mascota encontrada, reconozco la mancha..."
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500 leading-relaxed"
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMatch(null)}
+                    className="w-1/3 bg-neutral-800 hover:bg-neutral-700 font-bold py-3 rounded-xl text-xs text-neutral-300"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    className="w-2/3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40"
+                  >
+                    {sending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                    <span>Enviar a Triaje Central</span>
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
       )}
     </>
   );

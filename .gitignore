@@ -10,8 +10,13 @@
 !.yarn/releases
 !.yarn/versions
 
+
 # testing
 /coverage
+/test-results/
+/playwright-report/
+__pycache__/
+*.pyc
 
 # next.js
 /.next/

@@ -8,30 +8,38 @@ with open('src/data/visual_features_cache.json', 'r', encoding='utf-8') as f:
 
 dakota = next(p for p in pets if p['id'] == 'B5')
 print("--- TARGET PET ---")
-print(f"ID: {dakota['id']}, Name: {dakota['name']}, Neighborhood: {dakota['neighborhood']}")
+print(f"ID: {dakota['id']}, Name: {dakota['name']}, Sexo: {dakota['gender']}, Barrio: {dakota['neighborhood']}")
 print(f"Vertex AI Vision: {vf.get('B5', {})}")
 
+# Test matching logic with gender rule-out and breed morphology filter
 found_pets = [p for p in pets if p['report_type'] == 'FOUND' and p['species'] == 'DOG']
 
-scored = []
-for p in found_pets:
-    pid = p['id']
-    pvf = vf.get(pid, {})
-    p_color = pvf.get('primary_color', '')
-    is_dark = any(c in p_color.lower() for c in ['negro', 'oscuro', 'marrón', 'marron', 'cafe', 'atigrado'])
-    scored.append({
-        'id': pid,
-        'name': p['name'],
-        'neighborhood': p['neighborhood'],
-        'primary_color': p_color,
-        'breed': pvf.get('breed_likely', ''),
-        'ears': pvf.get('ear_type', ''),
-        'is_dark': is_dark,
-        'summary': pvf.get('search_summary', '')
-    })
+print(f"\nTotal Found Dogs in database: {len(found_pets)}")
 
-print(f"\nTotal Found Dogs analyzed: {len(scored)}")
-dark_dogs = [d for d in scored if d['is_dark']]
-print(f"Found Dogs with Dark / Black fur matching Dakota: {len(dark_dogs)}")
-for d in dark_dogs[:5]:
-    print(f"  -> [{d['id']}] {d['name']} ({d['neighborhood']}): {d['breed']} | Color: {d['primary_color']} | Orejas: {d['ears']}")
+# Filter by gender compatibility
+gender_compatible = [p for p in found_pets if p['gender'] == dakota['gender'] or p['gender'] == 'UNKNOWN' or dakota['gender'] == 'UNKNOWN']
+print(f"Found Dogs with compatible gender ({dakota['gender']}): {len(gender_compatible)}")
+
+# Rule out Bulldogs and tiny toys for Dakota (Shepherd)
+def get_morph(text):
+    b = str(text).lower()
+    if any(k in b for k in ['pastor', 'malinois', 'belga', 'aleman', 'husky']):
+        return "SHEPHERD"
+    if any(k in b for k in ['bulldog', 'french', 'pug', 'boston']):
+        return "BULLDOG"
+    if any(k in b for k in ['pincher', 'chihuahua', 'toy', 'yorkie']):
+        return "TOY"
+    return "OTHER"
+
+filtered = []
+for p in gender_compatible:
+    pvf = vf.get(p['id'], {})
+    p_morph = get_morph(f"{pvf.get('breed_likely', '')} {p.get('primary_color', '')}")
+    if p_morph in ['BULLDOG', 'TOY']:
+        continue # Ruled out!
+    filtered.append((p, pvf))
+
+print(f"Found Dogs after morphology/breed rule-out: {len(filtered)}")
+print("\nTop 5 Candidates for Dakota:")
+for p, pvf in filtered[:5]:
+    print(f"  -> [{p['id']}] {p['name']} ({p['gender']}): {pvf.get('breed_likely')} | Color: {pvf.get('primary_color')} | Barrio: {p['neighborhood']}")

@@ -110,6 +110,11 @@ export default function Home() {
     }, 400);
   };
 
+  const handleClosePetCase = (petId: string) => {
+    setPets((prev) => prev.filter((p) => p.id !== petId));
+    setAllPets((prev) => prev.filter((p) => p.id !== petId));
+  };
+
   const clearAllFilters = () => {
     setSpeciesFilter("ALL");
     setTypeFilter("ALL");
@@ -141,7 +146,7 @@ export default function Home() {
             </div>
             <div>
               <h1 className="font-extrabold text-base tracking-tight text-white flex items-center gap-2">
-                Red Mascotas Cali
+                Búsqueda Animal Cali
               </h1>
               <p className="text-[11px] text-neutral-400">
                 Rescate, Búsqueda y Triaje de Emergencia
@@ -149,13 +154,12 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Right header actions (can be empty or status indicator) */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleOpenReport("LOST")}
-              className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs px-3 py-2 rounded-lg transition shadow-md shadow-amber-950/30"
-            >
-              + Publicar Reporte
-            </button>
+            <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Red Activa
+            </span>
           </div>
         </div>
       </header>
@@ -416,6 +420,7 @@ export default function Home() {
                   key={pet.id}
                   pet={pet}
                   onFindMatches={(target) => setMatchingTargetPet(target)}
+                  onCloseCase={handleClosePetCase}
                 />
               ))}
             </div>

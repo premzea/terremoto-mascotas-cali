@@ -6,11 +6,26 @@ import { saveOfflineReport } from "@/lib/offline-queue";
 import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, MapPin } from "lucide-react";
 import imageCompression from "browser-image-compression";
 import barrioCoords from "@/data/coords_by_barrio.json";
+import seedPets from "@/data/seed_pets.json";
 
 interface ReportModalProps {
   initialType: "LOST" | "FOUND";
   onClose: () => void;
   onSuccess: (pet: PetReport) => void;
+}
+
+function getNextPetId(reportType: "LOST" | "FOUND"): string {
+  const prefix = reportType === "LOST" ? "B" : "R";
+  let maxNum = 0;
+  for (const p of seedPets as any[]) {
+    if (p.id && typeof p.id === "string" && p.id.startsWith(prefix)) {
+      const num = parseInt(p.id.slice(prefix.length), 10);
+      if (!isNaN(num) && num > maxNum) {
+        maxNum = num;
+      }
+    }
+  }
+  return `${prefix}${maxNum + 1}`;
 }
 
 export default function ReportModal({ initialType, onClose, onSuccess }: ReportModalProps) {
@@ -26,6 +41,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const [species, setSpecies] = useState<"DOG" | "CAT" | "OTHER">("DOG");
   const [name, setName] = useState<string>("");
   const [gender, setGender] = useState<"MACHO" | "HEMBRA" | "UNKNOWN">("UNKNOWN");
+  const [size, setSize] = useState<"PEQUEÑO" | "MEDIANO" | "GRANDE">("MEDIANO");
   const [primaryColor, setPrimaryColor] = useState<string>("");
   const [neighborhood, setNeighborhood] = useState<string>("");
   const [distinctiveFeatures, setDistinctiveFeatures] = useState<string>("");
@@ -100,8 +116,10 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const handleFinish = async () => {
     setSubmitting(true);
     try {
+      const generatedId = getNextPetId(reportType);
+
       const newPet: PetReport = {
-        id: `LOCAL-${Date.now()}`,
+        id: generatedId,
         report_type: reportType,
         species,
         name: name.trim() || (reportType === "LOST" ? "Sin nombre" : "Rescatado"),
@@ -109,10 +127,10 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         primary_color: primaryColor.trim() || "Desconocido",
         secondary_color: "",
         pattern: "",
-        size: "MEDIANO",
+        size,
         neighborhood: neighborhood.trim() || "Cali Centro (General)",
         distinctive_features: distinctiveFeatures.trim(),
-        photo_url: photoPreview || "/photos/Cartel Bonic Perro.jpeg",
+        photo_url: photoPreview || "/placeholder-pet.png",
         contact_name: contactName.trim() || "Reportante Anónimo",
         contact_phone: contactPhone.trim(),
         status: "ACTIVE",
@@ -121,6 +139,20 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
       // Guardar en la cola local de IndexedDB inmediatamente (Resiliencia Offline)
       await saveOfflineReport(newPet, photoBlob || undefined);
+
+      // Notificar por correo a busquedanimalcali@gmail.com
+      try {
+        await fetch("/api/notify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "NEW_REPORT",
+            data: { pet: newPet },
+          }),
+        });
+      } catch (emailErr) {
+        console.warn("Could not dispatch registration email:", emailErr);
+      }
       
       onSuccess(newPet);
       onClose();
@@ -260,11 +292,11 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               </div>
             </div>
 
-            {/* Nombre y Sexo */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Nombre, Sexo y Tamaño */}
+            <div className="grid grid-cols-3 gap-2.5">
               <div>
                 <label className="text-xs font-bold text-neutral-400 mb-1 block">
-                  Nombre (si se conoce)
+                  Nombre
                 </label>
                 <input
                   type="text"
@@ -281,11 +313,25 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value as any)}
-                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-2.5 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
                 >
                   <option value="UNKNOWN">No se sabe</option>
                   <option value="MACHO">Macho</option>
                   <option value="HEMBRA">Hembra</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-neutral-400 mb-1 block">
+                  Tamaño *
+                </label>
+                <select
+                  value={size}
+                  onChange={(e) => setSize(e.target.value as any)}
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-2.5 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none font-semibold text-amber-400"
+                >
+                  <option value="PEQUEÑO">Pequeño</option>
+                  <option value="MEDIANO">Mediano</option>
+                  <option value="GRANDE">Grande</option>
                 </select>
               </div>
             </div>

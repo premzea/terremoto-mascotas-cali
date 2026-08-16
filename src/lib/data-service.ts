@@ -7,7 +7,9 @@ export async function getPets(filters?: {
   neighborhood?: string;
   search?: string;
 }): Promise<PetReport[]> {
-  let list = seedPets as PetReport[];
+  let list = (seedPets as PetReport[]).filter(
+    (p) => p.status !== "CLOSED" && p.status !== "REUNITED"
+  );
 
   if (filters?.species && filters.species !== "ALL") {
     list = list.filter((p) => p.species === filters.species);
