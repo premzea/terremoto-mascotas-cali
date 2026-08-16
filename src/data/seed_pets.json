@@ -1,27 +1,5 @@
 [
   {
-    "id": "B2",
-    "report_type": "LOST",
-    "species": "OTHER",
-    "name": "Sin nombre",
-    "gender": "UNKNOWN",
-    "primary_color": "Desconocido",
-    "secondary_color": "",
-    "pattern": "",
-    "size": "MEDIANO",
-    "distinctive_features": "",
-    "neighborhood": "Cali Centro (General)",
-    "lat": 3.4516,
-    "lng": -76.532,
-    "comuna": "3",
-    "photo_url": "/photos/B2.png",
-    "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******1",
-    "source_url": "nan",
-    "status": "ACTIVE",
-    "created_at": "2026-08-15T08:00:00Z"
-  },
-  {
     "id": "B1",
     "report_type": "LOST",
     "species": "CAT",
@@ -44,7 +22,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "B2-LOST-4",
+    "id": "B2",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Pikachu",
@@ -2024,28 +2002,6 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "R2",
-    "report_type": "FOUND",
-    "species": "OTHER",
-    "name": "Rescatado",
-    "gender": "UNKNOWN",
-    "primary_color": "Desconocido",
-    "secondary_color": "",
-    "pattern": "",
-    "size": "MEDIANO",
-    "distinctive_features": "",
-    "neighborhood": "Cali Centro (General)",
-    "lat": 3.4516,
-    "lng": -76.532,
-    "comuna": "3",
-    "photo_url": "/photos/Pitbull San Fernando.jpeg",
-    "contact_name": "Brigada de Rescate",
-    "contact_phone_masked": "321******1",
-    "source_url": "nan",
-    "status": "ACTIVE",
-    "created_at": "2026-08-15T09:00:00Z"
-  },
-  {
     "id": "R1",
     "report_type": "FOUND",
     "species": "DOG",
@@ -2068,7 +2024,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "R2-FOUND-4",
+    "id": "R2",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",

@@ -81,13 +81,21 @@ def find_photo_for_id(pet_id, photos_map):
         return photos_map[clean_id]
     return None
 
-def is_header_row(row):
-    # Check if this row is just an artifact header from spreadsheet
+def is_valid_pet_row(row):
+    # A valid row MUST have at least an explicit ID, Animal type, or Pet Name
+    has_id = pd.notna(row.get("ID")) and str(row.get("ID")).strip() != "" and str(row.get("ID")).lower() != "nan"
+    has_animal = pd.notna(row.get("Animal")) and str(row.get("Animal")).strip() != "" and str(row.get("Animal")).lower() != "nan"
+    has_name = pd.notna(row.get("Nombre")) and str(row.get("Nombre")).strip() != "" and str(row.get("Nombre")).lower() != "nan"
+    
+    if not has_id and not has_animal and not has_name:
+        return False
+        
     vals = [str(v).lower() for v in row.values if pd.notna(v)]
     combined = " ".join(vals)
-    if "google lens" in combined or "raza (esp" in combined or "ultimo lugar visto" in combined:
-        return True
-    return False
+    if "google lens" in combined or "raza (esp" in combined:
+        return False
+        
+    return True
 
 def parse_excel():
     excel_path = "docs/Base de Datos de Masctoas.xlsx"
@@ -129,15 +137,17 @@ def parse_excel():
     try:
         df_lost = pd.read_excel(read_path, sheet_name="Buscandose")
         for idx, row in df_lost.iterrows():
-            if is_header_row(row):
+            if not is_valid_pet_row(row):
                 continue
                 
-            raw_id = str(row.get("ID", "")).strip() if pd.notna(row.get("ID")) else f"B{idx+1}"
+            if pd.notna(row.get("ID")) and str(row.get("ID")).strip() != "" and str(row.get("ID")).lower() != "nan":
+                raw_id = str(row.get("ID")).strip()
+            else:
+                raw_id = f"LOST-{idx+1}"
             
-            # Disambiguate if duplicate ID
             pet_id = raw_id
             if pet_id in seen_ids:
-                pet_id = f"{raw_id}-LOST-{idx+1}"
+                pet_id = f"{raw_id}-{idx+1}"
             seen_ids.add(pet_id)
             
             photo_url = find_photo_for_id(raw_id, photos_map)
@@ -152,13 +162,13 @@ def parse_excel():
                 "id": pet_id,
                 "report_type": "LOST",
                 "species": clean_species(row.get("Animal", "")),
-                "name": str(row.get("Nombre", "Sin nombre")).strip() if pd.notna(row.get("Nombre")) else "Sin nombre",
+                "name": str(row.get("Nombre", "Sin nombre")).strip() if (pd.notna(row.get("Nombre")) and str(row.get("Nombre")).strip() != "" and str(row.get("Nombre")).lower() != "nan") else "Sin nombre",
                 "gender": clean_gender(row.get("Sexo", "")),
-                "primary_color": str(row.get("Caracteristicas", "Desconocido")).strip() if pd.notna(row.get("Caracteristicas")) else "Desconocido",
+                "primary_color": str(row.get("Caracteristicas", "Desconocido")).strip() if (pd.notna(row.get("Caracteristicas")) and str(row.get("Caracteristicas")).lower() != "nan") else "Desconocido",
                 "secondary_color": "",
                 "pattern": "",
                 "size": "MEDIANO",
-                "distinctive_features": str(row.get("Temperamento", "")).strip() if pd.notna(row.get("Temperamento")) else "",
+                "distinctive_features": str(row.get("Temperamento", "")).strip() if (pd.notna(row.get("Temperamento")) and str(row.get("Temperamento")).lower() != "nan") else "",
                 "neighborhood": loc_info["neighborhood"],
                 "lat": loc_info["lat"],
                 "lng": loc_info["lng"],
@@ -178,14 +188,17 @@ def parse_excel():
     try:
         df_found = pd.read_excel(read_path, sheet_name="Rescatadas")
         for idx, row in df_found.iterrows():
-            if is_header_row(row):
+            if not is_valid_pet_row(row):
                 continue
                 
-            raw_id = str(row.get("ID", "")).strip() if pd.notna(row.get("ID")) else f"R{idx+1}"
+            if pd.notna(row.get("ID")) and str(row.get("ID")).strip() != "" and str(row.get("ID")).lower() != "nan":
+                raw_id = str(row.get("ID")).strip()
+            else:
+                raw_id = f"FOUND-{idx+1}"
             
             pet_id = raw_id
             if pet_id in seen_ids:
-                pet_id = f"{raw_id}-FOUND-{idx+1}"
+                pet_id = f"{raw_id}-{idx+1}"
             seen_ids.add(pet_id)
             
             photo_url = find_photo_for_id(raw_id, photos_map)
@@ -200,13 +213,13 @@ def parse_excel():
                 "id": pet_id,
                 "report_type": "FOUND",
                 "species": clean_species(row.get("Animal", "")),
-                "name": str(row.get("Nombre", "Rescatado")).strip() if pd.notna(row.get("Nombre")) else "Rescatado",
+                "name": str(row.get("Nombre", "Rescatado")).strip() if (pd.notna(row.get("Nombre")) and str(row.get("Nombre")).strip() != "" and str(row.get("Nombre")).lower() != "nan") else "Rescatado",
                 "gender": clean_gender(row.get("Sexo", "")),
-                "primary_color": str(row.get("Caracteristicas", "Desconocido")).strip() if pd.notna(row.get("Caracteristicas")) else "Desconocido",
+                "primary_color": str(row.get("Caracteristicas", "Desconocido")).strip() if (pd.notna(row.get("Caracteristicas")) and str(row.get("Caracteristicas")).lower() != "nan") else "Desconocido",
                 "secondary_color": "",
                 "pattern": "",
                 "size": "MEDIANO",
-                "distinctive_features": str(row.get("Estadia", "")).strip() if pd.notna(row.get("Estadia")) else "",
+                "distinctive_features": str(row.get("Estadia", "")).strip() if (pd.notna(row.get("Estadia")) and str(row.get("Estadia")).lower() != "nan") else "",
                 "neighborhood": loc_info["neighborhood"],
                 "lat": loc_info["lat"],
                 "lng": loc_info["lng"],
@@ -236,7 +249,7 @@ def parse_excel():
     with open("src/data/coords_by_barrio.json", "w", encoding="utf-8") as f:
         json.dump(BARRIO_COORDS, f, ensure_ascii=False, indent=2)
 
-    print(f"Successfully processed {len(all_pets)} clean pets into src/data/seed_pets.json")
+    print(f"Successfully processed {len(all_pets)} valid pets into src/data/seed_pets.json")
     print(f"Total pets with matching custom photos: {matched_photos_count}")
 
 if __name__ == "__main__":
