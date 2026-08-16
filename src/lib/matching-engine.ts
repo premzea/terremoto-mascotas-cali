@@ -131,6 +131,11 @@ export function findBestMatches(
     const candidateV2: PetMetadataV2 = v2Cache[candidate.id || ""] || {};
     const candidateDino: number[] | undefined = dinoCache[candidate.id || ""];
 
+    // Must have real visual features or embedding
+    if (!candidateDino && (!candidateV2.coat_colors || candidateV2.coat_colors.length === 0)) {
+      continue;
+    }
+
     // Color list inspection
     const targetColors = targetV2.coat_colors || [];
     const candidateColors = candidateV2.coat_colors || [];
