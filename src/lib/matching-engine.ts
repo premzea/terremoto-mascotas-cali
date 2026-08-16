@@ -41,7 +41,7 @@ export function calculateDistanceKm(lat1?: number, lon1?: number, lat2?: number,
   return Math.round(R * c * 10) / 10;
 }
 
-// Discrete Color Signature Classifier
+// Discrete Color Signature Classifier (STRICTLY ON FUR COLOR ONLY)
 export type ColorSignature =
   | "ORANGE_WHITE"
   | "ORANGE_SOLID"
@@ -55,16 +55,22 @@ export type ColorSignature =
   | "TRICOLOR_CAREY"
   | "MULTICOLOR";
 
-export function getColorSignature(visual?: VisualTrait, pet?: PetReport): ColorSignature {
-  const txt = `${visual?.primary_color || ""} ${visual?.secondary_color || ""} ${pet?.primary_color || ""} ${visual?.distinctive_marks || ""}`.toLowerCase();
-  
-  const isOrange = /naranja|amarillo|miel|rubio|ginger|dorado|canela|garfield/i.test(txt);
-  const isGray = /gris|plomo|plateado|cenizo|azul ruso/i.test(txt);
-  const isBlack = /negro|azabache|oscuro/i.test(txt);
-  const isBrown = /marron|marrón|cafe|café|chocolate/i.test(txt);
-  const isWhite = /blanco|crema/i.test(txt);
+export function getPureFurSignature(visual?: VisualTrait, pet?: PetReport): ColorSignature {
+  const prim = (visual?.primary_color || "").toLowerCase();
+  const sec = (visual?.secondary_color || "").toLowerCase();
+  let petPrim = (pet?.primary_color || "").toLowerCase();
+  if (petPrim === "desconocido") petPrim = "";
 
-  if ((isOrange && isBlack && isWhite) || /carey|calico|tricolor/i.test(txt)) return "TRICOLOR_CAREY";
+  // STRICTLY inspect fur color fields only (exclude eyes/collar from distinctive_marks)
+  const furTxt = `${prim} ${sec} ${petPrim}`.toLowerCase();
+  
+  const isOrange = /naranja|amarillo|miel|rubio|ginger|dorado|canela|garfield/i.test(furTxt);
+  const isGray = /gris|plomo|plateado|cenizo|azul ruso/i.test(furTxt);
+  const isBlack = /negro|azabache|oscuro/i.test(furTxt);
+  const isBrown = /marron|marrón|cafe|café|chocolate/i.test(furTxt);
+  const isWhite = /blanco|crema/i.test(furTxt);
+
+  if ((isOrange && isBlack && isWhite) || /carey|calico|tricolor/i.test(furTxt)) return "TRICOLOR_CAREY";
   if (isOrange && isWhite) return "ORANGE_WHITE";
   if (isOrange) return "ORANGE_SOLID";
   if (isGray && isWhite) return "GRAY_WHITE";
@@ -170,7 +176,7 @@ export function findBestMatches(
   const vCache = (visualFeaturesCache as unknown) as Record<string, VisualTrait>;
 
   const targetVisual: VisualTrait = vCache[targetPet.id || ""] || {};
-  const targetSignature = getColorSignature(targetVisual, targetPet);
+  const targetSignature = getPureFurSignature(targetVisual, targetPet);
   const targetMorphology = getBreedMorphology(`${targetVisual.breed_likely || ""} ${targetPet.primary_color || ""} ${targetPet.distinctive_features || ""}`);
 
   const searchInTypes =
@@ -199,7 +205,7 @@ export function findBestMatches(
     }
 
     const candidateVisual: VisualTrait = vCache[candidate.id || ""] || {};
-    const candidateSignature = getColorSignature(candidateVisual, candidate);
+    const candidateSignature = getPureFurSignature(candidateVisual, candidate);
     const candidateMorphology = getBreedMorphology(`${candidateVisual.breed_likely || ""} ${candidate.primary_color || ""} ${candidate.distinctive_features || ""}`);
 
     // RULE OUT: MORPHOLOGY / BREED INCOMPATIBILITY (Canines)
@@ -214,48 +220,38 @@ export function findBestMatches(
       }
     }
 
-    // RULE OUT: DISCRETE COLOR SIGNATURE COMPATIBILITY (Felines & Canines)
-    // Regla estricta: Gris no coincide con Naranja ni con Negro sólido
-    let signatureMatch = false;
+    // RULE OUT: STRICT DISCRETE FUR COLOR SIGNATURE (Felines & Canines)
     let signatureScore = 0;
     const reasons: string[] = [];
 
     if (targetSignature === candidateSignature) {
-      signatureMatch = true;
-      signatureScore = 50; // Gran base por coincidencia cromática exacta
-      reasons.push(`🎨 Color coincidente (${candidateVisual.primary_color || candidateSignature})`);
+      signatureScore = 55; // Puntuación base alta por coincidencia cromática exacta
+      reasons.push(`🎨 Color pelaje idéntico (${candidateVisual.primary_color || candidateSignature})`);
     } else {
-      // Compatibilidades secundarias permitidas con penalización
+      // Compatibilidades secundarias permitidas
       if (targetSignature === "GRAY_WHITE" && candidateSignature === "GRAY_SOLID") {
-        signatureMatch = true;
-        signatureScore = 32;
+        signatureScore = 35;
         reasons.push("🎨 Tono gris compatible");
       } else if (targetSignature === "GRAY_SOLID" && candidateSignature === "GRAY_WHITE") {
-        signatureMatch = true;
-        signatureScore = 32;
+        signatureScore = 35;
         reasons.push("🎨 Tono gris compatible");
       } else if (targetSignature === "ORANGE_WHITE" && candidateSignature === "ORANGE_SOLID") {
-        signatureMatch = true;
-        signatureScore = 32;
-        reasons.push("🎨 Tono naranja compatible");
+        signatureScore = 35;
+        reasons.push("🎨 Tono naranja/amarillo compatible");
       } else if (targetSignature === "ORANGE_SOLID" && candidateSignature === "ORANGE_WHITE") {
-        signatureMatch = true;
-        signatureScore = 32;
-        reasons.push("🎨 Tono naranja compatible");
+        signatureScore = 35;
+        reasons.push("🎨 Tono naranja/amarillo compatible");
       } else if (targetSignature === "BLACK_WHITE" && candidateSignature === "BLACK_SOLID") {
-        signatureMatch = true;
-        signatureScore = 32;
+        signatureScore = 35;
         reasons.push("🎨 Tono negro compatible");
       } else if (targetSignature === "BLACK_SOLID" && candidateSignature === "BLACK_WHITE") {
-        signatureMatch = true;
-        signatureScore = 32;
+        signatureScore = 35;
         reasons.push("🎨 Tono negro compatible");
       } else if (targetSignature === "TRICOLOR_CAREY" || candidateSignature === "TRICOLOR_CAREY") {
-        signatureMatch = true;
-        signatureScore = 28;
+        signatureScore = 25;
         reasons.push("🎨 Patrón tricolor/carey compatible");
       } else {
-        // CROMATIC CLASH -> EXCLUDE COMPLETELY!
+        // CROMATIC CLASH -> EXCLUDE COMPLETELY! (Un gato naranja nunca es gris ni negro)
         continue;
       }
     }
@@ -263,10 +259,10 @@ export function findBestMatches(
     // 2. PATTERN & BREED MORPHOLOGY SCORING
     let traitScore = 0;
 
-    // Pattern (Bicolor vs Rayas vs Sólido)
+    // Pattern (Rayas/Atigrado vs Bicolor vs Sólido)
     if (targetVisual.coat_pattern && candidateVisual.coat_pattern && targetVisual.coat_pattern === candidateVisual.coat_pattern) {
       traitScore += 18;
-      reasons.push(`✨ Patrón (${targetVisual.coat_pattern.toLowerCase()})`);
+      reasons.push(`✨ Patrón coincidente (${targetVisual.coat_pattern.toLowerCase()})`);
     }
 
     // Breed Morphology (Dogs)
