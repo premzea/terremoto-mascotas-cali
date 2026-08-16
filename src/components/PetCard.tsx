@@ -1,7 +1,7 @@
 "use client";
 
 import { PetReport } from "@/lib/types";
-import { MapPin, MessageCircle, Maximize2, X, ZoomIn } from "lucide-react";
+import { MapPin, MessageCircle, Maximize2, X, ZoomIn, Info, Tag } from "lucide-react";
 import { useState } from "react";
 import ContactGateModal from "./ContactGateModal";
 
@@ -21,76 +21,95 @@ export default function PetCard({ pet }: PetCardProps) {
 
   return (
     <>
-      <div className="edge-card p-4 flex flex-col sm:flex-row gap-4 hover:bg-neutral-900/60 transition">
+      <div className="edge-card p-4 sm:p-5 flex flex-col sm:flex-row gap-4 hover:bg-neutral-900/60 transition">
         {/* Foto completa visible sin cortes (object-contain) y clickeable para ampliar */}
         <div
           onClick={() => setShowPhotoModal(true)}
-          className="w-full sm:w-48 h-56 sm:h-44 bg-[#0a0a0c] relative rounded-lg overflow-hidden flex-shrink-0 border border-neutral-800 cursor-pointer group flex items-center justify-center p-1"
+          className="w-full sm:w-52 h-60 sm:h-52 bg-[#08080a] relative rounded-xl overflow-hidden flex-shrink-0 border border-neutral-800 cursor-pointer group flex items-center justify-center p-1.5"
         >
           <img
             src={pet.photo_url || "/placeholder-pet.png"}
             alt={pet.name}
-            className="w-full h-full object-contain transition group-hover:scale-[1.02]"
+            className="w-full h-full object-contain transition duration-200 group-hover:scale-[1.02]"
             onError={(e) => {
               (e.target as HTMLImageElement).src = fallbackPhoto;
             }}
           />
 
           {/* Badge Tipo */}
-          <div className="absolute top-2 left-2 pointer-events-none">
+          <div className="absolute top-2.5 left-2.5 pointer-events-none">
             <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded border ${badgeColor} backdrop-blur-md`}>
               {badgeText}
             </span>
           </div>
 
           {/* Overlay sutil para indicar que se puede ampliar */}
-          <div className="absolute bottom-2 right-2 bg-black/75 border border-neutral-700/80 rounded-md px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-neutral-200 group-hover:bg-amber-500 group-hover:text-black transition shadow-md">
-            <ZoomIn className="w-3 h-3" />
-            <span>Ampliar</span>
+          <div className="absolute bottom-2.5 right-2.5 bg-black/80 border border-neutral-700/90 rounded-lg px-2.5 py-1 flex items-center gap-1.5 text-[11px] font-bold text-neutral-200 group-hover:bg-amber-500 group-hover:text-black transition shadow-lg">
+            <ZoomIn className="w-3.5 h-3.5" />
+            <span>Ver foto completa</span>
           </div>
         </div>
 
-        {/* Información Crítica */}
-        <div className="flex-1 flex flex-col justify-between space-y-2">
-          <div>
+        {/* Información Crítica & Descripción Completa */}
+        <div className="flex-1 flex flex-col justify-between space-y-3">
+          <div className="space-y-2">
+            {/* Título y Código */}
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="font-extrabold text-xl text-white tracking-tight leading-none">
+                <h3 className="font-black text-xl sm:text-2xl text-white tracking-tight leading-none">
                   {pet.name}
                 </h3>
-                <p className="text-xs font-semibold text-neutral-400 mt-1">
-                  {pet.species === "DOG" ? "🐶 Perro" : pet.species === "CAT" ? "🐱 Gato" : "🐾 Mascota"} • {pet.gender} • {pet.primary_color}
-                </p>
+                <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-neutral-400 mt-1.5">
+                  <span className="text-amber-400 font-bold">
+                    {pet.species === "DOG" ? "🐶 Perro" : pet.species === "CAT" ? "🐱 Gato" : "🐾 Mascota"}
+                  </span>
+                  <span>•</span>
+                  <span>{pet.gender}</span>
+                  {pet.size && pet.size !== "MEDIANO" && (
+                    <>
+                      <span>•</span>
+                      <span className="text-neutral-300">Tamaño: {pet.size}</span>
+                    </>
+                  )}
+                </div>
               </div>
-              <span className="text-xs bg-neutral-800 text-neutral-300 font-mono px-2 py-1 rounded">
-                ID: {pet.id}
+              <span className="text-xs bg-neutral-800/90 text-neutral-300 font-mono font-bold px-2.5 py-1 rounded-md border border-neutral-700">
+                {pet.id}
               </span>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs text-amber-400 font-medium mt-2">
+            {/* Ubicación Barrial */}
+            <div className="flex items-center gap-1.5 text-xs text-amber-400 font-semibold bg-amber-500/10 px-2.5 py-1.5 rounded-lg border border-amber-500/20 w-fit">
               <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
               <span>{pet.neighborhood}</span>
             </div>
 
+            {/* Descripción Completa Extraída del Excel */}
             {pet.distinctive_features && (
-              <p className="text-xs text-neutral-300 mt-2 bg-neutral-900/70 p-2 rounded border border-neutral-800/80 leading-relaxed">
-                <strong>Detalles:</strong> {pet.distinctive_features}
-              </p>
+              <div className="text-xs text-neutral-200 bg-[#161619] p-3 rounded-xl border border-neutral-800/90 leading-relaxed space-y-1">
+                <div className="flex items-center gap-1 text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider">
+                  <Info className="w-3 h-3 text-amber-400" />
+                  <span>Descripción y Rasgos:</span>
+                </div>
+                <p className="text-neutral-200 font-normal">
+                  {pet.distinctive_features}
+                </p>
+              </div>
             )}
           </div>
 
           {/* Botón de Contacto Protegido */}
-          <div className="pt-2 flex items-center gap-2">
+          <div className="pt-1 flex items-center gap-2">
             <button
               onClick={() => setShowGate(true)}
-              className={`flex-1 font-bold text-xs sm:text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition ${
+              className={`flex-1 font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition ${
                 isLost
                   ? "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-950/40"
                   : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/40"
               }`}
             >
               <MessageCircle className="w-4 h-4" />
-              {isLost ? "¡Vi a esta mascota!" : "¡Es mi mascota!"}
+              {isLost ? "¡Vi a esta mascota! (Contactar Triaje)" : "¡Es mi mascota! (Reclamar)"}
             </button>
           </div>
         </div>
@@ -128,7 +147,7 @@ export default function PetCard({ pet }: PetCardProps) {
             </div>
 
             {/* Contenedor de la Imagen Completa */}
-            <div className="flex-1 bg-black p-2 sm:p-4 flex items-center justify-center min-h-[300px] max-h-[70vh] overflow-hidden">
+            <div className="flex-1 bg-black p-2 sm:p-4 flex items-center justify-center min-h-[300px] max-h-[65vh] overflow-hidden">
               <img
                 src={pet.photo_url || fallbackPhoto}
                 alt={pet.name}
@@ -139,25 +158,29 @@ export default function PetCard({ pet }: PetCardProps) {
               />
             </div>
 
-            {/* Footer con Acciones */}
-            <div className="p-4 border-t border-neutral-800 flex items-center justify-between gap-3 bg-[#18181c]">
-              <p className="text-xs text-neutral-400 line-clamp-1 flex-1">
-                {pet.distinctive_features || `${pet.primary_color} • ${pet.species}`}
-              </p>
-              <button
-                onClick={() => {
-                  setShowPhotoModal(false);
-                  setShowGate(true);
-                }}
-                className={`font-bold text-xs py-2.5 px-4 rounded-lg flex items-center gap-1.5 ${
-                  isLost
-                    ? "bg-red-600 hover:bg-red-500 text-white"
-                    : "bg-emerald-600 hover:bg-emerald-500 text-white"
-                }`}
-              >
-                <MessageCircle className="w-4 h-4" />
-                {isLost ? "Reportar Avistamiento" : "Contactar"}
-              </button>
+            {/* Footer con Descripción y Acciones */}
+            <div className="p-4 border-t border-neutral-800 bg-[#18181c] space-y-3">
+              {pet.distinctive_features && (
+                <div className="text-xs text-neutral-300 bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800 leading-relaxed">
+                  <strong className="text-amber-400">Descripción:</strong> {pet.distinctive_features}
+                </div>
+              )}
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setShowPhotoModal(false);
+                    setShowGate(true);
+                  }}
+                  className={`w-full sm:w-auto font-bold text-xs py-3 px-5 rounded-xl flex items-center justify-center gap-2 ${
+                    isLost
+                      ? "bg-red-600 hover:bg-red-500 text-white"
+                      : "bg-emerald-600 hover:bg-emerald-500 text-white"
+                  }`}
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  {isLost ? "Reportar Avistamiento" : "Es mi Mascota"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

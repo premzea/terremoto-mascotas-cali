@@ -82,7 +82,6 @@ def find_photo_for_id(pet_id, photos_map):
     return None
 
 def is_valid_pet_row(row):
-    # A valid row MUST have at least an explicit ID, Animal type, or Pet Name
     has_id = pd.notna(row.get("ID")) and str(row.get("ID")).strip() != "" and str(row.get("ID")).lower() != "nan"
     has_animal = pd.notna(row.get("Animal")) and str(row.get("Animal")).strip() != "" and str(row.get("Animal")).lower() != "nan"
     has_name = pd.notna(row.get("Nombre")) and str(row.get("Nombre")).strip() != "" and str(row.get("Nombre")).lower() != "nan"
@@ -96,6 +95,59 @@ def is_valid_pet_row(row):
         return False
         
     return True
+
+def build_full_description(row, is_lost=True):
+    parts = []
+    
+    # Raza / Tipo
+    caract = row.get("Caracteristicas")
+    if pd.notna(caract) and str(caract).strip() != "" and str(caract).lower() != "nan":
+        parts.append(f"Raza/Tipo: {str(caract).strip()}")
+        
+    # Color
+    color = row.get("Unnamed: 7")
+    if pd.notna(color) and str(color).strip() != "" and str(color).lower() != "nan" and str(color).lower() != "color":
+        parts.append(f"Color: {str(color).strip()}")
+        
+    # Patron
+    patron = row.get("Unnamed: 8")
+    if pd.notna(patron) and str(patron).strip() != "" and str(patron).lower() != "nan":
+        parts.append(f"Patrón: {str(patron).strip()}")
+        
+    # Pelaje
+    pelaje = row.get("Unnamed: 9")
+    if pd.notna(pelaje) and str(pelaje).strip() != "" and str(pelaje).lower() != "nan":
+        parts.append(f"Pelaje: {str(pelaje).strip()}")
+        
+    # Ojos
+    ojos = row.get("Unnamed: 10")
+    if pd.notna(ojos) and str(ojos).strip() != "" and str(ojos).lower() != "nan":
+        parts.append(f"Ojos: {str(ojos).strip()}")
+        
+    # Tamaño
+    tamano = row.get("Unnamed: 15")
+    if pd.notna(tamano) and str(tamano).strip() != "" and str(tamano).lower() != "nan":
+        parts.append(f"Tamaño: {str(tamano).strip()}")
+        
+    # Señas particulares / Accesorios
+    senas = row.get("Unnamed: 16")
+    if pd.notna(senas) and str(senas).strip() != "" and str(senas).lower() != "nan":
+        parts.append(f"Señas/Accesorios: {str(senas).strip()}")
+        
+    # Temperamento o Estadía
+    if is_lost:
+        temp = row.get("Temperamento")
+        if pd.notna(temp) and str(temp).strip() != "" and str(temp).lower() != "nan":
+            parts.append(f"Temperamento: {str(temp).strip()}")
+    else:
+        estadia = row.get("Estadia")
+        if pd.notna(estadia) and str(estadia).strip() != "" and str(estadia).lower() != "nan":
+            parts.append(f"Resguardo/Estadía: {str(estadia).strip()}")
+            
+    if not parts:
+        return "Sin descripción adicional registrada."
+        
+    return " • ".join(parts)
 
 def parse_excel():
     excel_path = "docs/Base de Datos de Masctoas.xlsx"
@@ -119,8 +171,6 @@ def parse_excel():
                 base_name = os.path.splitext(fname)[0].strip().upper()
                 photos_map[base_name] = f"/photos/{fname}"
                 
-    print(f"Mapped and copied {len(photos_map)} photo files to {public_photos_dir}")
-    
     temp_excel_path = "temp_excel_read.xlsx"
     try:
         shutil.copy2(excel_path, temp_excel_path)
@@ -157,18 +207,26 @@ def parse_excel():
                 photo_url = "/photos/Cartel Bonic Perro.jpeg" if clean_species(row.get("Animal", "")) == "DOG" else "/photos/Cartel Dos Gatos Perdidos.jpeg"
                 
             loc_info = match_barrio_coords(row.get("Ultimo Lugar Visto", ""))
+            desc_text = build_full_description(row, is_lost=True)
             
+            # Color primario
+            color_text = str(row.get("Unnamed: 7", row.get("Caracteristicas", "Desconocido"))).strip()
+            if color_text.lower() in ["nan", "color", ""]:
+                color_text = str(row.get("Caracteristicas", "Desconocido")).strip()
+            if color_text.lower() in ["nan", ""]:
+                color_text = "Desconocido"
+
             pet = {
                 "id": pet_id,
                 "report_type": "LOST",
                 "species": clean_species(row.get("Animal", "")),
                 "name": str(row.get("Nombre", "Sin nombre")).strip() if (pd.notna(row.get("Nombre")) and str(row.get("Nombre")).strip() != "" and str(row.get("Nombre")).lower() != "nan") else "Sin nombre",
                 "gender": clean_gender(row.get("Sexo", "")),
-                "primary_color": str(row.get("Caracteristicas", "Desconocido")).strip() if (pd.notna(row.get("Caracteristicas")) and str(row.get("Caracteristicas")).lower() != "nan") else "Desconocido",
+                "primary_color": color_text,
                 "secondary_color": "",
-                "pattern": "",
-                "size": "MEDIANO",
-                "distinctive_features": str(row.get("Temperamento", "")).strip() if (pd.notna(row.get("Temperamento")) and str(row.get("Temperamento")).lower() != "nan") else "",
+                "pattern": str(row.get("Unnamed: 8", "")).strip() if pd.notna(row.get("Unnamed: 8")) else "",
+                "size": str(row.get("Unnamed: 15", "MEDIANO")).strip() if pd.notna(row.get("Unnamed: 15")) else "MEDIANO",
+                "distinctive_features": desc_text,
                 "neighborhood": loc_info["neighborhood"],
                 "lat": loc_info["lat"],
                 "lng": loc_info["lng"],
@@ -208,18 +266,25 @@ def parse_excel():
                 photo_url = "/photos/Historia Gato Encontrado Melendez ISabela Futbol.png" if clean_species(row.get("Animal", "")) == "CAT" else "/photos/Pitbull San Fernando.jpeg"
                 
             loc_info = match_barrio_coords(row.get("Donde se encontro", ""))
+            desc_text = build_full_description(row, is_lost=False)
             
+            color_text = str(row.get("Unnamed: 7", row.get("Caracteristicas", "Desconocido"))).strip()
+            if color_text.lower() in ["nan", "color", ""]:
+                color_text = str(row.get("Caracteristicas", "Desconocido")).strip()
+            if color_text.lower() in ["nan", ""]:
+                color_text = "Desconocido"
+
             pet = {
                 "id": pet_id,
                 "report_type": "FOUND",
                 "species": clean_species(row.get("Animal", "")),
                 "name": str(row.get("Nombre", "Rescatado")).strip() if (pd.notna(row.get("Nombre")) and str(row.get("Nombre")).strip() != "" and str(row.get("Nombre")).lower() != "nan") else "Rescatado",
                 "gender": clean_gender(row.get("Sexo", "")),
-                "primary_color": str(row.get("Caracteristicas", "Desconocido")).strip() if (pd.notna(row.get("Caracteristicas")) and str(row.get("Caracteristicas")).lower() != "nan") else "Desconocido",
+                "primary_color": color_text,
                 "secondary_color": "",
-                "pattern": "",
-                "size": "MEDIANO",
-                "distinctive_features": str(row.get("Estadia", "")).strip() if (pd.notna(row.get("Estadia")) and str(row.get("Estadia")).lower() != "nan") else "",
+                "pattern": str(row.get("Unnamed: 8", "")).strip() if pd.notna(row.get("Unnamed: 8")) else "",
+                "size": str(row.get("Unnamed: 15", "MEDIANO")).strip() if pd.notna(row.get("Unnamed: 15")) else "MEDIANO",
+                "distinctive_features": desc_text,
                 "neighborhood": loc_info["neighborhood"],
                 "lat": loc_info["lat"],
                 "lng": loc_info["lng"],
@@ -249,7 +314,7 @@ def parse_excel():
     with open("src/data/coords_by_barrio.json", "w", encoding="utf-8") as f:
         json.dump(BARRIO_COORDS, f, ensure_ascii=False, indent=2)
 
-    print(f"Successfully processed {len(all_pets)} valid pets into src/data/seed_pets.json")
+    print(f"Successfully processed {len(all_pets)} valid pets with comprehensive text descriptions")
     print(f"Total pets with matching custom photos: {matched_photos_count}")
 
 if __name__ == "__main__":
