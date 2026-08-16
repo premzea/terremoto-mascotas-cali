@@ -52,7 +52,7 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
           {/* Tarjeta de Referencia de la Mascota Objetivo */}
           <div className="p-4 bg-[#0e0e11] border-b border-neutral-800/80 flex items-center gap-3.5">
             <div
-              onClick={() => setZoomedPhoto({ url: targetPet.photo_url || "/placeholder-pet.png", name: targetPet.name, id: targetPet.id })}
+              onClick={() => setZoomedPhoto({ url: targetPet.photo_url || "/placeholder-pet.png", name: targetPet.name, id: targetPet.id || "N/A" })}
               className="w-16 h-16 rounded-lg bg-black border border-neutral-800 overflow-hidden flex-shrink-0 cursor-pointer relative group flex items-center justify-center p-1"
             >
               <img
@@ -106,7 +106,7 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                   >
                     {/* Foto Candidato Ampliable */}
                     <div
-                      onClick={() => setZoomedPhoto({ url: m.pet.photo_url || "/placeholder-pet.png", name: m.pet.name, id: m.pet.id })}
+                      onClick={() => setZoomedPhoto({ url: m.pet.photo_url || "/placeholder-pet.png", name: m.pet.name, id: m.pet.id || "N/A" })}
                       className="w-full sm:w-36 h-40 bg-black rounded-lg overflow-hidden border border-neutral-800 flex-shrink-0 flex items-center justify-center p-1 relative cursor-pointer group"
                     >
                       <img

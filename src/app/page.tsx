@@ -431,7 +431,7 @@ export default function Home() {
         <ReportModal
           initialType={reportModalType}
           onClose={() => setReportModalOpen(false)}
-          onReportCreated={handleNewReportCreated}
+          onSuccess={handleNewReportCreated}
         />
       )}
 
