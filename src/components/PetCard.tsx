@@ -18,7 +18,7 @@ export default function PetCard({ pet, onFindMatches }: PetCardProps) {
   const badgeColor = isLost ? "bg-red-500/20 text-red-400 border-red-500/30" : "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
   const badgeText = isLost ? "PERDIDO / BUSCADO" : "ENCONTRADO / RESCATADO";
 
-  const fallbackPhoto = pet.species === "DOG" ? "/photos/Cartel Bonic Perro.jpeg" : "/photos/Cartel Dos Gatos Perdidos.jpeg";
+  const fallbackPhoto = "/placeholder-pet.png";
 
   return (
     <>
