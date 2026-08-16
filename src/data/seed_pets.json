@@ -1,6 +1,6 @@
 [
   {
-    "id": "LOST-1",
+    "id": "B1",
     "report_type": "LOST",
     "species": "OTHER",
     "name": "Sin nombre",
@@ -14,7 +14,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "3",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B1.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******0",
     "source_url": "nan",
@@ -22,7 +22,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-2",
+    "id": "B2",
     "report_type": "LOST",
     "species": "OTHER",
     "name": "Sin nombre",
@@ -36,7 +36,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "3",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B2.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******1",
     "source_url": "nan",
@@ -44,7 +44,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-3",
+    "id": "B1",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Miel",
@@ -58,7 +58,7 @@
     "lat": 3.4215,
     "lng": -76.5412,
     "comuna": "19",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B1.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******2",
     "source_url": "1.0",
@@ -66,7 +66,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-4",
+    "id": "B2",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Pikachu",
@@ -80,7 +80,7 @@
     "lat": 3.4789,
     "lng": -76.5054,
     "comuna": "5",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B2.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******3",
     "source_url": "1.0",
@@ -88,7 +88,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-5",
+    "id": "B3",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Angel",
@@ -102,7 +102,7 @@
     "lat": 3.398,
     "lng": -76.522,
     "comuna": "17",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B3.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******4",
     "source_url": "1.0",
@@ -110,7 +110,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-6",
+    "id": "B5",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Dakota",
@@ -124,7 +124,7 @@
     "lat": 3.385,
     "lng": -76.536,
     "comuna": "17",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B5.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******5",
     "source_url": "1.0",
@@ -132,7 +132,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-7",
+    "id": "B6",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Ramon",
@@ -146,7 +146,7 @@
     "lat": 3.415,
     "lng": -76.542,
     "comuna": "19",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B6.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******6",
     "source_url": "1.0",
@@ -154,7 +154,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-8",
+    "id": "B8",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Shury",
@@ -168,7 +168,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B8.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******7",
     "source_url": "1.0",
@@ -176,7 +176,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-9",
+    "id": "B9",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Poker",
@@ -190,7 +190,7 @@
     "lat": 3.372,
     "lng": -76.528,
     "comuna": "17",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B9.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******8",
     "source_url": "1.0",
@@ -198,7 +198,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-10",
+    "id": "B11",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Lia",
@@ -212,7 +212,7 @@
     "lat": 3.485,
     "lng": -76.525,
     "comuna": "2",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B11.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******9",
     "source_url": "1.0",
@@ -220,7 +220,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-11",
+    "id": "B12",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Alana",
@@ -234,7 +234,7 @@
     "lat": 3.438,
     "lng": -76.538,
     "comuna": "9",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B12.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******0",
     "source_url": "1.0",
@@ -242,7 +242,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-12",
+    "id": "B13",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Malu",
@@ -256,7 +256,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "3",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B13.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******1",
     "source_url": "1.0",
@@ -264,7 +264,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-13",
+    "id": "B14",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Candy",
@@ -278,7 +278,7 @@
     "lat": 3.412,
     "lng": -76.502,
     "comuna": "13",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B14.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******2",
     "source_url": "1.0",
@@ -286,7 +286,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-14",
+    "id": "B15",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Salem",
@@ -300,7 +300,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B15.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******3",
     "source_url": "1.0",
@@ -308,7 +308,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-15",
+    "id": "B16",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Willy",
@@ -322,7 +322,7 @@
     "lat": 3.405,
     "lng": -76.538,
     "comuna": "17",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B16.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******4",
     "source_url": "1.0",
@@ -330,7 +330,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-16",
+    "id": "B17",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Spike",
@@ -344,7 +344,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B17.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******5",
     "source_url": "1.0",
@@ -352,7 +352,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-17",
+    "id": "B18",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Lucas",
@@ -366,7 +366,7 @@
     "lat": 3.438,
     "lng": -76.538,
     "comuna": "9",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B18.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******6",
     "source_url": "1.0",
@@ -374,7 +374,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-18",
+    "id": "B19",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Kira",
@@ -388,7 +388,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B19.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******7",
     "source_url": "1.0",
@@ -396,7 +396,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-19",
+    "id": "B20",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Luna",
@@ -410,7 +410,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B20.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******8",
     "source_url": "1.0",
@@ -418,7 +418,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-20",
+    "id": "B21",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Lulu Enana",
@@ -432,7 +432,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B21.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******9",
     "source_url": "1.0",
@@ -440,7 +440,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-21",
+    "id": "B22",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Amapola",
@@ -454,7 +454,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B22.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******0",
     "source_url": "1.0",
@@ -462,7 +462,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-22",
+    "id": "B23",
     "report_type": "LOST",
     "species": "OTHER",
     "name": "Lola",
@@ -476,7 +476,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B23.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******1",
     "source_url": "1.0",
@@ -484,7 +484,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-23",
+    "id": "B24",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Luna",
@@ -498,7 +498,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B24.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******2",
     "source_url": "1.0",
@@ -506,7 +506,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-24",
+    "id": "B25",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Yoko",
@@ -520,7 +520,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B25.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******3",
     "source_url": "1.0",
@@ -528,7 +528,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-25",
+    "id": "B26",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Yuri",
@@ -542,7 +542,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B26.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******4",
     "source_url": "1.0",
@@ -550,7 +550,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-26",
+    "id": "B27",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Colores",
@@ -564,7 +564,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B27.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******5",
     "source_url": "1.0",
@@ -572,7 +572,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-27",
+    "id": "B28",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Niko",
@@ -586,7 +586,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B28.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******6",
     "source_url": "1.0",
@@ -594,7 +594,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-28",
+    "id": "B29",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Thor",
@@ -608,7 +608,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B29.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******7",
     "source_url": "1.0",
@@ -616,7 +616,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-29",
+    "id": "B30",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Ameri",
@@ -630,7 +630,7 @@
     "lat": 3.431,
     "lng": -76.545,
     "comuna": "19",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B30.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******8",
     "source_url": "1.0",
@@ -638,7 +638,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-30",
+    "id": "B31",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Tequila",
@@ -652,7 +652,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B31.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******9",
     "source_url": "1.0",
@@ -660,7 +660,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-31",
+    "id": "B32",
     "report_type": "LOST",
     "species": "DOG",
     "name": "De trosky",
@@ -674,7 +674,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B32.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******0",
     "source_url": "1.0",
@@ -682,7 +682,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-32",
+    "id": "B33",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Rose",
@@ -696,7 +696,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B33.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******1",
     "source_url": "1.0",
@@ -704,7 +704,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-33",
+    "id": "B34",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Freya",
@@ -718,7 +718,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B34.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******2",
     "source_url": "1.0",
@@ -726,7 +726,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-34",
+    "id": "B35",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Ares",
@@ -740,7 +740,7 @@
     "lat": 3.372,
     "lng": -76.528,
     "comuna": "17",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B35.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******3",
     "source_url": "1.0",
@@ -748,7 +748,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-35",
+    "id": "B36",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Negra",
@@ -762,7 +762,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B36.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******4",
     "source_url": "1.0",
@@ -770,7 +770,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-36",
+    "id": "B37",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Sin nombre",
@@ -784,7 +784,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B37.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******5",
     "source_url": "1.0",
@@ -792,7 +792,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-37",
+    "id": "B38",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Lulu",
@@ -806,7 +806,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B38.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******6",
     "source_url": "1.0",
@@ -814,7 +814,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-38",
+    "id": "B39",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Leyla",
@@ -828,7 +828,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B39.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******7",
     "source_url": "1.0",
@@ -836,7 +836,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-39",
+    "id": "B40",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Miskitin",
@@ -850,7 +850,7 @@
     "lat": 3.385,
     "lng": -76.536,
     "comuna": "17",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B40.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******8",
     "source_url": "1.0",
@@ -858,7 +858,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-40",
+    "id": "B41",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Ula",
@@ -872,7 +872,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B41.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******9",
     "source_url": "1.0",
@@ -880,7 +880,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-41",
+    "id": "B42",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Milagros",
@@ -894,7 +894,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "3",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B42.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******0",
     "source_url": "1.0",
@@ -902,7 +902,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-42",
+    "id": "B43",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Milu",
@@ -916,7 +916,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B43.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******1",
     "source_url": "1.0",
@@ -924,7 +924,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-43",
+    "id": "B44",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Loky",
@@ -938,7 +938,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B44.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******2",
     "source_url": "1.0",
@@ -946,7 +946,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-44",
+    "id": "B45",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Luna",
@@ -960,7 +960,7 @@
     "lat": 3.415,
     "lng": -76.542,
     "comuna": "19",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B45.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******3",
     "source_url": "1.0",
@@ -968,7 +968,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-45",
+    "id": "B46",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Lupe",
@@ -982,7 +982,7 @@
     "lat": 3.415,
     "lng": -76.542,
     "comuna": "19",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B46.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******4",
     "source_url": "1.0",
@@ -990,7 +990,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-46",
+    "id": "B47",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Hanna",
@@ -1004,7 +1004,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "3",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B47.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******5",
     "source_url": "1.0",
@@ -1012,7 +1012,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-47",
+    "id": "B48",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Dulce",
@@ -1026,7 +1026,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B48.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******6",
     "source_url": "1.0",
@@ -1034,7 +1034,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-48",
+    "id": "B49",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Merlin",
@@ -1048,7 +1048,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B49.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******7",
     "source_url": "1.0",
@@ -1056,7 +1056,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-49",
+    "id": "B50",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Toby",
@@ -1070,7 +1070,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B50.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******8",
     "source_url": "1.0",
@@ -1078,7 +1078,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-50",
+    "id": "B51",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Simon",
@@ -1092,7 +1092,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B51.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******9",
     "source_url": "1.0",
@@ -1100,7 +1100,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-51",
+    "id": "B52",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Luna",
@@ -1114,7 +1114,7 @@
     "lat": 3.372,
     "lng": -76.528,
     "comuna": "17",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B52.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******0",
     "source_url": "1.0",
@@ -1122,7 +1122,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-52",
+    "id": "B53",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Tulio",
@@ -1136,7 +1136,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B53.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******1",
     "source_url": "1.0",
@@ -1144,7 +1144,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-53",
+    "id": "B54",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Julita",
@@ -1158,7 +1158,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B54.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******2",
     "source_url": "1.0",
@@ -1166,7 +1166,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-54",
+    "id": "B55",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Molly",
@@ -1180,7 +1180,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B55.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******3",
     "source_url": "1.0",
@@ -1188,7 +1188,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-55",
+    "id": "B56",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Otto",
@@ -1202,7 +1202,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B56.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******4",
     "source_url": "1.0",
@@ -1210,7 +1210,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-56",
+    "id": "B57",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Juana",
@@ -1224,7 +1224,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B57.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******5",
     "source_url": "1.0",
@@ -1232,7 +1232,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-57",
+    "id": "B58",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Luna",
@@ -1246,7 +1246,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B58.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******6",
     "source_url": "1.0",
@@ -1254,7 +1254,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-58",
+    "id": "B59",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Juanita",
@@ -1268,7 +1268,7 @@
     "lat": 3.438,
     "lng": -76.538,
     "comuna": "9",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B59.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******7",
     "source_url": "1.0",
@@ -1276,7 +1276,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-59",
+    "id": "B60",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Mavis",
@@ -1290,7 +1290,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B60.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******8",
     "source_url": "1.0",
@@ -1298,7 +1298,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-60",
+    "id": "B61",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Aruma",
@@ -1312,7 +1312,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B61.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******9",
     "source_url": "1.0",
@@ -1320,7 +1320,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-61",
+    "id": "B62",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Rocky",
@@ -1334,7 +1334,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B62.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******0",
     "source_url": "1.0",
@@ -1342,7 +1342,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-62",
+    "id": "B63",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Tiara",
@@ -1356,7 +1356,7 @@
     "lat": 3.4215,
     "lng": -76.5412,
     "comuna": "19",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B63.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******1",
     "source_url": "1.0",
@@ -1364,7 +1364,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-63",
+    "id": "B64",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Simon",
@@ -1378,7 +1378,7 @@
     "lat": 3.4516,
     "lng": -76.532,
     "comuna": "General",
-    "photo_url": "/placeholder-pet.png",
+    "photo_url": "/photos/B64.png",
     "contact_name": "Dueño Reportante",
     "contact_phone_masked": "318******2",
     "source_url": "1.0",
@@ -1386,7 +1386,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-64",
+    "id": "B65",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Mango",
@@ -1408,7 +1408,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-65",
+    "id": "B66",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Reyna",
@@ -1430,7 +1430,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-66",
+    "id": "B67",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Pelusa",
@@ -1452,7 +1452,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-67",
+    "id": "B68",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Victor",
@@ -1474,7 +1474,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-68",
+    "id": "B69",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Shayka",
@@ -1496,7 +1496,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-69",
+    "id": "B70",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Lupo",
@@ -1518,29 +1518,7 @@
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-70",
-    "report_type": "LOST",
-    "species": "DOG",
-    "name": "Renata",
-    "gender": "HEMBRA",
-    "primary_color": "Pitbull Terrier",
-    "secondary_color": "",
-    "pattern": "",
-    "size": "MEDIANO",
-    "distinctive_features": "",
-    "neighborhood": "Torres del Limonar",
-    "lat": 3.405,
-    "lng": -76.538,
-    "comuna": "17",
-    "photo_url": "/placeholder-pet.png",
-    "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******9",
-    "source_url": "2.0",
-    "status": "ACTIVE",
-    "created_at": "2026-08-15T08:00:00Z"
-  },
-  {
-    "id": "LOST-71",
+    "id": "B72",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Lucy",
@@ -1556,13 +1534,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******0",
+    "contact_phone_masked": "318******9",
     "source_url": "2.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-72",
+    "id": "B73",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Nieves",
@@ -1578,13 +1556,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******1",
+    "contact_phone_masked": "318******0",
     "source_url": "2.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-73",
+    "id": "B74",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Princesa",
@@ -1600,13 +1578,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******2",
+    "contact_phone_masked": "318******1",
     "source_url": "2.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-74",
+    "id": "B75",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Keyla",
@@ -1622,13 +1600,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******3",
+    "contact_phone_masked": "318******2",
     "source_url": "2.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-75",
+    "id": "B76",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Mia",
@@ -1644,13 +1622,13 @@
     "comuna": "17",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******4",
+    "contact_phone_masked": "318******3",
     "source_url": "4.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-76",
+    "id": "B77",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Coco",
@@ -1666,13 +1644,13 @@
     "comuna": "17",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******5",
+    "contact_phone_masked": "318******4",
     "source_url": "4.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-77",
+    "id": "B78",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Bonic",
@@ -1688,13 +1666,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******6",
+    "contact_phone_masked": "318******5",
     "source_url": "7.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-78",
+    "id": "B79",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Tamy",
@@ -1710,13 +1688,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******7",
+    "contact_phone_masked": "318******6",
     "source_url": "13.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-79",
+    "id": "B81",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Miss Luna",
@@ -1732,13 +1710,13 @@
     "comuna": "17",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******8",
+    "contact_phone_masked": "318******7",
     "source_url": "10.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-80",
+    "id": "B83",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Niño",
@@ -1754,13 +1732,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******9",
+    "contact_phone_masked": "318******8",
     "source_url": "10.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-81",
+    "id": "B84",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Mila",
@@ -1776,13 +1754,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******0",
+    "contact_phone_masked": "318******9",
     "source_url": "15.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-82",
+    "id": "B85",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Kaila",
@@ -1798,13 +1776,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******1",
+    "contact_phone_masked": "318******0",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-83",
+    "id": "B86",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Brunito",
@@ -1820,13 +1798,13 @@
     "comuna": "2",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******2",
+    "contact_phone_masked": "318******1",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-84",
+    "id": "B87",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Buho",
@@ -1842,13 +1820,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******3",
+    "contact_phone_masked": "318******2",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-85",
+    "id": "B88",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Franco",
@@ -1864,13 +1842,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******4",
+    "contact_phone_masked": "318******3",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-86",
+    "id": "B89",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Emilia",
@@ -1886,13 +1864,13 @@
     "comuna": "19",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******5",
+    "contact_phone_masked": "318******4",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-87",
+    "id": "B90",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Lucas",
@@ -1908,13 +1886,13 @@
     "comuna": "9",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******6",
+    "contact_phone_masked": "318******5",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-88",
+    "id": "B91",
     "report_type": "LOST",
     "species": "DOG",
     "name": "Aslam",
@@ -1930,13 +1908,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******7",
+    "contact_phone_masked": "318******6",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-89",
+    "id": "B92",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Tony",
@@ -1952,13 +1930,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******8",
+    "contact_phone_masked": "318******7",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-90",
+    "id": "B93",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Pacho",
@@ -1974,13 +1952,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******9",
+    "contact_phone_masked": "318******8",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-91",
+    "id": "B94",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Adolf",
@@ -1996,13 +1974,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******0",
+    "contact_phone_masked": "318******9",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-92",
+    "id": "B95",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Zoe",
@@ -2018,13 +1996,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******1",
+    "contact_phone_masked": "318******0",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-93",
+    "id": "B96",
     "report_type": "LOST",
     "species": "CAT",
     "name": "Hannah",
@@ -2040,13 +2018,13 @@
     "comuna": "General",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******2",
+    "contact_phone_masked": "318******1",
     "source_url": "16.0",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "LOST-94",
+    "id": "B97",
     "report_type": "LOST",
     "species": "OTHER",
     "name": "Sin nombre",
@@ -2062,13 +2040,13 @@
     "comuna": "3",
     "photo_url": "/placeholder-pet.png",
     "contact_name": "Dueño Reportante",
-    "contact_phone_masked": "318******3",
+    "contact_phone_masked": "318******2",
     "source_url": "nan",
     "status": "ACTIVE",
     "created_at": "2026-08-15T08:00:00Z"
   },
   {
-    "id": "FOUND-1",
+    "id": "R1",
     "report_type": "FOUND",
     "species": "OTHER",
     "name": "Rescatado",
@@ -2090,7 +2068,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-2",
+    "id": "R2",
     "report_type": "FOUND",
     "species": "OTHER",
     "name": "Rescatado",
@@ -2112,7 +2090,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-3",
+    "id": "R1",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2134,7 +2112,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-4",
+    "id": "R2",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2156,7 +2134,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-5",
+    "id": "R3",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2178,7 +2156,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-6",
+    "id": "R4",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2200,7 +2178,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-7",
+    "id": "R5",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2222,7 +2200,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-8",
+    "id": "R6",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2244,7 +2222,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-9",
+    "id": "R7",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2266,7 +2244,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-10",
+    "id": "R8",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2288,7 +2266,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-11",
+    "id": "R9",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2310,7 +2288,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-12",
+    "id": "R10",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2332,7 +2310,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-13",
+    "id": "R11",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2354,7 +2332,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-14",
+    "id": "R12",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2376,7 +2354,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-15",
+    "id": "R13",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2398,7 +2376,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-16",
+    "id": "R14",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2420,7 +2398,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-17",
+    "id": "R15",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2442,7 +2420,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-18",
+    "id": "R16",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2464,7 +2442,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-19",
+    "id": "R17",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2486,7 +2464,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-20",
+    "id": "R18",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2508,7 +2486,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-21",
+    "id": "R19",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2530,7 +2508,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-22",
+    "id": "R20",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2552,7 +2530,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-23",
+    "id": "R21",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2574,7 +2552,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-24",
+    "id": "R22",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2596,7 +2574,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-25",
+    "id": "R23",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2618,7 +2596,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-26",
+    "id": "R24",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2640,7 +2618,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-27",
+    "id": "R25",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2662,7 +2640,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-28",
+    "id": "R26",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2684,7 +2662,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-29",
+    "id": "R27",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2706,7 +2684,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-30",
+    "id": "R28",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2728,7 +2706,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-31",
+    "id": "R29",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2750,7 +2728,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-32",
+    "id": "R30",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2772,7 +2750,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-33",
+    "id": "R31",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",
@@ -2794,7 +2772,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-34",
+    "id": "R32",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2816,7 +2794,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-35",
+    "id": "R33",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2838,7 +2816,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-36",
+    "id": "R34",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2860,7 +2838,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-37",
+    "id": "R35",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2882,7 +2860,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-38",
+    "id": "R36",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2904,7 +2882,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-39",
+    "id": "R37",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2926,7 +2904,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-40",
+    "id": "R38",
     "report_type": "FOUND",
     "species": "CAT",
     "name": "Rescatado",
@@ -2948,7 +2926,7 @@
     "created_at": "2026-08-15T09:00:00Z"
   },
   {
-    "id": "FOUND-41",
+    "id": "R39",
     "report_type": "FOUND",
     "species": "DOG",
     "name": "Rescatado",

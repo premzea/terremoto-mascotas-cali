@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import os
+import shutil
 import re
 
 # Cali Barrios with approximate geo centroids (Latitude, Longitude)
@@ -72,21 +73,73 @@ def clean_gender(text):
         return "HEMBRA"
     return "UNKNOWN"
 
+def find_photo_for_id(pet_id, photos_map):
+    if not pet_id:
+        return None
+    
+    clean_id = str(pet_id).strip().upper()
+    
+    # Direct match in photos_map
+    if clean_id in photos_map:
+        return photos_map[clean_id]
+        
+    return None
+
 def parse_excel():
     excel_path = "docs/Base de Datos de Masctoas.xlsx"
+    fotos_dir = "docs/Fotos"
+    public_photos_dir = "public/photos"
+    
     if not os.path.exists(excel_path):
         print(f"File not found: {excel_path}")
         return
     
+    os.makedirs(public_photos_dir, exist_ok=True)
+    
+    # Map all available photos in docs/Fotos
+    photos_map = {}
+    if os.path.exists(fotos_dir):
+        for fname in os.listdir(fotos_dir):
+            full_src = os.path.join(fotos_dir, fname)
+            if os.path.isfile(full_src):
+                # Copy to public/photos
+                full_dest = os.path.join(public_photos_dir, fname)
+                shutil.copy2(full_src, full_dest)
+                
+                # Base name without extension, uppercased
+                base_name = os.path.splitext(fname)[0].strip().upper()
+                photos_map[base_name] = f"/photos/{fname}"
+                
+    print(f"Mapped and copied {len(photos_map)} photo files from {fotos_dir} to {public_photos_dir}")
+    print(f"Sample photo keys: {list(photos_map.keys())[:15]}")
+    
+    # Copy excel to temp file to prevent Windows file lock if user has Excel open
+    temp_excel_path = "temp_excel_read.xlsx"
+    try:
+        shutil.copy2(excel_path, temp_excel_path)
+        read_path = temp_excel_path
+    except Exception as e:
+        print(f"Could not copy to temp, trying direct: {e}")
+        read_path = excel_path
+
     all_pets = []
+    matched_photos_count = 0
     
     # 1. Buscandose (Lost pets)
     try:
-        df_lost = pd.read_excel(excel_path, sheet_name="Buscandose")
+        df_lost = pd.read_excel(read_path, sheet_name="Buscandose")
         for idx, row in df_lost.iterrows():
             loc_info = match_barrio_coords(row.get("Ultimo Lugar Visto", ""))
+            raw_id = str(row.get("ID", "")).strip() if pd.notna(row.get("ID")) else f"B{idx+1}"
+            
+            photo_url = find_photo_for_id(raw_id, photos_map)
+            if photo_url:
+                matched_photos_count += 1
+            else:
+                photo_url = "/placeholder-pet.png"
+                
             pet = {
-                "id": f"LOST-{idx+1}",
+                "id": raw_id,
                 "report_type": "LOST",
                 "species": clean_species(row.get("Animal", "")),
                 "name": str(row.get("Nombre", "Sin nombre")).strip() if pd.notna(row.get("Nombre")) else "Sin nombre",
@@ -100,7 +153,7 @@ def parse_excel():
                 "lat": loc_info["lat"],
                 "lng": loc_info["lng"],
                 "comuna": loc_info["comuna"],
-                "photo_url": "/placeholder-pet.png",
+                "photo_url": photo_url,
                 "contact_name": "Dueño Reportante",
                 "contact_phone_masked": "318******" + str(idx % 10),
                 "source_url": str(row.get("Fuente", "")),
@@ -113,11 +166,19 @@ def parse_excel():
 
     # 2. Rescatadas (Found / Sheltered pets)
     try:
-        df_found = pd.read_excel(excel_path, sheet_name="Rescatadas")
+        df_found = pd.read_excel(read_path, sheet_name="Rescatadas")
         for idx, row in df_found.iterrows():
             loc_info = match_barrio_coords(row.get("Donde se encontro", ""))
+            raw_id = str(row.get("ID", "")).strip() if pd.notna(row.get("ID")) else f"R{idx+1}"
+            
+            photo_url = find_photo_for_id(raw_id, photos_map)
+            if photo_url:
+                matched_photos_count += 1
+            else:
+                photo_url = "/placeholder-pet.png"
+                
             pet = {
-                "id": f"FOUND-{idx+1}",
+                "id": raw_id,
                 "report_type": "FOUND",
                 "species": clean_species(row.get("Animal", "")),
                 "name": str(row.get("Nombre", "Rescatado")).strip() if pd.notna(row.get("Nombre")) else "Rescatado",
@@ -131,7 +192,7 @@ def parse_excel():
                 "lat": loc_info["lat"],
                 "lng": loc_info["lng"],
                 "comuna": loc_info["comuna"],
-                "photo_url": "/placeholder-pet.png",
+                "photo_url": photo_url,
                 "contact_name": "Brigada de Rescate",
                 "contact_phone_masked": "321******" + str(idx % 10),
                 "source_url": str(row.get("Fuente", "")),
@@ -142,6 +203,12 @@ def parse_excel():
     except Exception as e:
         print(f"Error parsing Rescatadas: {e}")
 
+    if os.path.exists(temp_excel_path):
+        try:
+            os.remove(temp_excel_path)
+        except Exception:
+            pass
+
     # Output to src/data
     os.makedirs("src/data", exist_ok=True)
     with open("src/data/seed_pets.json", "w", encoding="utf-8") as f:
@@ -150,7 +217,9 @@ def parse_excel():
     with open("src/data/coords_by_barrio.json", "w", encoding="utf-8") as f:
         json.dump(BARRIO_COORDS, f, ensure_ascii=False, indent=2)
 
-    print(f"Successfully processed {len(all_pets)} pets into src/data/seed_pets.json and coords_by_barrio.json")
+    print(f"Successfully processed {len(all_pets)} pets into src/data/seed_pets.json")
+    print(f"Total pets with matching custom photos: {matched_photos_count}")
 
 if __name__ == "__main__":
     parse_excel()
+
