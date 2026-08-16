@@ -161,6 +161,28 @@ export function findBestMatches(
     }
 
     // -------------------------------------------------------------
+    // KEY PARAMETER: USER-DEFINED SIZE FILTERING & EXCLUSION
+    // A small dog (e.g., Dachshund / Frenchie) cannot match a large dog (e.g., German Shepherd / Mastiff)
+    // -------------------------------------------------------------
+    const normalizeSize = (s?: string) => {
+      if (!s) return "UNKNOWN";
+      const upper = s.toUpperCase();
+      if (upper.includes("PEQUEÑO") || upper.includes("SMALL") || upper.includes("MINI") || upper.includes("ENANO")) return "SMALL";
+      if (upper.includes("GRANDE") || upper.includes("LARGE") || upper.includes("GIGANTE")) return "LARGE";
+      if (upper.includes("MEDIANO") || upper.includes("MEDIUM")) return "MEDIUM";
+      return "UNKNOWN";
+    };
+
+    const targetSize = normalizeSize(targetPet.size) !== "UNKNOWN" ? normalizeSize(targetPet.size) : normalizeSize(targetV2.size);
+    const candidateSize = normalizeSize(candidate.size) !== "UNKNOWN" ? normalizeSize(candidate.size) : normalizeSize(candidateV2.size);
+
+    if (targetSize !== "UNKNOWN" && candidateSize !== "UNKNOWN") {
+      // Hard rule: SMALL vs LARGE is an absolute exclusion
+      if (targetSize === "SMALL" && candidateSize === "LARGE") continue;
+      if (targetSize === "LARGE" && candidateSize === "SMALL") continue;
+    }
+
+    // -------------------------------------------------------------
     // PASS 2: 50% DISCRETE CHARACTERISTICS COMPARISON
     // -------------------------------------------------------------
     let charScore = 0; // Max 50 points
