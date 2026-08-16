@@ -1,5 +1,7 @@
 import { PetReport } from "./types";
-import visualFeaturesCache from "@/data/visual_features_cache.json";
+import dinov2Embeddings from "@/data/dinov2_embeddings.json";
+import visualFeaturesV2 from "@/data/visual_features_v2_cache.json";
+import legacyVisualFeatures from "@/data/visual_features_cache.json";
 
 export interface MatchResult {
   pet: PetReport;
@@ -9,16 +11,27 @@ export interface MatchResult {
   visualSummary?: string | null;
 }
 
-export interface VisualTrait {
-  species?: string | null;
-  breed_likely?: string | null;
-  primary_color?: string | null;
-  secondary_color?: string | null;
-  coat_pattern?: string | null;
-  ear_type?: string | null;
-  fur_length?: string | null;
-  distinctive_marks?: string | null;
-  search_summary?: string | null;
+export type SpeciesEnum = "DOG" | "CAT" | "OTHER" | "UNKNOWN";
+export type SizeEnum = "SMALL" | "MEDIUM" | "LARGE" | "UNKNOWN";
+export type FurLengthEnum = "SHORT" | "MEDIUM" | "LONG" | "HAIRLESS" | "UNKNOWN";
+export type HeadShapeEnum = "POINTED_WEDGE" | "BROAD_FLAT" | "PRISMATIC_SQUARE" | "ROUND_DELICATE" | "UNKNOWN";
+export type EarTypeEnum = "ERECT" | "FLOPPY" | "SEMI_ERECT" | "UNKNOWN";
+export type BodyBuildEnum = "STURDY_PROPORTIONATE" | "HEAVY_MASSIVE" | "SLENDER_AERODYNAMIC" | "COMPACT_DWARF" | "TOY_MINIATURE" | "UNKNOWN";
+export type CoatColorEnum = "BLACK" | "WHITE" | "BROWN" | "GOLDEN_YELLOW" | "GRAY_SILVER" | "CREAM" | "ORANGE_RED";
+export type CoatPatternEnum = "SOLID" | "SPOTTED" | "STRIPED_TABBY" | "MERLE_BRINDLE" | "PATCHED_CALICO" | "BICOLOR_TUXEDO" | "POINTED_SIAMESE" | "UNKNOWN";
+
+export interface PetMetadataV2 {
+  species?: SpeciesEnum;
+  size?: SizeEnum;
+  fur_length?: FurLengthEnum;
+  head_and_muzzle_shape?: HeadShapeEnum;
+  ear_type?: EarTypeEnum;
+  body_build?: BodyBuildEnum;
+  coat_colors?: CoatColorEnum[];
+  coat_pattern?: CoatPatternEnum;
+  eye_color?: string;
+  nose_color?: string;
+  distinctive_features?: string[];
 }
 
 // Haversine distance in km
@@ -40,144 +53,54 @@ export function calculateDistanceKm(lat1?: number, lon1?: number, lat2?: number,
   return Math.round(R * c * 10) / 10;
 }
 
-export type ChromaFamily = "ORANGE" | "GRAY" | "BLACK" | "BROWN" | "WHITE" | "TRICOLOR" | "OTHER";
-
-export function getDominantChroma(visual?: VisualTrait, pet?: PetReport): { primary: ChromaFamily; hasWhite: boolean; rawName: string } {
-  const pColor = (visual?.primary_color || "").toLowerCase();
-  const sColor = (visual?.secondary_color || "").toLowerCase();
-  const petColor = (pet?.primary_color || "").toLowerCase();
-
-  // Combine only primary fur fields
-  const furText = `${pColor} ${sColor} ${petColor === "desconocido" ? "" : petColor}`;
-
-  const isOrange = /naranja|amarillo|miel|rubio|ginger|dorado|canela|garfield/i.test(pColor) || (/naranja|amarillo|miel|rubio|ginger|dorado/i.test(petColor) && !/gris|negro/i.test(pColor));
-  const isGray = /gris|plomo|plateado|cenizo|azul ruso/i.test(pColor) || (/gris/i.test(petColor) && !/naranja|negro/i.test(pColor));
-  const isBlack = /negro|azabache|oscuro/i.test(pColor) || (/negro/i.test(petColor) && !/naranja|gris/i.test(pColor));
-  const isBrown = /marron|marrón|cafe|café|chocolate/i.test(pColor);
-  const isWhite = /blanco|crema/i.test(pColor) && !isBlack && !isGray && !isOrange && !isBrown;
-  const isTricolor = /carey|calico|tricolor/i.test(furText) || (isOrange && isBlack);
-
-  const hasWhite = /blanco|crema/i.test(furText);
-
-  let primary: ChromaFamily = "OTHER";
-  let rawName = visual?.primary_color || pet?.primary_color || "Color mixto";
-
-  if (isTricolor) {
-    primary = "TRICOLOR";
-    rawName = "Tricolor / Carey";
-  } else if (isOrange) {
-    primary = "ORANGE";
-    rawName = "Naranja / Amarillo / Miel";
-  } else if (isGray) {
-    primary = "GRAY";
-    rawName = "Gris / Plomo";
-  } else if (isBlack) {
-    primary = "BLACK";
-    rawName = "Negro / Oscuro";
-  } else if (isBrown) {
-    primary = "BROWN";
-    rawName = "Marrón / Café";
-  } else if (isWhite) {
-    primary = "WHITE";
-    rawName = "Blanco";
+// Cosine similarity for DINOv2 vectors
+export function cosineSimilarity(vecA?: number[], vecB?: number[]): number {
+  if (!vecA || !vecB || vecA.length === 0 || vecA.length !== vecB.length) return 0.5;
+  let dot = 0;
+  for (let i = 0; i < vecA.length; i++) {
+    dot += vecA[i] * vecB[i];
   }
-
-  return { primary, hasWhite, rawName };
+  return Math.max(0, Math.min(1, dot));
 }
 
-// Morphological Breed Families (Canines)
-export function getBreedMorphology(breedText?: string | null): string {
-  if (!breedText) return "UNKNOWN";
-  const b = breedText.toLowerCase();
-  
-  if (
-    b.includes("pastor") ||
-    b.includes("malinois") ||
-    b.includes("belga") ||
-    b.includes("holandes") ||
-    b.includes("aleman") ||
-    b.includes("husky") ||
-    b.includes("siberiano") ||
-    b.includes("akita") ||
-    b.includes("lobo")
-  ) {
-    return "SHEPHERD_LARGE";
-  }
+// Map color enums to friendly Spanish descriptions
+const COLOR_NAMES: Record<CoatColorEnum, string> = {
+  BLACK: "Negro",
+  WHITE: "Blanco",
+  BROWN: "Marrón",
+  GOLDEN_YELLOW: "Amarillo/Miel",
+  GRAY_SILVER: "Gris/Plomo",
+  CREAM: "Crema",
+  ORANGE_RED: "Naranja/Rubio",
+};
 
-  if (
-    b.includes("bulldog") ||
-    b.includes("french") ||
-    b.includes("frances") ||
-    b.includes("pug") ||
-    b.includes("boston") ||
-    b.includes("braquicefalo")
-  ) {
-    return "BULLDOG_BRACHY";
-  }
+const PATTERN_NAMES: Record<CoatPatternEnum, string> = {
+  SOLID: "Sólido",
+  SPOTTED: "Manchas",
+  STRIPED_TABBY: "Rayas / Atigrado",
+  MERLE_BRINDLE: "Abigarrado / Brindle",
+  PATCHED_CALICO: "Calicó / Carey",
+  BICOLOR_TUXEDO: "Bicolor / Tuxedo",
+  POINTED_SIAMESE: "Siamés (Pointed)",
+  UNKNOWN: "Mixto",
+};
 
-  if (
-    b.includes("pitbull") ||
-    b.includes("bull terrier") ||
-    b.includes("american bully") ||
-    b.includes("staffordshire") ||
-    b.includes("rottweiler") ||
-    b.includes("boxer") ||
-    b.includes("dogo")
-  ) {
-    return "TERRIER_MOLOSSER";
-  }
-
-  if (
-    b.includes("pincher") ||
-    b.includes("chihuahua") ||
-    b.includes("pomerania") ||
-    b.includes("shih") ||
-    b.includes("yorkie") ||
-    b.includes("yorkshire") ||
-    b.includes("maltes")
-  ) {
-    return "TOY_TINY";
-  }
-
-  if (
-    b.includes("labrador") ||
-    b.includes("golden") ||
-    b.includes("retriever") ||
-    b.includes("beagle") ||
-    b.includes("pointer") ||
-    b.includes("sabueso")
-  ) {
-    return "RETRIEVER_HOUND";
-  }
-
-  if (
-    b.includes("cocker") ||
-    b.includes("spaniel") ||
-    b.includes("poodle") ||
-    b.includes("caniche") ||
-    b.includes("schnauzer") ||
-    b.includes("bobtail")
-  ) {
-    return "MEDIUM_FLUFFY";
-  }
-
-  if (b.includes("salchicha") || b.includes("dachshund") || b.includes("teckel")) {
-    return "DACHSHUND";
-  }
-
-  return "GENERAL_CRIOLLO";
-}
-
+/**
+ * Hybrid 50/50 Matching Engine:
+ * 50% Discrete Enum Trait Comparison (Colors, Pattern, Shape, Ears, Build, Size)
+ * 50% DINOv2 Self-Supervised Vision Transformer Embedding (Fine-grained texture & distribution)
+ */
 export function findBestMatches(
   targetPet: PetReport,
   allPets: PetReport[],
   limit = 5
 ): MatchResult[] {
-  const vCache = (visualFeaturesCache as unknown) as Record<string, VisualTrait>;
+  const v2Cache = (visualFeaturesV2 as unknown) as Record<string, PetMetadataV2>;
+  const dinoCache = (dinov2Embeddings as unknown) as Record<string, number[]>;
+  const legacyCache = (legacyVisualFeatures as unknown) as Record<string, { search_summary?: string }>;
 
-  const targetVisual: VisualTrait = vCache[targetPet.id || ""] || {};
-  const targetChroma = getDominantChroma(targetVisual, targetPet);
-  const targetMorphology = getBreedMorphology(`${targetVisual.breed_likely || ""} ${targetPet.primary_color || ""} ${targetPet.distinctive_features || ""}`);
+  const targetV2: PetMetadataV2 = v2Cache[targetPet.id || ""] || {};
+  const targetDino: number[] | undefined = dinoCache[targetPet.id || ""];
 
   const searchInTypes =
     targetPet.report_type === "LOST"
@@ -187,13 +110,14 @@ export function findBestMatches(
   const results: MatchResult[] = [];
 
   for (const candidate of allPets) {
-    // 1. HARD RULE-OUT FILTERS
-
+    // -------------------------------------------------------------
+    // PASS 1: HARD DETERMINISTIC EXCLUSIONS (Zero Tolerance)
+    // -------------------------------------------------------------
     if (candidate.id === targetPet.id) continue;
     if (candidate.species !== targetPet.species) continue;
     if (!searchInTypes.includes(candidate.report_type)) continue;
 
-    // RULE OUT: SEX INCOMPATIBILITY
+    // Hard biological sex filter
     if (
       targetPet.gender &&
       candidate.gender &&
@@ -201,113 +125,125 @@ export function findBestMatches(
       candidate.gender !== "UNKNOWN" &&
       targetPet.gender !== candidate.gender
     ) {
-      continue; // Descartado por sexo opuesto
+      continue;
     }
 
-    const candidateVisual: VisualTrait = vCache[candidate.id || ""] || {};
-    const candidateChroma = getDominantChroma(candidateVisual, candidate);
-    const candidateMorphology = getBreedMorphology(`${candidateVisual.breed_likely || ""} ${candidate.primary_color || ""} ${candidate.distinctive_features || ""}`);
+    const candidateV2: PetMetadataV2 = v2Cache[candidate.id || ""] || {};
+    const candidateDino: number[] | undefined = dinoCache[candidate.id || ""];
 
-    // RULE OUT: CANINE MORPHOLOGY INCOMPATIBILITY
+    // Color list inspection
+    const targetColors = targetV2.coat_colors || [];
+    const candidateColors = candidateV2.coat_colors || [];
+
+    // Strict Chromatic Spectrum Clash:
+    // If target has ONLY Gray/Silver and candidate has ONLY Orange/Red (or vice versa)
+    const isTargetPureOrange = targetColors.includes("ORANGE_RED") && !targetColors.includes("GRAY_SILVER") && !targetColors.includes("BLACK");
+    const isCandidatePureGray = candidateColors.includes("GRAY_SILVER") && !candidateColors.includes("ORANGE_RED") && !candidateColors.includes("GOLDEN_YELLOW");
+    if (isTargetPureOrange && isCandidatePureGray) continue;
+
+    const isTargetPureGray = targetColors.includes("GRAY_SILVER") && !targetColors.includes("ORANGE_RED") && !targetColors.includes("GOLDEN_YELLOW");
+    const isCandidatePureOrange = candidateColors.includes("ORANGE_RED") && !candidateColors.includes("GRAY_SILVER") && !candidateColors.includes("BLACK");
+    if (isTargetPureGray && isCandidatePureOrange) continue;
+
+    // Solid Black vs Solid White
+    const isTargetSolidBlack = targetColors.length === 1 && targetColors[0] === "BLACK";
+    const isCandidateSolidWhite = candidateColors.length === 1 && candidateColors[0] === "WHITE";
+    if (isTargetSolidBlack && isCandidateSolidWhite) continue;
+
+    // Morphology Head/Muzzle clash in dogs
     if (targetPet.species === "DOG") {
-      if (
-        (targetMorphology === "SHEPHERD_LARGE" && (candidateMorphology === "BULLDOG_BRACHY" || candidateMorphology === "TOY_TINY" || candidateMorphology === "DACHSHUND")) ||
-        (targetMorphology === "BULLDOG_BRACHY" && (candidateMorphology === "SHEPHERD_LARGE" || candidateMorphology === "RETRIEVER_HOUND" || candidateMorphology === "DACHSHUND")) ||
-        (targetMorphology === "TOY_TINY" && (candidateMorphology === "SHEPHERD_LARGE" || candidateMorphology === "TERRIER_MOLOSSER" || candidateMorphology === "RETRIEVER_HOUND")) ||
-        (targetMorphology === "DACHSHUND" && (candidateMorphology === "SHEPHERD_LARGE" || candidateMorphology === "RETRIEVER_HOUND"))
-      ) {
+      if (targetV2.head_and_muzzle_shape === "POINTED_WEDGE" && candidateV2.head_and_muzzle_shape === "BROAD_FLAT") {
+        continue;
+      }
+      if (targetV2.head_and_muzzle_shape === "BROAD_FLAT" && candidateV2.head_and_muzzle_shape === "POINTED_WEDGE") {
         continue;
       }
     }
 
-    // RULE OUT: STRICT COLOR SPECTRUM COMPATIBILITY
-    let colorScore = 0;
+    // -------------------------------------------------------------
+    // PASS 2: 50% DISCRETE CHARACTERISTICS COMPARISON
+    // -------------------------------------------------------------
+    let charScore = 0; // Max 50 points
     const reasons: string[] = [];
 
-    // Check if primary chromas match
-    if (targetChroma.primary === candidateChroma.primary) {
-      colorScore = 55;
-      reasons.push(`🎨 Mismo color primario (${candidateChroma.rawName})`);
-
-      // Bicolor match bonus (e.g. both have white chest/markings)
-      if (targetChroma.hasWhite && candidateChroma.hasWhite) {
-        colorScore += 10;
+    // 1. Color overlap (Max 22 pts)
+    if (targetColors.length > 0 && candidateColors.length > 0) {
+      const commonColors = targetColors.filter((c) => candidateColors.includes(c));
+      if (commonColors.length > 0) {
+        const jaccard = commonColors.length / new Set([...targetColors, ...candidateColors]).size;
+        const pts = Math.round(jaccard * 22);
+        charScore += pts;
+        const colorLabels = commonColors.map((c) => COLOR_NAMES[c] || c).join(", ");
+        reasons.push(`🎨 Colores coincidentes: ${colorLabels}`);
       }
     } else {
-      // Compatible cross-categories (e.g. White Solid with Gray/White Bicolor)
-      if (targetChroma.primary === "WHITE" && (candidateChroma.primary === "GRAY" || candidateChroma.primary === "BLACK") && candidateChroma.hasWhite) {
-        colorScore = 35;
-        reasons.push("🎨 Base blanca compatible");
-      } else if (candidateChroma.primary === "WHITE" && (targetChroma.primary === "GRAY" || targetChroma.primary === "BLACK") && targetChroma.hasWhite) {
-        colorScore = 35;
-        reasons.push("🎨 Base blanca compatible");
-      } else if (targetChroma.primary === "TRICOLOR" || candidateChroma.primary === "TRICOLOR") {
-        colorScore = 30;
-        reasons.push("🎨 Patrón tricolor/carey compatible");
-      } else {
-        // CROMATIC CLASH -> RULE OUT! (Un gato naranja NUNCA coincide con un gato gris o negro)
-        continue;
+      charScore += 8; // Neutral if missing
+    }
+
+    // 2. Coat Pattern (Max 10 pts)
+    if (targetV2.coat_pattern && candidateV2.coat_pattern && targetV2.coat_pattern !== "UNKNOWN" && targetV2.coat_pattern === candidateV2.coat_pattern) {
+      charScore += 10;
+      reasons.push(`✨ Patrón de pelaje (${PATTERN_NAMES[targetV2.coat_pattern] || targetV2.coat_pattern})`);
+    }
+
+    // 3. Head & Muzzle Shape (Max 6 pts)
+    if (targetV2.head_and_muzzle_shape && candidateV2.head_and_muzzle_shape && targetV2.head_and_muzzle_shape !== "UNKNOWN" && targetV2.head_and_muzzle_shape === candidateV2.head_and_muzzle_shape) {
+      charScore += 6;
+      reasons.push(`📐 Estructura craneal coincidente`);
+    }
+
+    // 4. Ear Type (Max 5 pts)
+    if (targetV2.ear_type && candidateV2.ear_type && targetV2.ear_type !== "UNKNOWN" && targetV2.ear_type === candidateV2.ear_type) {
+      charScore += 5;
+      reasons.push(`👂 Orejas coincidentes`);
+    }
+
+    // 5. Body Build & Size (Max 4 pts)
+    if (targetV2.body_build && candidateV2.body_build && targetV2.body_build !== "UNKNOWN" && targetV2.body_build === candidateV2.body_build) {
+      charScore += 4;
+    }
+
+    // 6. Fur Length (Max 3 pts)
+    if (targetV2.fur_length && candidateV2.fur_length && targetV2.fur_length !== "UNKNOWN" && targetV2.fur_length === candidateV2.fur_length) {
+      charScore += 3;
+    }
+
+    // -------------------------------------------------------------
+    // PASS 3: 50% DINOv2 VISUAL SIMILARITY (Fine-Grained Texture)
+    // -------------------------------------------------------------
+    let dinoScore = 25; // default neutral 50% of 50
+    if (targetDino && candidateDino) {
+      const sim = cosineSimilarity(targetDino, candidateDino);
+      // Scale from [0.5, 1.0] cosine to [0, 50] points
+      dinoScore = Math.max(0, Math.min(50, Math.round(((sim - 0.45) / 0.55) * 50)));
+      if (sim >= 0.75) {
+        reasons.push(`👁️ Gran similitud visual y textura DINOv2 (${Math.round(sim * 100)}%)`);
       }
     }
 
-    // 2. PATTERN & BREED MORPHOLOGY SCORING
-    let traitScore = 0;
-
-    // Pattern (Bicolor vs Rayas/Atigrado vs Sólido)
-    if (targetVisual.coat_pattern && candidateVisual.coat_pattern && targetVisual.coat_pattern === candidateVisual.coat_pattern) {
-      traitScore += 15;
-      reasons.push(`✨ Patrón coincidente (${targetVisual.coat_pattern.toLowerCase()})`);
-    }
-
-    // Breed Morphology (Dogs)
-    if (targetPet.species === "DOG") {
-      const tBreed = (targetVisual.breed_likely || "").toLowerCase();
-      const cBreed = (candidateVisual.breed_likely || "").toLowerCase();
-      if (tBreed && cBreed && tBreed === cBreed && !tBreed.includes("mestizo")) {
-        traitScore += 20;
-        reasons.push(`🐾 Misma raza (${candidateVisual.breed_likely})`);
-      } else if (targetMorphology !== "GENERAL_CRIOLLO" && targetMorphology === candidateMorphology) {
-        traitScore += 14;
-        reasons.push(`🐾 Misma tipología (${candidateVisual.breed_likely || "Estructura compatible"})`);
-      }
-
-      if (targetVisual.ear_type && candidateVisual.ear_type && targetVisual.ear_type === candidateVisual.ear_type) {
-        traitScore += 8;
-        reasons.push(`👂 Orejas ${targetVisual.ear_type.toLowerCase()}`);
-      }
-    }
-
-    // Verified Sex Match
-    if (targetPet.gender && candidate.gender && targetPet.gender === candidate.gender && targetPet.gender !== "UNKNOWN") {
-      traitScore += 5;
-      reasons.push(`⚧ Sexo (${targetPet.gender === "MACHO" ? "Macho" : "Hembra"})`);
-    }
-
-    // Geographic Proximity in Cali (Max 15 pts)
+    // Proximity Bonus in Cali (Optional Geo context)
     const distanceKm = calculateDistanceKm(
       targetPet.lat,
       targetPet.lng,
       candidate.lat,
       candidate.lng
     );
-
-    const geoScore = Math.max(0, Math.round(15 * (1 - distanceKm / 15)));
     if (distanceKm <= 3.0) {
       reasons.push(`📍 A solo ${distanceKm} km en ${candidate.neighborhood}`);
-    } else if (distanceKm <= 7.0) {
-      reasons.push(`📍 A ${distanceKm} km en ${candidate.neighborhood}`);
     }
 
-    // Total Additive Score
-    const finalScore = Math.min(99, Math.max(25, colorScore + traitScore + geoScore));
+    // TOTAL 50/50 COMPOSITE SCORE (0 - 100)
+    const totalScore = Math.min(99, Math.max(10, charScore + dinoScore));
 
-    results.push({
-      pet: candidate,
-      score: finalScore,
-      distanceKm,
-      reasons: reasons.slice(0, 3),
-      visualSummary: candidateVisual.search_summary,
-    });
+    if (totalScore >= 30) {
+      results.push({
+        pet: candidate,
+        score: totalScore,
+        distanceKm,
+        reasons: reasons.slice(0, 3),
+        visualSummary: legacyCache[candidate.id || ""]?.search_summary || null,
+      });
+    }
   }
 
   // Sort by score descending
