@@ -1,7 +1,7 @@
 "use client";
 
 import { PetReport } from "@/lib/types";
-import { MapPin, MessageCircle, Maximize2, X, ZoomIn, Info, Sparkles } from "lucide-react";
+import { MapPin, MessageCircle, ZoomIn, Info, Sparkles, Shield } from "lucide-react";
 import { useState } from "react";
 import ContactGateModal from "./ContactGateModal";
 
@@ -79,13 +79,22 @@ export default function PetCard({ pet, onFindMatches }: PetCardProps) {
               </span>
             </div>
 
-            {/* Ubicación Barrial */}
-            <div className="flex items-center gap-1.5 text-xs text-amber-400 font-semibold bg-amber-500/10 px-2.5 py-1.5 rounded-lg border border-amber-500/20 w-fit">
-              <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>{pet.neighborhood}</span>
+            {/* Ubicación: Protegida para rescatados contra extorsiones / Abierta para perdidos */}
+            <div className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border w-fit">
+              {isLost ? (
+                <div className="flex items-center gap-1.5 text-amber-400 bg-amber-500/10 border-amber-500/20">
+                  <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span>Visto por última vez en: <strong>{pet.neighborhood}</strong></span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 border-emerald-500/20">
+                  <Shield className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span>En resguardo en Cali (Ubicación exacta protegida por Triaje)</span>
+                </div>
+              )}
             </div>
 
-            {/* Descripción Completa Extraída del Excel */}
+            {/* Descripción Completa */}
             {pet.distinctive_features && (
               <div className="text-xs text-neutral-200 bg-[#161619] p-3 rounded-xl border border-neutral-800/90 leading-relaxed space-y-1">
                 <div className="flex items-center gap-1 text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider">
@@ -136,7 +145,6 @@ export default function PetCard({ pet, onFindMatches }: PetCardProps) {
             onClick={(e) => e.stopPropagation()}
             className="bg-[#141417] border border-neutral-800 rounded-2xl max-w-2xl w-full max-h-[95vh] flex flex-col overflow-hidden shadow-2xl"
           >
-            {/* Header del Modal */}
             <div className="p-4 border-b border-neutral-800 flex items-center justify-between bg-[#18181c]">
               <div>
                 <h3 className="font-extrabold text-base text-white flex items-center gap-2">
@@ -146,18 +154,17 @@ export default function PetCard({ pet, onFindMatches }: PetCardProps) {
                   </span>
                 </h3>
                 <p className="text-xs text-neutral-400">
-                  {pet.neighborhood} • ID: {pet.id}
+                  {isLost ? `Visto en ${pet.neighborhood}` : "Resguardado en Cali"} • ID: {pet.id}
                 </p>
               </div>
               <button
                 onClick={() => setShowPhotoModal(false)}
                 className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white transition"
               >
-                <X className="w-5 h-5" />
+                ✕
               </button>
             </div>
 
-            {/* Contenedor de la Imagen Completa */}
             <div className="flex-1 bg-black p-2 sm:p-4 flex items-center justify-center min-h-[300px] max-h-[65vh] overflow-hidden">
               <img
                 src={pet.photo_url || fallbackPhoto}
@@ -169,7 +176,6 @@ export default function PetCard({ pet, onFindMatches }: PetCardProps) {
               />
             </div>
 
-            {/* Footer con Descripción y Acciones */}
             <div className="p-4 border-t border-neutral-800 bg-[#18181c] space-y-3">
               {pet.distinctive_features && (
                 <div className="text-xs text-neutral-300 bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800 leading-relaxed">

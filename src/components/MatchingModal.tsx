@@ -2,7 +2,7 @@
 
 import { PetReport } from "@/lib/types";
 import { findBestMatches, MatchResult } from "@/lib/matching-engine";
-import { Sparkles, MapPin, X, ArrowRight, ShieldCheck, CheckCircle2, AlertCircle, Compass } from "lucide-react";
+import { Sparkles, MapPin, X, ShieldCheck, CheckCircle2, Compass, ZoomIn } from "lucide-react";
 import { useState } from "react";
 import ContactGateModal from "./ContactGateModal";
 
@@ -14,6 +14,7 @@ interface MatchingModalProps {
 
 export default function MatchingModal({ targetPet, allPets, onClose }: MatchingModalProps) {
   const [selectedMatch, setSelectedMatch] = useState<PetReport | null>(null);
+  const [zoomedPhoto, setZoomedPhoto] = useState<{ url: string; name: string; id: string } | null>(null);
   const matches: MatchResult[] = findBestMatches(targetPet, allPets, 5);
 
   const isLost = targetPet.report_type === "LOST";
@@ -32,11 +33,11 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                 <h2 className="font-black text-lg sm:text-xl text-white flex items-center gap-2">
                   Motor de Coincidencias IA
                   <span className="text-[10px] bg-amber-500 font-bold px-2 py-0.5 rounded text-black uppercase">
-                    Cali Match
+                    50/50 DINOv2
                   </span>
                 </h2>
                 <p className="text-xs text-neutral-400 mt-0.5">
-                  Buscando coincidencias para: <strong className="text-white">{targetPet.name}</strong> ({targetPet.neighborhood})
+                  Buscando coincidencias para: <strong className="text-white">{targetPet.name}</strong> ({targetPet.species === "DOG" ? "Perro" : "Gato"})
                 </p>
               </div>
             </div>
@@ -50,12 +51,18 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
 
           {/* Tarjeta de Referencia de la Mascota Objetivo */}
           <div className="p-4 bg-[#0e0e11] border-b border-neutral-800/80 flex items-center gap-3.5">
-            <div className="w-16 h-16 rounded-lg bg-black border border-neutral-800 overflow-hidden flex-shrink-0">
+            <div
+              onClick={() => setZoomedPhoto({ url: targetPet.photo_url || "/placeholder-pet.png", name: targetPet.name, id: targetPet.id })}
+              className="w-16 h-16 rounded-lg bg-black border border-neutral-800 overflow-hidden flex-shrink-0 cursor-pointer relative group flex items-center justify-center p-1"
+            >
               <img
                 src={targetPet.photo_url || "/placeholder-pet.png"}
                 alt={targetPet.name}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain group-hover:scale-105 transition"
               />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                <ZoomIn className="w-4 h-4 text-white" />
+              </div>
             </div>
             <div className="flex-1 text-xs">
               <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-neutral-800 text-neutral-300">
@@ -65,7 +72,7 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                 {targetPet.name} — {targetPet.species === "DOG" ? "🐶 Perro" : "🐱 Gato"} ({targetPet.primary_color})
               </h4>
               <p className="text-neutral-400 mt-0.5">
-                📍 {targetPet.neighborhood} • ID: {targetPet.id}
+                {isLost ? `📍 Última vez visto en: ${targetPet.neighborhood}` : "📍 Rescatado en Cali (Ubicación exacta protegida)"} • ID: {targetPet.id}
               </p>
             </div>
           </div>
@@ -77,7 +84,7 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                 Top {matches.length} Coincidencias encontradas:
               </span>
               <span className="font-mono text-emerald-400 text-[11px]">
-                Similitud Visual + Proximidad GPS
+                50% Rasgos Enums + 50% Visión DINOv2
               </span>
             </div>
 
@@ -90,18 +97,27 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                     ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
                     : "bg-blue-500/20 text-blue-400 border-blue-500/30";
 
+                const isCandidateFound = m.pet.report_type === "FOUND" || m.pet.report_type === "SHELTERED";
+
                 return (
                   <div
                     key={m.pet.id}
                     className="bg-[#18181c] border border-neutral-800 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4 hover:border-neutral-700 transition"
                   >
-                    {/* Foto Candidato */}
-                    <div className="w-full sm:w-36 h-40 bg-black rounded-lg overflow-hidden border border-neutral-800 flex-shrink-0 flex items-center justify-center p-1">
+                    {/* Foto Candidato Ampliable */}
+                    <div
+                      onClick={() => setZoomedPhoto({ url: m.pet.photo_url || "/placeholder-pet.png", name: m.pet.name, id: m.pet.id })}
+                      className="w-full sm:w-36 h-40 bg-black rounded-lg overflow-hidden border border-neutral-800 flex-shrink-0 flex items-center justify-center p-1 relative cursor-pointer group"
+                    >
                       <img
                         src={m.pet.photo_url || "/placeholder-pet.png"}
                         alt={m.pet.name}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain group-hover:scale-105 transition"
                       />
+                      <div className="absolute bottom-2 right-2 bg-black/80 border border-neutral-700 rounded px-1.5 py-0.5 flex items-center gap-1 text-[10px] font-bold text-neutral-300 group-hover:bg-amber-500 group-hover:text-black transition">
+                        <ZoomIn className="w-3 h-3" />
+                        <span>Ampliar</span>
+                      </div>
                     </div>
 
                     {/* Detalles de la Coincidencia */}
@@ -131,12 +147,18 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                           </div>
                         </div>
 
-                        {/* Ubicación y Distancia */}
-                        <div className="flex items-center gap-2 text-xs text-amber-400 font-semibold mt-2">
-                          <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                          <span>
-                            {m.pet.neighborhood} (a ~{m.distanceKm} km)
-                          </span>
+                        {/* Ubicación Protegida para Encontrados */}
+                        <div className="flex items-center gap-2 text-xs font-semibold mt-2">
+                          <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-amber-400" />
+                          {isCandidateFound ? (
+                            <span className="text-emerald-400">
+                              Bajo resguardo en Cali (Ubicación exacta protegida por Triaje)
+                            </span>
+                          ) : (
+                            <span className="text-amber-400">
+                              {m.pet.neighborhood} (a ~{m.distanceKm} km)
+                            </span>
+                          )}
                         </div>
 
                         {/* Razones de Match */}
@@ -186,6 +208,38 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
           </div>
         </div>
       </div>
+
+      {/* Lightbox / Modal para Ampliar Foto */}
+      {zoomedPhoto && (
+        <div
+          onClick={() => setZoomedPhoto(null)}
+          className="fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4 backdrop-blur-md animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#141417] border border-neutral-800 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl"
+          >
+            <div className="p-3.5 border-b border-neutral-800 flex items-center justify-between bg-[#18181c]">
+              <h4 className="font-extrabold text-sm text-white">
+                {zoomedPhoto.name} — ID: {zoomedPhoto.id}
+              </h4>
+              <button
+                onClick={() => setZoomedPhoto(null)}
+                className="p-1.5 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 bg-black p-2 flex items-center justify-center min-h-[300px] max-h-[70vh] overflow-hidden">
+              <img
+                src={zoomedPhoto.url}
+                alt={zoomedPhoto.name}
+                className="max-w-full max-h-full object-contain rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Trigger para el Gate de Seguridad si el usuario elige validar */}
       {selectedMatch && (
