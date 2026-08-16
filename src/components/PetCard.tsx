@@ -1,15 +1,16 @@
 "use client";
 
 import { PetReport } from "@/lib/types";
-import { MapPin, MessageCircle, Maximize2, X, ZoomIn, Info, Tag } from "lucide-react";
+import { MapPin, MessageCircle, Maximize2, X, ZoomIn, Info, Sparkles } from "lucide-react";
 import { useState } from "react";
 import ContactGateModal from "./ContactGateModal";
 
 interface PetCardProps {
   pet: PetReport;
+  onFindMatches?: (pet: PetReport) => void;
 }
 
-export default function PetCard({ pet }: PetCardProps) {
+export default function PetCard({ pet, onFindMatches }: PetCardProps) {
   const [showGate, setShowGate] = useState<boolean>(false);
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
 
@@ -98,8 +99,18 @@ export default function PetCard({ pet }: PetCardProps) {
             )}
           </div>
 
-          {/* Botón de Contacto Protegido */}
-          <div className="pt-1 flex items-center gap-2">
+          {/* Botones de Acción */}
+          <div className="pt-1 flex flex-wrap sm:flex-nowrap items-center gap-2">
+            {onFindMatches && (
+              <button
+                onClick={() => onFindMatches(pet)}
+                className="bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-extrabold text-xs py-3 px-3.5 rounded-xl flex items-center justify-center gap-1.5 transition"
+              >
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>Coincidencias IA</span>
+              </button>
+            )}
+
             <button
               onClick={() => setShowGate(true)}
               className={`flex-1 font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition ${
@@ -109,7 +120,7 @@ export default function PetCard({ pet }: PetCardProps) {
               }`}
             >
               <MessageCircle className="w-4 h-4" />
-              {isLost ? "¡Vi a esta mascota! (Contactar Triaje)" : "¡Es mi mascota! (Reclamar)"}
+              {isLost ? "¡Vi a esta mascota!" : "¡Es mi mascota!"}
             </button>
           </div>
         </div>
@@ -165,13 +176,25 @@ export default function PetCard({ pet }: PetCardProps) {
                   <strong className="text-amber-400">Descripción:</strong> {pet.distinctive_features}
                 </div>
               )}
-              <div className="flex items-center justify-end gap-3">
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {onFindMatches && (
+                  <button
+                    onClick={() => {
+                      setShowPhotoModal(false);
+                      onFindMatches(pet);
+                    }}
+                    className="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs py-3 px-4 rounded-xl flex items-center gap-1.5"
+                  >
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    Buscar Coincidencias IA
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setShowPhotoModal(false);
                     setShowGate(true);
                   }}
-                  className={`w-full sm:w-auto font-bold text-xs py-3 px-5 rounded-xl flex items-center justify-center gap-2 ${
+                  className={`font-bold text-xs py-3 px-5 rounded-xl flex items-center justify-center gap-2 ${
                     isLost
                       ? "bg-red-600 hover:bg-red-500 text-white"
                       : "bg-emerald-600 hover:bg-emerald-500 text-white"

@@ -7,11 +7,14 @@ import UnsyncedBadge from "@/components/UnsyncedBadge";
 import SplitHero from "@/components/SplitHero";
 import PetCard from "@/components/PetCard";
 import ReportModal from "@/components/ReportModal";
-import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass } from "lucide-react";
+import MatchingModal from "@/components/MatchingModal";
+import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass, Sparkles } from "lucide-react";
 import barrioCoords from "@/data/coords_by_barrio.json";
+import rawSeedPets from "@/data/seed_pets.json";
 
 export default function Home() {
   const [pets, setPets] = useState<PetReport[]>([]);
+  const [allPets, setAllPets] = useState<PetReport[]>(rawSeedPets as PetReport[]);
   const [loading, setLoading] = useState<boolean>(true);
   const [speciesFilter, setSpeciesFilter] = useState<string>("ALL");
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
@@ -19,6 +22,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [reportModalType, setReportModalType] = useState<"LOST" | "FOUND">("LOST");
+  const [matchingTargetPet, setMatchingTargetPet] = useState<PetReport | null>(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -48,6 +52,11 @@ export default function Home() {
 
   const handleNewReportCreated = (newPet: PetReport) => {
     setPets((prev) => [newPet, ...prev]);
+    setAllPets((prev) => [newPet, ...prev]);
+    // Abrir automáticamente el modal de coincidencias para el nuevo reporte
+    setTimeout(() => {
+      setMatchingTargetPet(newPet);
+    }, 400);
   };
 
   const clearAllFilters = () => {
@@ -85,7 +94,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => handleOpenReport("LOST")}
-              className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs px-3 py-2 rounded-lg transition"
+              className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs px-3 py-2 rounded-lg transition shadow-md shadow-amber-950/30"
             >
               + Publicar Reporte
             </button>
@@ -109,7 +118,7 @@ export default function Home() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar por nombre, color, rasgos (ej: blanco con manchas)..."
+              placeholder="Buscar por nombre, color, raza o rasgos (ej: pastor holandes, salchicha)..."
               className="w-full bg-[#1e1e24] border border-neutral-700/80 rounded-xl pl-9 pr-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 placeholder-neutral-500"
             />
           </div>
@@ -206,7 +215,11 @@ export default function Home() {
         ) : pets.length > 0 ? (
           <div className="divide-y divide-neutral-800">
             {pets.map((pet, idx) => (
-              <PetCard key={`${pet.report_type}-${pet.id}-${idx}`} pet={pet} />
+              <PetCard
+                key={`${pet.report_type}-${pet.id}-${idx}`}
+                pet={pet}
+                onFindMatches={(p) => setMatchingTargetPet(p)}
+              />
             ))}
           </div>
         ) : (
@@ -239,6 +252,15 @@ export default function Home() {
           initialType={reportModalType}
           onClose={() => setReportModalOpen(false)}
           onSuccess={handleNewReportCreated}
+        />
+      )}
+
+      {/* Modal de Coincidencias IA */}
+      {matchingTargetPet && (
+        <MatchingModal
+          targetPet={matchingTargetPet}
+          allPets={allPets}
+          onClose={() => setMatchingTargetPet(null)}
         />
       )}
     </div>
