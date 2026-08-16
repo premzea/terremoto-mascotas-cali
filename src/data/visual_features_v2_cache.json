@@ -1,0 +1,4377 @@
+{
+  "B1": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "White chest patch",
+      "Tabby forehead markings"
+    ]
+  },
+  "B10": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Orange spot on left side of nose",
+      "Large upright ears"
+    ]
+  },
+  "B100": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "AMBER",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "Tortoiseshell coat pattern",
+      "Stuffed sloth toy on back"
+    ]
+  },
+  "B101": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "ORANGE_RED",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "GREEN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "Red collar with blue pattern",
+      "Large gray patch on nose",
+      "Small green bell on collar"
+    ]
+  },
+  "B102": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Ringed tail",
+      "Tabby patches on white body"
+    ]
+  },
+  "B103": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "CREAM"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Cream patch on forehead",
+      "Cream patch on chin"
+    ]
+  },
+  "B104": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Extremely fluffy coat",
+      "Tongue visible",
+      "Small pointed ears"
+    ]
+  },
+  "B105": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BROWN",
+      "CREAM",
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Plumed tail",
+      "Dense ruff around neck"
+    ]
+  },
+  "B107": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "ORANGE_RED",
+      "BLACK"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "WEARING_COLLAR"
+    ]
+  },
+  "B11": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Striped tail",
+      "Orange and gray patches"
+    ]
+  },
+  "B12": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Black mask over eyes",
+      "White muzzle and chest"
+    ]
+  },
+  "B13": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BLUE",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "Colorful beaded collar",
+      "Bright blue eyes",
+      "Dapple coat pattern"
+    ]
+  },
+  "B14": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "PRISMATIC_SQUARE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Pink collar with metal tag",
+      "Small white chest patch"
+    ]
+  },
+  "B15": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Thick neck ruff",
+      "Yellow-gold eyes"
+    ]
+  },
+  "B16": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "Red collar",
+      "Black patch over left eye",
+      "Large black spots on white coat"
+    ]
+  },
+  "B17": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "UNKNOWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Red collar",
+      "Shaggy facial fur"
+    ]
+  },
+  "B18": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "Red patterned bandana"
+    ]
+  },
+  "B19": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "BLACK"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B2": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "UNKNOWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Black spot on chin",
+      "White muzzle and blaze",
+      "Black mask over eyes"
+    ]
+  },
+  "B21": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Gray spot on white fur",
+      "White blaze on face",
+      "Gray mask over eyes"
+    ]
+  },
+  "B23": {
+    "species": "OTHER",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "UNKNOWN",
+    "ear_type": "ERECT",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "SPOTTED",
+    "eye_color": "UNKNOWN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "Pig snout",
+      "Large black patches on head and back"
+    ]
+  },
+  "B24": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "PRISMATIC_SQUARE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "White patch on chest",
+      "Liver brown coat"
+    ]
+  },
+  "B20": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "UNKNOWN",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B22": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GRAY_SILVER",
+      "BLACK"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B25": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BLUE",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "long fluffy fur",
+      "blue eyes"
+    ]
+  },
+  "B26": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BLACK"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "UNKNOWN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "black mustache-like marking",
+      "black patch on head",
+      "black patch on flank"
+    ]
+  },
+  "B27": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "ORANGE_RED",
+      "BROWN"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B28": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM",
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BLUE",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "brachycephalic face",
+      "long fluffy fur"
+    ]
+  },
+  "B29": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B3": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B30": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing a collar",
+      "small white chest patch"
+    ]
+  },
+  "B31": {
+    "species": "CAT",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BLUE",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "pink collar",
+      "sitting upright"
+    ]
+  },
+  "B32": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "Purple harness",
+      "One ear folded back"
+    ]
+  },
+  "B33": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B34": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "white blaze on forehead",
+      "white muzzle",
+      "white chest"
+    ]
+  },
+  "B35": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B36": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "very erect ears"
+    ]
+  },
+  "B37": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing green harness"
+    ]
+  },
+  "B38": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "pink collar",
+      "long tongue"
+    ]
+  },
+  "B39": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B40": {
+    "species": "CAT",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW",
+      "BLACK"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "CHUBBY_BUILD"
+    ]
+  },
+  "B41": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "purple collar and harness",
+      "pink tag with name ULA"
+    ]
+  },
+  "B42": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "white blaze on face",
+      "thin build"
+    ]
+  },
+  "B43": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "dark markings above eyes"
+    ]
+  },
+  "B44": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B45": {
+    "species": "DOG",
+    "size": "LARGE",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B46": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "FLOPPY",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "WHITE",
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "UNKNOWN",
+    "nose_color": "BROWN",
+    "distinctive_features": []
+  },
+  "B47": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BLACK"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "pink collar with bow",
+      "black patch over one eye"
+    ]
+  },
+  "B48": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing bandana"
+    ]
+  },
+  "B49": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing blue outfit"
+    ]
+  },
+  "B5": {
+    "species": "DOG",
+    "size": "LARGE",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "orange bandana"
+    ]
+  },
+  "B50": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "PRISMATIC_SQUARE",
+    "ear_type": "FLOPPY",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B51": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B52": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "small white chest patch"
+    ]
+  },
+  "B53": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "long white whiskers"
+    ]
+  },
+  "B54": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "BLACK",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "long shaggy fur",
+      "pink collar"
+    ]
+  },
+  "B55": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "pink bandana"
+    ]
+  },
+  "B56": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "BLACK"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B57": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "white whiskers",
+      "white chest patch"
+    ]
+  },
+  "B58": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B59": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "colorful hair clip on head"
+    ]
+  },
+  "B6": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "long fluffy fur"
+    ]
+  },
+  "B60": {
+    "species": "CAT",
+    "size": "UNKNOWN",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B61": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "CREAM",
+      "WHITE"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B62": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE",
+      "BLACK"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B63": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing red plaid bow tie"
+    ]
+  },
+  "B64": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing a bandana",
+      "curly fur"
+    ]
+  },
+  "B65": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "UNKNOWN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B66": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B67": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "white paws",
+      "white chest",
+      "white facial markings"
+    ]
+  },
+  "B68": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "folded ear tips"
+    ]
+  },
+  "B69": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "large erect ears"
+    ]
+  },
+  "B70": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing ribbon"
+    ]
+  },
+  "B72": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing blue harness"
+    ]
+  },
+  "B73": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "POINTED_SIAMESE",
+    "eye_color": "BLUE",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "colorpoint markings",
+      "blue eyes"
+    ]
+  },
+  "B74": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B75": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "POINTED_SIAMESE",
+    "eye_color": "BLUE",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "pointed coloration"
+    ]
+  },
+  "B76": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B77": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "pink collar"
+    ]
+  },
+  "B78": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "SLENDER_AERODYNAMIC",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "small white chest patch"
+    ]
+  },
+  "B79": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "red studded collar"
+    ]
+  },
+  "B8": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "UNKNOWN",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "white markings on face",
+      "white paws"
+    ]
+  },
+  "B81": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "red harness",
+      "curled tail"
+    ]
+  },
+  "B83": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BLACK",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "B84": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "UNKNOWN",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "shaggy fur",
+      "red harness"
+    ]
+  },
+  "B85": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM",
+      "GOLDEN_YELLOW",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Shaggy fur"
+    ]
+  },
+  "B86": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "WHITE",
+      "CREAM"
+    ],
+    "coat_pattern": "POINTED_SIAMESE",
+    "eye_color": "BLUE",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "red bow tie",
+      "striking blue eyes"
+    ]
+  },
+  "B87": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "white muzzle patch"
+    ]
+  },
+  "B88": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B89": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B9": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "long body",
+      "short legs"
+    ]
+  },
+  "B91": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "distinct black and tan markings"
+    ]
+  },
+  "B92": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B93": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "white blaze",
+      "white chest",
+      "white paws"
+    ]
+  },
+  "B94": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "bushy tail",
+      "white chest and paws"
+    ]
+  },
+  "B95": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "BLACK"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing collar"
+    ]
+  },
+  "B96": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "wearing a bandana",
+      "white blaze on face",
+      "bell on collar"
+    ]
+  },
+  "B97": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "B98": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "white blaze on face",
+      "white paws"
+    ]
+  },
+  "B99": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R1": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "UNKNOWN",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BLACK"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "black eye patch"
+    ]
+  },
+  "R10": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Aging dog with graying muzzle",
+      "Cloudy eyes (possible cataracts)",
+      "Black speckles on white fur"
+    ]
+  },
+  "R100": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "two dogs",
+      "similar appearance"
+    ]
+  },
+  "R101": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "large prominent eyes"
+    ]
+  },
+  "R102": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "UNKNOWN",
+    "ear_type": "FLOPPY",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "happy expression",
+      "lighter muzzle fur"
+    ]
+  },
+  "R103": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "darker muzzle shading"
+    ]
+  },
+  "R104": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "freckles on muzzle"
+    ]
+  },
+  "R105": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "ELDERLY_APPEARANCE",
+      "CLOUDY_EYE"
+    ]
+  },
+  "R106": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "shaggy wiry fur"
+    ]
+  },
+  "R107": {
+    "species": "DOG",
+    "size": "LARGE",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R108": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing harness",
+      "bandaged leg"
+    ]
+  },
+  "R109": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "long floppy ears",
+      "feathery fur on legs and ears"
+    ]
+  },
+  "R11": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BLACK"
+    ],
+    "coat_pattern": "SPOTTED",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "black patch over one eye"
+    ]
+  },
+  "R110": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "long wavy fur",
+      "floppy ears"
+    ]
+  },
+  "R111": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "CREAM"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R112": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "SLENDER_AERODYNAMIC",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "CREAM",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Eye discharge",
+      "Thin build"
+    ]
+  },
+  "R113": {
+    "species": "CAT",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "WAVY_FUR"
+    ]
+  },
+  "R114": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R115": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "pink collar"
+    ]
+  },
+  "R116": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE",
+      "CREAM"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R117": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R118": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "POINTED_SIAMESE",
+    "eye_color": "BLUE",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "Lynx Point markings"
+    ]
+  },
+  "R119": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "blue collar"
+    ]
+  },
+  "R12": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BLACK"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "white blaze on forehead",
+      "black spots on white fur"
+    ]
+  },
+  "R120": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "white facial stripe"
+    ]
+  },
+  "R121": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "curled tail"
+    ]
+  },
+  "R122": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R123": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "SLENDER_AERODYNAMIC",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER",
+      "BLACK"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R124": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "wearing a collar"
+    ]
+  },
+  "R125": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "UNKNOWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "wearing a collar with a bell"
+    ]
+  },
+  "R126": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "SPOTTED",
+    "distinctive_features": []
+  },
+  "R128": {
+    "species": "CAT",
+    "size": "UNKNOWN",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "POINTED_SIAMESE",
+    "eye_color": "BLUE",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R129": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Large round eyes",
+      "Calico pattern"
+    ]
+  },
+  "R13": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "black patch over one eye and ear",
+      "wearing a harness"
+    ]
+  },
+  "R130": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "UNKNOWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "white blaze on face"
+    ]
+  },
+  "R131": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "large expressive eyes",
+      "one ear slightly bent at tip"
+    ]
+  },
+  "R132": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R133": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "fluffy tail"
+    ]
+  },
+  "R134": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "wearing a collar"
+    ]
+  },
+  "R135": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "SLENDER_AERODYNAMIC",
+    "coat_colors": [
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "large ears",
+      "slender build"
+    ]
+  },
+  "R136": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R137": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "Bushy tail"
+    ]
+  },
+  "R138": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R139": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "tongue out",
+      "raised paw"
+    ]
+  },
+  "R14": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "large floppy ears",
+      "white blaze on face"
+    ]
+  },
+  "R140": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Long, fluffy fur",
+      "Tortoiseshell pattern"
+    ]
+  },
+  "R141": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "ORANGE_RED",
+      "BROWN"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "Tortoiseshell coat pattern",
+      "Orange patch on nose"
+    ]
+  },
+  "R142": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R143": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "UNKNOWN",
+    "nose_color": "UNKNOWN",
+    "distinctive_features": []
+  },
+  "R144": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R145": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "damaged red collar"
+    ]
+  },
+  "R146": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "POINTED_SIAMESE",
+    "eye_color": "BLUE",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "pointed coloration"
+    ]
+  },
+  "R15": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "brindle patches",
+      "white coat"
+    ]
+  },
+  "R16": {
+    "species": "DOG",
+    "size": "UNKNOWN",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "FLOPPY",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R17": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "white blaze on muzzle",
+      "pregnant"
+    ]
+  },
+  "R18": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "UNKNOWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "wearing red and white striped shirt"
+    ]
+  },
+  "R19": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "white blaze",
+      "dilated pupils"
+    ]
+  },
+  "R2": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "UNKNOWN",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "shaggy fur"
+    ]
+  },
+  "R20": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "white collar/bandage"
+    ]
+  },
+  "R21": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "black patch over eye",
+      "white facial blaze"
+    ]
+  },
+  "R22": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "White muzzle",
+      "White chest and paws"
+    ]
+  },
+  "R23": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "white whiskers",
+      "white facial blaze"
+    ]
+  },
+  "R24": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "AMBER",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "white blaze",
+      "white paws",
+      "white chest"
+    ]
+  },
+  "R25": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R26": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "UNKNOWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "wearing collar",
+      "eyes closed/injured"
+    ]
+  },
+  "R27": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "WHITE",
+      "BLACK"
+    ],
+    "coat_pattern": "SPOTTED",
+    "eye_color": "BLUE",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "black markings above eyes"
+    ]
+  },
+  "R28": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "BLACK"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R3": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Blue harness",
+      "Brown patch on head"
+    ]
+  },
+  "R30": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "scarred ears"
+    ]
+  },
+  "R31": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "prominent eyes",
+      "tongue out"
+    ]
+  },
+  "R32": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "POINTED_SIAMESE",
+    "eye_color": "BLUE",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Siamese-like coloration"
+    ]
+  },
+  "R33": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "AMBER",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "dilated pupils"
+    ]
+  },
+  "R34": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "large round eyes"
+    ]
+  },
+  "R35": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "GREEN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "dirty fur",
+      "ears folded back"
+    ]
+  },
+  "R36": {
+    "species": "CAT",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "STRIPED_TABBY",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R37": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BLACK",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "AMBER",
+    "nose_color": "PINK",
+    "distinctive_features": []
+  },
+  "R38": {
+    "species": "CAT",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "PATCHED_CALICO",
+    "eye_color": "GREEN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "tortoiseshell coat"
+    ]
+  },
+  "R39": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM",
+      "BLACK",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "large erect ears"
+    ]
+  },
+  "R4": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing collar",
+      "redness on neck/chest"
+    ]
+  },
+  "R40": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Red collar",
+      "Prominent eyes"
+    ]
+  },
+  "R41": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "white markings on paws",
+      "Labrador-like features"
+    ]
+  },
+  "R43": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "ERECT",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "short muzzle",
+      "erect ears",
+      "tongue out"
+    ]
+  },
+  "R44": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R45": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BLUE",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "scar on forehead"
+    ]
+  },
+  "R46": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R48": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R49": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R5": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "colorful collar"
+    ]
+  },
+  "R50": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "metal chain collar"
+    ]
+  },
+  "R51": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BLACK",
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "graying around face and ears"
+    ]
+  },
+  "R52": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R53": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "ERECT",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "tongue out",
+      "chain collar"
+    ]
+  },
+  "R54": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Merle coat pattern",
+      "Visible wound on side"
+    ]
+  },
+  "R55": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing bandana"
+    ]
+  },
+  "R56": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "spotted tongue",
+      "merle coat pattern"
+    ]
+  },
+  "R57": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GRAY_SILVER",
+      "CREAM"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "floral collar"
+    ]
+  },
+  "R58": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "white speckling on muzzle and legs",
+      "yellow collar"
+    ]
+  },
+  "R59": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "red rope collar"
+    ]
+  },
+  "R6": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BLUE",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "blue eyes",
+      "smiling expression"
+    ]
+  },
+  "R60": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "POLICE K9 harness"
+    ]
+  },
+  "R61": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "VISIBLE_TEETH",
+      "COLLAR_VISIBLE"
+    ]
+  },
+  "R62": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "BLACK"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R63": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "UNKNOWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "reflective eyes"
+    ]
+  },
+  "R64": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "small white chest patch"
+    ]
+  },
+  "R65": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "expressive face"
+    ]
+  },
+  "R66": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "ERECT",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R67": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Large erect ears",
+      "Small white chest patch"
+    ]
+  },
+  "R68": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "UNKNOWN",
+    "nose_color": "UNKNOWN",
+    "distinctive_features": [
+      "wearing harness"
+    ]
+  },
+  "R69": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing bandana",
+      "wearing bow",
+      "tongue out"
+    ]
+  },
+  "R7": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN",
+      "BLACK"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "white blaze on forehead",
+      "dark mask around eyes"
+    ]
+  },
+  "R70": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "UNKNOWN",
+    "coat_colors": [
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "GRAYING_MUZZLE"
+    ]
+  },
+  "R71": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "worried expression"
+    ]
+  },
+  "R72": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BLACK",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "SPOTTED",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "AGING_FEATURES",
+      "WIRY_FACIAL_FUR"
+    ]
+  },
+  "R73": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "SLENDER_AERODYNAMIC",
+    "coat_colors": [
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing a pink and grey hoodie"
+    ]
+  },
+  "R74": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "GRAY_SILVER",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "SHAGGY_FUR",
+      "BEARDED_MUZZLE"
+    ]
+  },
+  "R75": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "UNKNOWN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "Husky-like markings",
+      "Masked face"
+    ]
+  },
+  "R76": {
+    "species": "DOG",
+    "size": "LARGE",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "GOLDEN_YELLOW",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BLUE",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "blue eyes"
+    ]
+  },
+  "R77": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "FLOPPY",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "BLACK"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Wrinkled face",
+      "Black mask",
+      "Short muzzle"
+    ]
+  },
+  "R78": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "BLACK",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing collar"
+    ]
+  },
+  "R79": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "UNKNOWN",
+    "nose_color": "SPOTTED",
+    "distinctive_features": [
+      "Merle coat pattern",
+      "Spotted nose"
+    ]
+  },
+  "R8": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing collar"
+    ]
+  },
+  "R80": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "pink harness"
+    ]
+  },
+  "R81": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "BROWN"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "purple collar",
+      "tongue out"
+    ]
+  },
+  "R82": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "ERECT",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "Brachycephalic face",
+      "Prominent wrinkles",
+      "Tongue sticking out"
+    ]
+  },
+  "R83": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "ERECT",
+    "body_build": "COMPACT_DWARF",
+    "coat_colors": [
+      "GRAY_SILVER",
+      "BLACK",
+      "WHITE"
+    ],
+    "coat_pattern": "MERLE_BRINDLE",
+    "eye_color": "HETEROCHROMIA",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "heterochromia",
+      "merle coat pattern",
+      "blue collar"
+    ]
+  },
+  "R84": {
+    "species": "DOG",
+    "size": "LARGE",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "BROWN",
+      "GRAY_SILVER"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "graying muzzle"
+    ]
+  },
+  "R85": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Wearing a bandana",
+      "Scruffy muzzle fur"
+    ]
+  },
+  "R86": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "TOY_MINIATURE",
+    "coat_colors": [
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "PINK",
+    "distinctive_features": [
+      "fluffy coat",
+      "wearing harness"
+    ]
+  },
+  "R87": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "white blaze on forehead"
+    ]
+  },
+  "R88": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Large erect ears"
+    ]
+  },
+  "R89": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "scar on head"
+    ]
+  },
+  "R9": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "LONG",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "UNKNOWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "Long feathery ears"
+    ]
+  },
+  "R90": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "CREAM"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BROWN",
+    "distinctive_features": [
+      "shaggy fur",
+      "fur covering eyes"
+    ]
+  },
+  "R91": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R92": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "ROUND_DELICATE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing red harness"
+    ]
+  },
+  "R93": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "ORANGE_RED"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "curled tail"
+    ]
+  },
+  "R94": {
+    "species": "DOG",
+    "size": "SMALL",
+    "fur_length": "MEDIUM",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "shaggy fur",
+      "asymmetrical ears"
+    ]
+  },
+  "R95": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "WHITE",
+      "BROWN"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "white blaze on forehead"
+    ]
+  },
+  "R96": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "SEMI_ERECT",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "GOLDEN_YELLOW",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing green harness",
+      "white blaze on forehead"
+    ]
+  },
+  "R97": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "WHITE"
+    ],
+    "coat_pattern": "BICOLOR_TUXEDO",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing collar"
+    ]
+  },
+  "R98": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "BROAD_FLAT",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN",
+      "GOLDEN_YELLOW"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": []
+  },
+  "R99": {
+    "species": "DOG",
+    "size": "MEDIUM",
+    "fur_length": "SHORT",
+    "head_and_muzzle_shape": "POINTED_WEDGE",
+    "ear_type": "FLOPPY",
+    "body_build": "STURDY_PROPORTIONATE",
+    "coat_colors": [
+      "BROWN"
+    ],
+    "coat_pattern": "SOLID",
+    "eye_color": "BROWN",
+    "nose_color": "BLACK",
+    "distinctive_features": [
+      "wearing harness"
+    ]
+  }
+}
