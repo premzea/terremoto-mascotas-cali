@@ -205,8 +205,8 @@ export default function Home() {
           </div>
         ) : pets.length > 0 ? (
           <div className="divide-y divide-neutral-800">
-            {pets.map((pet) => (
-              <PetCard key={pet.id} pet={pet} />
+            {pets.map((pet, idx) => (
+              <PetCard key={`${pet.report_type}-${pet.id}-${idx}`} pet={pet} />
             ))}
           </div>
         ) : (
