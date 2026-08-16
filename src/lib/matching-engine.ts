@@ -1,20 +1,34 @@
 import { PetReport } from "./types";
 import embeddingsCache from "@/data/embeddings_cache.json";
+import visualFeaturesCache from "@/data/visual_features_cache.json";
 
 export interface MatchResult {
   pet: PetReport;
   score: number; // 0 to 100
   distanceKm: number;
   reasons: string[];
+  visualSummary?: string | null;
 }
 
-// Haversine formula to compute distance in km between two GPS points
+export interface VisualTrait {
+  species?: string | null;
+  breed_likely?: string | null;
+  primary_color?: string | null;
+  secondary_color?: string | null;
+  coat_pattern?: string | null;
+  ear_type?: string | null;
+  fur_length?: string | null;
+  distinctive_marks?: string | null;
+  search_summary?: string | null;
+}
+
+// Haversine distance in km
 export function calculateDistanceKm(lat1?: number, lon1?: number, lat2?: number, lon2?: number): number {
   if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) {
-    return 5.0; // Default distance if coords missing
+    return 5.0;
   }
 
-  const R = 6371; // Earth radius in km
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -27,7 +41,7 @@ export function calculateDistanceKm(lat1?: number, lon1?: number, lat2?: number,
   return Math.round(R * c * 10) / 10;
 }
 
-// Cosine similarity between two unit vectors
+// Cosine similarity
 export function cosineSimilarity(vecA: number[], vecB: number[]): number {
   if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
   let dotProduct = 0;
@@ -37,39 +51,16 @@ export function cosineSimilarity(vecA: number[], vecB: number[]): number {
   return Math.max(0, Math.min(1, dotProduct));
 }
 
-// Generate vector dynamically for a new report submitted on the client
-export function generateClientVector(pet: PetReport): number[] {
-  const cache = embeddingsCache as Record<string, number[]>;
-  if (pet.id && cache[pet.id]) {
-    return cache[pet.id];
+// Extract dominant color keywords
+function getDominantColors(text?: string | null): string[] {
+  if (!text) return [];
+  const lower = text.toLowerCase();
+  const found: string[] = [];
+  const colorMap = ["negro", "blanco", "cafe", "marron", "marrón", "amarillo", "miel", "naranja", "gris", "dorado", "canela"];
+  for (const c of colorMap) {
+    if (lower.includes(c)) found.push(c.replace("marrón", "marron"));
   }
-
-  // Fallback simple bag of words if new local pet
-  const sampleVector = cache["B1"] || [];
-  const dim = sampleVector.length || 95;
-  const vec = new Array(dim).fill(0);
-
-  const text = `${pet.name} ${pet.species} ${pet.primary_color} ${pet.pattern || ""} ${pet.size || ""} ${pet.distinctive_features || ""} ${pet.neighborhood}`.toLowerCase();
-  
-  // Basic hash projection
-  const words = text.split(/\s+/);
-  for (const w of words) {
-    if (w.length >= 3) {
-      let hash = 0;
-      for (let i = 0; i < w.length; i++) {
-        hash = (hash << 5) - hash + w.charCodeAt(i);
-        hash |= 0;
-      }
-      const idx = Math.abs(hash) % dim;
-      vec[idx] += 1.0;
-    }
-  }
-
-  const norm = Math.sqrt(vec.reduce((acc, val) => acc + val * val, 0));
-  if (norm > 0) {
-    return vec.map((v) => v / norm);
-  }
-  return vec;
+  return found;
 }
 
 export function findBestMatches(
@@ -78,11 +69,12 @@ export function findBestMatches(
   limit = 5
 ): MatchResult[] {
   const cache = embeddingsCache as Record<string, number[]>;
-  const targetVector = cache[targetPet.id || ""] || generateClientVector(targetPet);
+  const vCache = (visualFeaturesCache as unknown) as Record<string, VisualTrait>;
 
-  // Determine target search pool:
-  // If target is LOST, search in FOUND/SHELTERED/OBSERVED
-  // If target is FOUND/SHELTERED, search in LOST
+  const targetVector = cache[targetPet.id || ""] || [];
+  const targetVisual: VisualTrait = vCache[targetPet.id || ""] || {};
+  const targetColors = getDominantColors(`${targetVisual.primary_color || ""} ${targetPet.primary_color || ""}`);
+
   const searchInTypes =
     targetPet.report_type === "LOST"
       ? ["FOUND", "SHELTERED", "OBSERVED"]
@@ -96,59 +88,93 @@ export function findBestMatches(
     if (candidate.species !== targetPet.species) continue;
     if (!searchInTypes.includes(candidate.report_type)) continue;
 
-    // 2. Vector Similarity
-    const candidateVector = cache[candidate.id || ""] || generateClientVector(candidate);
-    const sim = cosineSimilarity(targetVector, candidateVector);
+    const candidateVisual: VisualTrait = vCache[candidate.id || ""] || {};
+    const candidateVector = cache[candidate.id || ""] || [];
+    const candidateColors = getDominantColors(`${candidateVisual.primary_color || ""} ${candidate.primary_color || ""}`);
 
-    // 3. Geographic Distance in Cali
+    // 2. Color Compatibility & Clash Detection
+    let colorBonus = 0;
+    let isColorClash = false;
+
+    if (targetColors.length > 0 && candidateColors.length > 0) {
+      const hasColorOverlap = targetColors.some((tc) => candidateColors.includes(tc));
+      if (hasColorOverlap) {
+        colorBonus += 0.25;
+      } else {
+        // Direct clash (e.g. solid black vs solid white)
+        if (
+          (targetColors.includes("negro") && candidateColors.includes("blanco") && !candidateColors.includes("negro")) ||
+          (targetColors.includes("blanco") && candidateColors.includes("negro") && !candidateColors.includes("blanco"))
+        ) {
+          isColorClash = true;
+        }
+      }
+    }
+
+    // 3. Vector Similarity
+    const sim = targetVector.length && candidateVector.length ? cosineSimilarity(targetVector, candidateVector) : 0.3;
+
+    // 4. Geographic Distance in Cali
     const distanceKm = calculateDistanceKm(
       targetPet.lat,
       targetPet.lng,
       candidate.lat,
       candidate.lng
     );
-
-    // Geo score: 1.0 at 0km, linear decay up to 15km in Cali
     const geoScore = Math.max(0, 1 - distanceKm / 15);
 
-    // 4. Attribute alignment bonus
-    let attrBonus = 0;
+    // 5. Visual Traits Alignment & Explanations
     const reasons: string[] = [];
 
     // Species
-    reasons.push(targetPet.species === "DOG" ? "Misma especie (Perro)" : "Misma especie (Gato)");
+    reasons.push(targetPet.species === "DOG" ? "🐶 Perro" : "🐱 Gato");
 
-    // Distance
+    // Color match
+    if (targetColors.length > 0 && candidateColors.length > 0 && targetColors.some((tc) => candidateColors.includes(tc))) {
+      reasons.push(`🎨 Mismo tono visual (${candidateVisual.primary_color || candidateColors.join(", ")})`);
+    }
+
+    // Ear structure match
+    if (targetVisual.ear_type && candidateVisual.ear_type && targetVisual.ear_type === candidateVisual.ear_type) {
+      reasons.push(`👂 Orejas coincidentes (${targetVisual.ear_type.toLowerCase()})`);
+    }
+
+    // Breed similarity
+    if (targetVisual.breed_likely && candidateVisual.breed_likely) {
+      const bTarget = targetVisual.breed_likely.toLowerCase();
+      const bCand = candidateVisual.breed_likely.toLowerCase();
+      if (bTarget.includes("pastor") && bCand.includes("pastor")) {
+        reasons.push("🐾 Tipo de raza compatible (Pastor)");
+        colorBonus += 0.20;
+      } else if (bTarget.split(" ")[0] === bCand.split(" ")[0] && bTarget.split(" ")[0] !== "criollo") {
+        reasons.push(`🐾 Raza compatible (${candidateVisual.breed_likely})`);
+        colorBonus += 0.15;
+      }
+    }
+
+    // Distance explanation
     if (distanceKm <= 3.0) {
-      reasons.push(`Muy cercano: a ${distanceKm} km en ${candidate.neighborhood}`);
-      attrBonus += 0.15;
+      reasons.push(`📍 A solo ${distanceKm} km en ${candidate.neighborhood}`);
     } else if (distanceKm <= 7.0) {
-      reasons.push(`En el mismo sector: a ${distanceKm} km`);
-      attrBonus += 0.08;
+      reasons.push(`📍 A ${distanceKm} km en ${candidate.neighborhood}`);
     }
 
-    // Color / features overlap
-    const targetFeatures = `${targetPet.primary_color} ${targetPet.distinctive_features || ""}`.toLowerCase();
-    const candidateFeatures = `${candidate.primary_color} ${candidate.distinctive_features || ""}`.toLowerCase();
-    
-    if (targetPet.primary_color && candidateFeatures.includes(targetPet.primary_color.toLowerCase())) {
-      reasons.push(`Coincidencia en color (${targetPet.primary_color})`);
-      attrBonus += 0.12;
+    // 6. Compute Multi-Factor Final Score
+    let rawScore = 0.55 * sim + 0.30 * geoScore + 0.15 * colorBonus;
+
+    // Heavy penalty for color clash (e.g. solid white dog when searching black dog)
+    if (isColorClash) {
+      rawScore *= 0.35; // 65% penalty
     }
 
-    if (sim > 0.4) {
-      reasons.push("Alta similitud de rasgos visuales y descripción");
-    }
-
-    // Hybrid weighted score
-    const rawScore = 0.50 * sim + 0.35 * geoScore + 0.15 * attrBonus;
-    const finalScore = Math.min(99, Math.max(25, Math.round(rawScore * 100)));
+    const finalScore = Math.min(99, Math.max(15, Math.round(rawScore * 100)));
 
     results.push({
       pet: candidate,
       score: finalScore,
       distanceKm,
       reasons: reasons.slice(0, 3),
+      visualSummary: candidateVisual.search_summary,
     });
   }
 
