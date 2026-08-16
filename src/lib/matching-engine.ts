@@ -1,5 +1,4 @@
 import { PetReport } from "./types";
-import embeddingsCache from "@/data/embeddings_cache.json";
 import visualFeaturesCache from "@/data/visual_features_cache.json";
 
 export interface MatchResult {
@@ -41,50 +40,52 @@ export function calculateDistanceKm(lat1?: number, lon1?: number, lat2?: number,
   return Math.round(R * c * 10) / 10;
 }
 
-// Discrete Color Signature Classifier (STRICTLY ON FUR COLOR ONLY)
-export type ColorSignature =
-  | "ORANGE_WHITE"
-  | "ORANGE_SOLID"
-  | "GRAY_WHITE"
-  | "GRAY_SOLID"
-  | "BLACK_WHITE"
-  | "BLACK_SOLID"
-  | "BROWN_WHITE"
-  | "BROWN_SOLID"
-  | "WHITE_SOLID"
-  | "TRICOLOR_CAREY"
-  | "MULTICOLOR";
+export type ChromaFamily = "ORANGE" | "GRAY" | "BLACK" | "BROWN" | "WHITE" | "TRICOLOR" | "OTHER";
 
-export function getPureFurSignature(visual?: VisualTrait, pet?: PetReport): ColorSignature {
-  const prim = (visual?.primary_color || "").toLowerCase();
-  const sec = (visual?.secondary_color || "").toLowerCase();
-  let petPrim = (pet?.primary_color || "").toLowerCase();
-  if (petPrim === "desconocido") petPrim = "";
+export function getDominantChroma(visual?: VisualTrait, pet?: PetReport): { primary: ChromaFamily; hasWhite: boolean; rawName: string } {
+  const pColor = (visual?.primary_color || "").toLowerCase();
+  const sColor = (visual?.secondary_color || "").toLowerCase();
+  const petColor = (pet?.primary_color || "").toLowerCase();
 
-  // STRICTLY inspect fur color fields only (exclude eyes/collar from distinctive_marks)
-  const furTxt = `${prim} ${sec} ${petPrim}`.toLowerCase();
-  
-  const isOrange = /naranja|amarillo|miel|rubio|ginger|dorado|canela|garfield/i.test(furTxt);
-  const isGray = /gris|plomo|plateado|cenizo|azul ruso/i.test(furTxt);
-  const isBlack = /negro|azabache|oscuro/i.test(furTxt);
-  const isBrown = /marron|marrón|cafe|café|chocolate/i.test(furTxt);
-  const isWhite = /blanco|crema/i.test(furTxt);
+  // Combine only primary fur fields
+  const furText = `${pColor} ${sColor} ${petColor === "desconocido" ? "" : petColor}`;
 
-  if ((isOrange && isBlack && isWhite) || /carey|calico|tricolor/i.test(furTxt)) return "TRICOLOR_CAREY";
-  if (isOrange && isWhite) return "ORANGE_WHITE";
-  if (isOrange) return "ORANGE_SOLID";
-  if (isGray && isWhite) return "GRAY_WHITE";
-  if (isGray) return "GRAY_SOLID";
-  if (isBlack && isWhite) return "BLACK_WHITE";
-  if (isBlack) return "BLACK_SOLID";
-  if (isBrown && isWhite) return "BROWN_WHITE";
-  if (isBrown) return "BROWN_SOLID";
-  if (isWhite) return "WHITE_SOLID";
+  const isOrange = /naranja|amarillo|miel|rubio|ginger|dorado|canela|garfield/i.test(pColor) || (/naranja|amarillo|miel|rubio|ginger|dorado/i.test(petColor) && !/gris|negro/i.test(pColor));
+  const isGray = /gris|plomo|plateado|cenizo|azul ruso/i.test(pColor) || (/gris/i.test(petColor) && !/naranja|negro/i.test(pColor));
+  const isBlack = /negro|azabache|oscuro/i.test(pColor) || (/negro/i.test(petColor) && !/naranja|gris/i.test(pColor));
+  const isBrown = /marron|marrón|cafe|café|chocolate/i.test(pColor);
+  const isWhite = /blanco|crema/i.test(pColor) && !isBlack && !isGray && !isOrange && !isBrown;
+  const isTricolor = /carey|calico|tricolor/i.test(furText) || (isOrange && isBlack);
 
-  return "MULTICOLOR";
+  const hasWhite = /blanco|crema/i.test(furText);
+
+  let primary: ChromaFamily = "OTHER";
+  let rawName = visual?.primary_color || pet?.primary_color || "Color mixto";
+
+  if (isTricolor) {
+    primary = "TRICOLOR";
+    rawName = "Tricolor / Carey";
+  } else if (isOrange) {
+    primary = "ORANGE";
+    rawName = "Naranja / Amarillo / Miel";
+  } else if (isGray) {
+    primary = "GRAY";
+    rawName = "Gris / Plomo";
+  } else if (isBlack) {
+    primary = "BLACK";
+    rawName = "Negro / Oscuro";
+  } else if (isBrown) {
+    primary = "BROWN";
+    rawName = "Marrón / Café";
+  } else if (isWhite) {
+    primary = "WHITE";
+    rawName = "Blanco";
+  }
+
+  return { primary, hasWhite, rawName };
 }
 
-// Morphological Breed & Body Structure Families (Canines)
+// Morphological Breed Families (Canines)
 export function getBreedMorphology(breedText?: string | null): string {
   if (!breedText) return "UNKNOWN";
   const b = breedText.toLowerCase();
@@ -144,8 +145,7 @@ export function getBreedMorphology(breedText?: string | null): string {
     b.includes("retriever") ||
     b.includes("beagle") ||
     b.includes("pointer") ||
-    b.includes("sabueso") ||
-    b.includes("weimaraner")
+    b.includes("sabueso")
   ) {
     return "RETRIEVER_HOUND";
   }
@@ -176,7 +176,7 @@ export function findBestMatches(
   const vCache = (visualFeaturesCache as unknown) as Record<string, VisualTrait>;
 
   const targetVisual: VisualTrait = vCache[targetPet.id || ""] || {};
-  const targetSignature = getPureFurSignature(targetVisual, targetPet);
+  const targetChroma = getDominantChroma(targetVisual, targetPet);
   const targetMorphology = getBreedMorphology(`${targetVisual.breed_likely || ""} ${targetPet.primary_color || ""} ${targetPet.distinctive_features || ""}`);
 
   const searchInTypes =
@@ -201,14 +201,14 @@ export function findBestMatches(
       candidate.gender !== "UNKNOWN" &&
       targetPet.gender !== candidate.gender
     ) {
-      continue; // Descartado por sexo biológico opuesto
+      continue; // Descartado por sexo opuesto
     }
 
     const candidateVisual: VisualTrait = vCache[candidate.id || ""] || {};
-    const candidateSignature = getPureFurSignature(candidateVisual, candidate);
+    const candidateChroma = getDominantChroma(candidateVisual, candidate);
     const candidateMorphology = getBreedMorphology(`${candidateVisual.breed_likely || ""} ${candidate.primary_color || ""} ${candidate.distinctive_features || ""}`);
 
-    // RULE OUT: MORPHOLOGY / BREED INCOMPATIBILITY (Canines)
+    // RULE OUT: CANINE MORPHOLOGY INCOMPATIBILITY
     if (targetPet.species === "DOG") {
       if (
         (targetMorphology === "SHEPHERD_LARGE" && (candidateMorphology === "BULLDOG_BRACHY" || candidateMorphology === "TOY_TINY" || candidateMorphology === "DACHSHUND")) ||
@@ -216,42 +216,36 @@ export function findBestMatches(
         (targetMorphology === "TOY_TINY" && (candidateMorphology === "SHEPHERD_LARGE" || candidateMorphology === "TERRIER_MOLOSSER" || candidateMorphology === "RETRIEVER_HOUND")) ||
         (targetMorphology === "DACHSHUND" && (candidateMorphology === "SHEPHERD_LARGE" || candidateMorphology === "RETRIEVER_HOUND"))
       ) {
-        continue; // Descartado por estructura corporal incompatible
+        continue;
       }
     }
 
-    // RULE OUT: STRICT DISCRETE FUR COLOR SIGNATURE (Felines & Canines)
-    let signatureScore = 0;
+    // RULE OUT: STRICT COLOR SPECTRUM COMPATIBILITY
+    let colorScore = 0;
     const reasons: string[] = [];
 
-    if (targetSignature === candidateSignature) {
-      signatureScore = 55; // Puntuación base alta por coincidencia cromática exacta
-      reasons.push(`🎨 Color pelaje idéntico (${candidateVisual.primary_color || candidateSignature})`);
+    // Check if primary chromas match
+    if (targetChroma.primary === candidateChroma.primary) {
+      colorScore = 55;
+      reasons.push(`🎨 Mismo color primario (${candidateChroma.rawName})`);
+
+      // Bicolor match bonus (e.g. both have white chest/markings)
+      if (targetChroma.hasWhite && candidateChroma.hasWhite) {
+        colorScore += 10;
+      }
     } else {
-      // Compatibilidades secundarias permitidas
-      if (targetSignature === "GRAY_WHITE" && candidateSignature === "GRAY_SOLID") {
-        signatureScore = 35;
-        reasons.push("🎨 Tono gris compatible");
-      } else if (targetSignature === "GRAY_SOLID" && candidateSignature === "GRAY_WHITE") {
-        signatureScore = 35;
-        reasons.push("🎨 Tono gris compatible");
-      } else if (targetSignature === "ORANGE_WHITE" && candidateSignature === "ORANGE_SOLID") {
-        signatureScore = 35;
-        reasons.push("🎨 Tono naranja/amarillo compatible");
-      } else if (targetSignature === "ORANGE_SOLID" && candidateSignature === "ORANGE_WHITE") {
-        signatureScore = 35;
-        reasons.push("🎨 Tono naranja/amarillo compatible");
-      } else if (targetSignature === "BLACK_WHITE" && candidateSignature === "BLACK_SOLID") {
-        signatureScore = 35;
-        reasons.push("🎨 Tono negro compatible");
-      } else if (targetSignature === "BLACK_SOLID" && candidateSignature === "BLACK_WHITE") {
-        signatureScore = 35;
-        reasons.push("🎨 Tono negro compatible");
-      } else if (targetSignature === "TRICOLOR_CAREY" || candidateSignature === "TRICOLOR_CAREY") {
-        signatureScore = 25;
+      // Compatible cross-categories (e.g. White Solid with Gray/White Bicolor)
+      if (targetChroma.primary === "WHITE" && (candidateChroma.primary === "GRAY" || candidateChroma.primary === "BLACK") && candidateChroma.hasWhite) {
+        colorScore = 35;
+        reasons.push("🎨 Base blanca compatible");
+      } else if (candidateChroma.primary === "WHITE" && (targetChroma.primary === "GRAY" || targetChroma.primary === "BLACK") && targetChroma.hasWhite) {
+        colorScore = 35;
+        reasons.push("🎨 Base blanca compatible");
+      } else if (targetChroma.primary === "TRICOLOR" || candidateChroma.primary === "TRICOLOR") {
+        colorScore = 30;
         reasons.push("🎨 Patrón tricolor/carey compatible");
       } else {
-        // CROMATIC CLASH -> EXCLUDE COMPLETELY! (Un gato naranja nunca es gris ni negro)
+        // CROMATIC CLASH -> RULE OUT! (Un gato naranja NUNCA coincide con un gato gris o negro)
         continue;
       }
     }
@@ -259,9 +253,9 @@ export function findBestMatches(
     // 2. PATTERN & BREED MORPHOLOGY SCORING
     let traitScore = 0;
 
-    // Pattern (Rayas/Atigrado vs Bicolor vs Sólido)
+    // Pattern (Bicolor vs Rayas/Atigrado vs Sólido)
     if (targetVisual.coat_pattern && candidateVisual.coat_pattern && targetVisual.coat_pattern === candidateVisual.coat_pattern) {
-      traitScore += 18;
+      traitScore += 15;
       reasons.push(`✨ Patrón coincidente (${targetVisual.coat_pattern.toLowerCase()})`);
     }
 
@@ -277,7 +271,6 @@ export function findBestMatches(
         reasons.push(`🐾 Misma tipología (${candidateVisual.breed_likely || "Estructura compatible"})`);
       }
 
-      // Ear type in dogs
       if (targetVisual.ear_type && candidateVisual.ear_type && targetVisual.ear_type === candidateVisual.ear_type) {
         traitScore += 8;
         reasons.push(`👂 Orejas ${targetVisual.ear_type.toLowerCase()}`);
@@ -306,7 +299,7 @@ export function findBestMatches(
     }
 
     // Total Additive Score
-    const finalScore = Math.min(99, Math.max(25, signatureScore + traitScore + geoScore));
+    const finalScore = Math.min(99, Math.max(25, colorScore + traitScore + geoScore));
 
     results.push({
       pet: candidate,
