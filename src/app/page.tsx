@@ -142,9 +142,6 @@ export default function Home() {
             <div>
               <h1 className="font-extrabold text-base tracking-tight text-white flex items-center gap-2">
                 Red Mascotas Cali
-                <span className="text-[10px] bg-red-600 font-bold px-1.5 py-0.5 rounded text-white uppercase">
-                  Sismo Día 5
-                </span>
               </h1>
               <p className="text-[11px] text-neutral-400">
                 Rescate, Búsqueda y Triaje de Emergencia
