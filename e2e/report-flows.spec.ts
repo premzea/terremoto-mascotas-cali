@@ -24,8 +24,8 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await fileInput.setInputFiles(sampleImagePath);
 
     // Confirm crop in the new cropping tool
-    const confirmCropBtn = page.locator("button:has-text('Confirmar Recorte')");
-    if (await confirmCropBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const confirmCropBtn = page.getByRole("button", { name: "Confirmar Recorte" });
+    if (await confirmCropBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await confirmCropBtn.click();
     }
 
@@ -121,8 +121,8 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await fileInput.setInputFiles(sampleImagePath);
 
     // Confirm crop in the new cropping tool
-    const confirmCropBtn = page.locator("button:has-text('Confirmar Recorte')");
-    if (await confirmCropBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const confirmCropBtn = page.getByRole("button", { name: "Confirmar Recorte" });
+    if (await confirmCropBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await confirmCropBtn.click();
     }
 
