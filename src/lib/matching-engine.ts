@@ -148,7 +148,8 @@ export function findBestMatches(
   targetPet: PetReport,
   allPets: PetReport[],
   limit = 5,
-  algorithmMode: MatchingAlgorithmMode = "V1_CLASSIC"
+  algorithmMode: MatchingAlgorithmMode = "V1_CLASSIC",
+  minScoreThreshold = 50
 ): MatchResult[] {
   const v2Cache = (visualFeaturesV2 as unknown) as Record<string, PetMetadataV2>;
   const dinoCache = (dinov2Embeddings as unknown) as Record<string, number[]>;
@@ -228,7 +229,7 @@ export function findBestMatches(
       );
 
       const reidMatch = scorePetReIDPair(targetReID, candidateReID, candidate);
-      if (reidMatch && reidMatch.totalScore >= 35) {
+      if (reidMatch && reidMatch.totalScore >= minScoreThreshold) {
         results.push({
           pet: candidate,
           score: reidMatch.totalScore,
@@ -272,7 +273,6 @@ export function findBestMatches(
         (domTarget === "BLACK" && domCandidate === "WHITE")
       ) {
         // Case 2: Inverted Dominance (Opposite polarity: Mostly White vs Mostly Black)
-        // Heavy reduction: only 5 pts even if they share an accent spot
         score += 5;
       } else if (targetColors.some((c) => candidateColors.includes(c))) {
         // Case 3: Partial accent match without direct opposite polarity
@@ -281,7 +281,6 @@ export function findBestMatches(
         score += 12;
         reasons.push(`🎨 Coincidencia parcial de color: ${colorLabels}`);
       } else {
-        // Complete mismatch
         score += 0;
       }
     } else {
@@ -389,8 +388,8 @@ export function findBestMatches(
     // Normalized Final Score (Bounded 15% - 98%)
     const finalScore = Math.min(98, Math.max(15, score));
 
-    // Only include meaningful candidates with positive score
-    if (finalScore >= 35) {
+    // Only include meaningful candidates with confidence >= minScoreThreshold (default 50%)
+    if (finalScore >= minScoreThreshold) {
       results.push({
         pet: candidate,
         score: finalScore,

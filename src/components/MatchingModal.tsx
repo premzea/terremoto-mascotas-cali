@@ -274,11 +274,13 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                 );
               })
             ) : (
-              <div className="text-center p-8 bg-white rounded-2xl border border-stone-200 shadow-sm space-y-2">
-                <Compass className="w-8 h-8 text-stone-400 mx-auto" />
-                <h4 className="font-bold text-stone-900 text-sm">No hay coincidencias directas aún</h4>
-                <p className="text-xs text-stone-500 max-w-sm mx-auto">
-                  La red de voluntarios continuará procesando nuevos reportes en las próximas horas.
+              <div className="text-center p-8 sm:p-10 bg-white rounded-2xl border border-stone-200 shadow-sm space-y-2.5">
+                <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center mx-auto text-stone-400">
+                  <Compass className="w-6 h-6" />
+                </div>
+                <h4 className="font-extrabold text-stone-900 text-sm">Sin coincidencias con alta probabilidad (≥ 50%)</h4>
+                <p className="text-xs text-stone-500 max-w-md mx-auto leading-relaxed">
+                  Para evitar falsos positivos o falsas esperanzas, el sistema solo muestra coincidencias superiores al 50%. La red de voluntarios seguirá cotejando nuevos rescates en Cali.
                 </p>
               </div>
             )}
