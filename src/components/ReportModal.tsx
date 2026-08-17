@@ -848,32 +848,32 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
             </div>
           </div>
         )}
-
-        {/* Image Cropper Modal */}
-        {rawImageForCrop && (
-          <ImageCropperModal
-            imageSrc={rawImageForCrop}
-            onCropComplete={handleCropComplete}
-            onCancel={handleCropCancel}
-          />
-        )}
-
-        {/* Map Location Picker Modal */}
-        {showMapPicker && (
-          <MapLocationPicker
-            initialBarrio={neighborhood || barrioSearch}
-            initialLat={selectedLat}
-            initialLng={selectedLng}
-            onSelectLocation={(loc) => {
-              setNeighborhood(loc.neighborhood);
-              setBarrioSearch(loc.neighborhood);
-              setSelectedLat(loc.lat);
-              setSelectedLng(loc.lng);
-            }}
-            onClose={() => setShowMapPicker(false)}
-          />
-        )}
       </div>
+
+      {/* Image Cropper Modal (Top-level z-index) */}
+      {rawImageForCrop && (
+        <ImageCropperModal
+          imageSrc={rawImageForCrop}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
+
+      {/* Map Location Picker Modal (Top-level z-index) */}
+      {showMapPicker && (
+        <MapLocationPicker
+          initialBarrio={neighborhood || barrioSearch}
+          initialLat={selectedLat}
+          initialLng={selectedLng}
+          onSelectLocation={(loc) => {
+            setNeighborhood(loc.neighborhood);
+            setBarrioSearch(loc.neighborhood);
+            setSelectedLat(loc.lat);
+            setSelectedLng(loc.lng);
+          }}
+          onClose={() => setShowMapPicker(false)}
+        />
+      )}
     </div>
   );
 }
