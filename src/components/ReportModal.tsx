@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabase";
 import { LOCAL_CREATED_PETS_KEY } from "@/lib/data-service";
 import MapLocationPicker from "./MapLocationPicker";
 import ImageCropperModal from "./ImageCropperModal";
+import SearchableBreedSelect from "./SearchableBreedSelect";
 
 interface ReportModalProps {
   initialType: "LOST" | "FOUND";
@@ -604,31 +605,12 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               </div>
             )}
 
-            {/* Raza de la Mascota */}
-            <div>
-              <label className="text-xs font-bold text-stone-700 mb-1 block">
-                Raza de la Mascota *
-              </label>
-              <input
-                type="text"
-                value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                placeholder="Ej: Criollo / Mestizo, Pitbull, Poodle, Labrador, Siamés..."
-                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none"
-              />
-              <div className="flex flex-wrap gap-1.5 mt-1.5">
-                {["Criollo / Mestizo", "Pitbull", "Poodle / Caniche", "Labrador", "Pinscher", "Siamés"].map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setBreed(r)}
-                    className="text-[10px] bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 px-2 py-0.5 rounded-md border border-stone-200 transition font-medium"
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Raza de la Mascota con Selector Inteligente y Autocompletado */}
+            <SearchableBreedSelect
+              species={species}
+              value={breed}
+              onChange={setBreed}
+            />
 
             {/* Color de Pelaje Deducido por la Máquina */}
             <div className="p-2.5 bg-amber-50/70 border border-amber-200/70 rounded-xl flex items-center justify-between text-xs">

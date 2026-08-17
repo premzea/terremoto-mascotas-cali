@@ -50,8 +50,15 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await modal.locator("select").first().selectOption("MACHO");
     await modal.locator("button:has-text('Sí (Castrado)')").click();
 
-    // Fill Breed
-    await modal.locator("input[placeholder*='Ej: Criollo']").fill("Labrador Mestizo");
+    // Fill Breed via SearchableBreedSelect
+    const breedInput = modal.locator("input[placeholder*='Buscar raza']");
+    if (await breedInput.isVisible()) {
+      await breedInput.fill("Labrador");
+      const breedSuggestion = modal.locator("button:has-text('Labrador Retriever')").first();
+      if (await breedSuggestion.isVisible()) {
+        await breedSuggestion.click();
+      }
+    }
 
     // Fill Barrio via search input
     const barrioInput = modal.locator("input[placeholder*='Escribe el barrio']");
@@ -135,8 +142,15 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     // Select Size
     await modal.locator("select").nth(1).selectOption("PEQUEÑO");
 
-    // Fill Breed
-    await modal.locator("input[placeholder*='Ej: Criollo']").fill("Siamés");
+    // Fill Breed via SearchableBreedSelect
+    const breedInputCat = modal.locator("input[placeholder*='Buscar raza']");
+    if (await breedInputCat.isVisible()) {
+      await breedInputCat.fill("Siamés");
+      const breedSuggestion = modal.locator("button:has-text('Siamés')").first();
+      if (await breedSuggestion.isVisible()) {
+        await breedSuggestion.click();
+      }
+    }
 
     // Fill Barrio via search input
     const barrioInput = modal.locator("input[placeholder*='Escribe el barrio']");
