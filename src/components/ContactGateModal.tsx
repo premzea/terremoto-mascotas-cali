@@ -81,7 +81,6 @@ export default function ContactGateModal({ pet, onClose }: ContactGateModalProps
                 <input
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   className="hidden"
                   onChange={handlePhotoUpload}
                 />

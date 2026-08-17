@@ -249,7 +249,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               <input
                 type="file"
                 accept="image/*"
-                capture="environment"
                 onChange={handleImageChange}
                 className="hidden"
               />

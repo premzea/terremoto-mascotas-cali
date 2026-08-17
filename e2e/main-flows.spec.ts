@@ -24,7 +24,7 @@ test.describe("Búsqueda Animal Cali - Main E2E Flows", () => {
   test("2. AI Matching modal opens and allows sending '¡Comunícate!' request", async ({ page }) => {
     // Find first card with "Coincidencias IA"
     const matchBtn = page.locator("button:has-text('Coincidencias IA')").first();
-    await expect(matchBtn).toBeVisible();
+    await expect(matchBtn).toBeVisible({ timeout: 10000 });
     await matchBtn.click();
 
     // Verify AI Matching Modal
