@@ -216,11 +216,14 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
                     setShowPhotoModal(false);
                     setShowGate(true);
                   }}
-                  className={`font-extrabold text-xs py-3 px-5 rounded-xl text-white ${
-                    isLost ? "bg-orange-500 hover:bg-orange-600" : "bg-emerald-600 hover:bg-emerald-700"
+                  className={`font-extrabold text-xs py-3 px-5 rounded-xl text-white flex items-center gap-1.5 transition active:scale-[0.98] cursor-pointer shadow-md ${
+                    isLost
+                      ? "bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 shadow-orange-500/20"
+                      : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-emerald-600/20"
                   }`}
                 >
-                  Contactar
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span>{isLost ? "¡Vi a esta mascota!" : "¡Es mi mascota!"}</span>
                 </button>
               </div>
             </div>
