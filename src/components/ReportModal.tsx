@@ -549,17 +549,26 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
             {/* Barrio / Ubicación en Cali y Jamundí con Búsqueda Escrita */}
             <div className="relative">
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-bold text-stone-700">
-                  Ubicación / Barrio en Cali o Jamundí *
-                </label>
+              <div className="flex items-start justify-between mb-1.5 gap-2">
+                <div>
+                  <label className="text-xs font-black text-stone-900 block">
+                    {reportType === "LOST"
+                      ? "¿Dónde fue vista por última vez? (Barrio o punto) *"
+                      : "¿En qué barrio o punto fue ENCONTRADO/RESCATADO? *"}
+                  </label>
+                  <span className="text-[10.5px] text-stone-500 block mt-0.5 leading-snug">
+                    {reportType === "LOST"
+                      ? "Lugar de pérdida para calcular la cercanía con animales encontrados"
+                      : "Punto donde se recogió al animal (NO la dirección de tu casa/refugio actual)"}
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={() => setShowMapPicker(true)}
-                  className="text-[11px] text-amber-800 hover:text-amber-950 font-bold flex items-center gap-1 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-lg border border-amber-300 transition shadow-2xs"
+                  className="text-[11px] text-amber-900 hover:text-amber-950 font-extrabold flex items-center gap-1 bg-amber-100 hover:bg-amber-200 px-2.5 py-1.5 rounded-lg border border-amber-300 transition shadow-2xs flex-shrink-0 mt-0.5"
                 >
                   <MapPin className="w-3.5 h-3.5 text-amber-600" />
-                  <span>📍 Abrir Mapa / GPS</span>
+                  <span>📍 Mapa / GPS</span>
                 </button>
               </div>
 
