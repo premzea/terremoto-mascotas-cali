@@ -1,0 +1,311 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { MapPin, Navigation, Search, Check, X, Loader2 } from "lucide-react";
+import barrioCoordsData from "@/data/coords_by_barrio.json";
+
+interface BarrioInfo {
+  name: string;
+  lat: number;
+  lng: number;
+  comuna: string;
+  zone?: string;
+}
+
+interface MapLocationPickerProps {
+  initialBarrio?: string;
+  initialLat?: number;
+  initialLng?: number;
+  onSelectLocation: (location: { neighborhood: string; lat: number; lng: number }) => void;
+  onClose: () => void;
+}
+
+const barriosList = Object.values(barrioCoordsData) as BarrioInfo[];
+
+// Helper to find closest barrio name from lat/lng
+function getClosestBarrio(lat: number, lng: number): string {
+  let minDistance = Infinity;
+  let closest = "Cali Centro";
+
+  for (const b of barriosList) {
+    const dLat = b.lat - lat;
+    const dLng = b.lng - lng;
+    const dist = dLat * dLat + dLng * dLng;
+    if (dist < minDistance) {
+      minDistance = dist;
+      closest = b.name;
+    }
+  }
+
+  return closest;
+}
+
+export default function MapLocationPicker({
+  initialBarrio,
+  initialLat,
+  initialLng,
+  onSelectLocation,
+  onClose,
+}: MapLocationPickerProps) {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+
+  const [selectedLat, setSelectedLat] = useState<number>(initialLat || 3.4516);
+  const [selectedLng, setSelectedLng] = useState<number>(initialLng || -76.532);
+  const [selectedBarrio, setSelectedBarrio] = useState<string>(
+    initialBarrio || getClosestBarrio(initialLat || 3.4516, initialLng || -76.532)
+  );
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<BarrioInfo[]>([]);
+  const [gettingGPS, setGettingGPS] = useState(false);
+
+  // Initialize Leaflet Map
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initMap() {
+      if (typeof window === "undefined" || !mapContainerRef.current) return;
+      const L = (await import("leaflet")).default;
+
+      // Fix standard marker icon path in Next.js/Webpack
+      const customIcon = L.icon({
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41],
+      });
+
+      if (!mapInstanceRef.current && isMounted && mapContainerRef.current) {
+        const map = L.map(mapContainerRef.current).setView(
+          [selectedLat, selectedLng],
+          14
+        );
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          maxZoom: 19,
+        }).addTo(map);
+
+        const marker = L.marker([selectedLat, selectedLng], {
+          draggable: true,
+          icon: customIcon,
+        }).addTo(map);
+
+        marker.on("dragend", (e: any) => {
+          const { lat, lng } = e.target.getLatLng();
+          setSelectedLat(lat);
+          setSelectedLng(lng);
+          const nearest = getClosestBarrio(lat, lng);
+          setSelectedBarrio(nearest);
+        });
+
+        map.on("click", (e: any) => {
+          const { lat, lng } = e.latlng;
+          marker.setLatLng([lat, lng]);
+          setSelectedLat(lat);
+          setSelectedLng(lng);
+          const nearest = getClosestBarrio(lat, lng);
+          setSelectedBarrio(nearest);
+        });
+
+        mapInstanceRef.current = map;
+        markerRef.current = marker;
+      }
+    }
+
+    initMap();
+
+    return () => {
+      isMounted = false;
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  // Handle Search Input Filter
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const q = searchQuery.toLowerCase().trim();
+    const matches = barriosList
+      .filter((b) => b.name.toLowerCase().includes(q) || b.zone?.toLowerCase().includes(q))
+      .slice(0, 6);
+    setSearchResults(matches);
+  }, [searchQuery]);
+
+  // Select Barrio from search results
+  const handleSelectSearchResult = (b: BarrioInfo) => {
+    setSelectedLat(b.lat);
+    setSelectedLng(b.lng);
+    setSelectedBarrio(b.name);
+    setSearchQuery("");
+    setSearchResults([]);
+
+    if (mapInstanceRef.current && markerRef.current) {
+      mapInstanceRef.current.setView([b.lat, b.lng], 15);
+      markerRef.current.setLatLng([b.lat, b.lng]);
+    }
+  };
+
+  // GPS Locate User
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Tu dispositivo no soporta geolocalización");
+      return;
+    }
+
+    setGettingGPS(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGettingGPS(false);
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        setSelectedLat(lat);
+        setSelectedLng(lng);
+        const nearest = getClosestBarrio(lat, lng);
+        setSelectedBarrio(nearest);
+
+        if (mapInstanceRef.current && markerRef.current) {
+          mapInstanceRef.current.setView([lat, lng], 16);
+          markerRef.current.setLatLng([lat, lng]);
+        }
+      },
+      (err) => {
+        setGettingGPS(false);
+        alert("No se pudo obtener la ubicación GPS. Por favor busca el barrio en el buscador o toca el mapa.");
+        console.warn("GPS error:", err);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
+  const handleConfirm = () => {
+    onSelectLocation({
+      neighborhood: selectedBarrio,
+      lat: selectedLat,
+      lng: selectedLng,
+    });
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/90 z-[70] flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-[#141417] border border-neutral-800 w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col h-[90vh] sm:h-[80vh] text-white shadow-2xl">
+        {/* Header */}
+        <div className="p-4 border-b border-neutral-800 flex items-center justify-between bg-[#19191e]">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-amber-500/10 rounded-lg text-amber-400">
+              <MapPin className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-base text-white">
+                Seleccionar Ubicación en Cali y Jamundí
+              </h3>
+              <p className="text-xs text-neutral-400">
+                Toca el mapa, busca el barrio o activa el GPS
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white transition"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Search Bar & GPS Button */}
+        <div className="p-3 bg-[#16161a] border-b border-neutral-800 space-y-2 relative">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-3" />
+              <input
+                type="text"
+                placeholder="Buscar barrio (Ej: Nápoles, Valle del Lili, Alfaguara...)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-neutral-900 border border-neutral-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-amber-500"
+              />
+            </div>
+            <button
+              onClick={handleGetCurrentLocation}
+              disabled={gettingGPS}
+              className="bg-neutral-800 hover:bg-neutral-700 text-amber-400 border border-neutral-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition whitespace-nowrap"
+            >
+              {gettingGPS ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Navigation className="w-3.5 h-3.5" />
+              )}
+              <span>GPS Actual</span>
+            </button>
+          </div>
+
+          {/* Autocomplete Search Dropdown */}
+          {searchResults.length > 0 && (
+            <div className="absolute left-3 right-3 top-14 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl z-30 max-h-48 overflow-y-auto">
+              {searchResults.map((b, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleSelectSearchResult(b)}
+                  className="w-full text-left px-3.5 py-2.5 hover:bg-neutral-800 border-b border-neutral-800 last:border-0 flex items-center justify-between text-xs transition"
+                >
+                  <span className="font-bold text-white">{b.name}</span>
+                  <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                    {b.zone || `Comuna ${b.comuna}`}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Map Container */}
+        <div className="flex-1 w-full relative">
+          <div ref={mapContainerRef} className="w-full h-full min-h-[300px]" />
+          
+          {/* Floating Current Barrio Pill */}
+          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-black/85 backdrop-blur-md border border-neutral-700 rounded-xl p-2.5 z-[1000] flex items-center gap-2 shadow-xl">
+            <MapPin className="w-4 h-4 text-amber-400 flex-shrink-0" />
+            <div className="text-xs">
+              <span className="text-neutral-400 block text-[10px] uppercase font-bold">Barrio Seleccionado:</span>
+              <strong className="text-amber-300 font-extrabold text-sm">{selectedBarrio}</strong>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="p-4 border-t border-neutral-800 bg-[#16161a] flex items-center justify-between gap-3">
+          <div className="text-xs text-neutral-400 hidden sm:block">
+            Coordenadas: {selectedLat.toFixed(4)}, {selectedLng.toFixed(4)}
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={onClose}
+              className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-neutral-700 text-xs font-bold text-neutral-300 hover:bg-neutral-800 transition"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleConfirm}
+              className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-lg shadow-amber-500/20"
+            >
+              <Check className="w-4 h-4" />
+              <span>Confirmar Ubicación</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

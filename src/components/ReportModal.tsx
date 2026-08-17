@@ -8,12 +8,17 @@ import imageCompression from "browser-image-compression";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import seedPets from "@/data/seed_pets.json";
 import { supabase } from "@/lib/supabase";
+import MapLocationPicker from "./MapLocationPicker";
 
 interface ReportModalProps {
   initialType: "LOST" | "FOUND";
   onClose: () => void;
   onSuccess: (pet: PetReport) => void;
 }
+
+const sortedBarrioList = Object.values(barrioCoords).sort((a: any, b: any) =>
+  a.name.localeCompare(b.name)
+);
 
 function getNextPetId(reportType: "LOST" | "FOUND"): string {
   const prefix = reportType === "LOST" ? "B" : "R";
@@ -45,6 +50,9 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const [size, setSize] = useState<"PEQUEÑO" | "MEDIANO" | "GRANDE">("MEDIANO");
   const [primaryColor, setPrimaryColor] = useState<string>("");
   const [neighborhood, setNeighborhood] = useState<string>("");
+  const [selectedLat, setSelectedLat] = useState<number | undefined>(undefined);
+  const [selectedLng, setSelectedLng] = useState<number | undefined>(undefined);
+  const [showMapPicker, setShowMapPicker] = useState<boolean>(false);
   const [distinctiveFeatures, setDistinctiveFeatures] = useState<string>("");
   const [contactName, setContactName] = useState<string>("");
   const [contactPhone, setContactPhone] = useState<string>("");
@@ -130,6 +138,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         pattern: "",
         size,
         neighborhood: neighborhood.trim() || "Cali Centro (General)",
+        lat: selectedLat || (barrioCoords as any)[neighborhood.toLowerCase()]?.lat || 3.4516,
+        lng: selectedLng || (barrioCoords as any)[neighborhood.toLowerCase()]?.lng || -76.532,
         distinctive_features: distinctiveFeatures.trim(),
         photo_url: photoPreview || "/placeholder-pet.png",
         contact_name: contactName.trim() || "Reportante Anónimo",
@@ -359,23 +369,52 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               />
             </div>
 
-            {/* Barrio en Cali */}
+            {/* Barrio / Ubicación en Cali y Jamundí */}
             <div>
-              <label className="text-xs font-bold text-neutral-400 mb-1 block">
-                Barrio en Cali donde se vio/rescató *
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-bold text-neutral-400">
+                  Ubicación / Barrio en Cali o Jamundí *
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowMapPicker(true)}
+                  className="text-[11px] text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 bg-amber-500/10 hover:bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-500/20 transition"
+                >
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>📍 Abrir Mapa / GPS</span>
+                </button>
+              </div>
+
               <select
                 value={neighborhood}
-                onChange={(e) => setNeighborhood(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setNeighborhood(val);
+                  const info = (barrioCoords as any)[val.toLowerCase()];
+                  if (info) {
+                    setSelectedLat(info.lat);
+                    setSelectedLng(info.lng);
+                  }
+                }}
                 className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
               >
-                <option value="">Selecciona un Barrio...</option>
-                {Object.keys(barrioCoords).map((b) => (
-                  <option key={b} value={b}>
-                    Barrio {b.toUpperCase()}
+                <option value="">Selecciona un Barrio o Sector...</option>
+                {sortedBarrioList.map((b: any) => (
+                  <option key={b.name} value={b.name}>
+                    {b.name} ({b.zone || `Comuna ${b.comuna}`})
                   </option>
                 ))}
               </select>
+
+              {neighborhood && (
+                <div className="text-[11px] text-neutral-400 mt-1 flex items-center gap-1.5">
+                  <MapPin className="w-3 h-3 text-amber-400" />
+                  <span>Ubicación: <strong className="text-white">{neighborhood}</strong></span>
+                  {selectedLat && (
+                    <span className="text-neutral-500">({selectedLat.toFixed(3)}, {selectedLng?.toFixed(3)})</span>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Rasgos distintivos */}
@@ -471,6 +510,21 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               </button>
             </div>
           </div>
+        )}
+
+        {/* Map Location Picker Modal */}
+        {showMapPicker && (
+          <MapLocationPicker
+            initialBarrio={neighborhood}
+            initialLat={selectedLat}
+            initialLng={selectedLng}
+            onSelectLocation={(loc) => {
+              setNeighborhood(loc.neighborhood);
+              setSelectedLat(loc.lat);
+              setSelectedLng(loc.lng);
+            }}
+            onClose={() => setShowMapPicker(false)}
+          />
         )}
       </div>
     </div>

@@ -266,12 +266,14 @@ export default function Home() {
                 onChange={(e) => setSelectedBarrio(e.target.value)}
                 className="w-full bg-[#1e1e24] border border-neutral-800 text-neutral-300 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-amber-500"
               >
-                <option value="ALL">📍 Todos los sectores y comunas</option>
-                {Object.keys(barrioCoords).sort().map((b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ))}
+                <option value="ALL">📍 Todos los sectores (Cali y Jamundí)</option>
+                {(Object.values(barrioCoords) as any[])
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((b) => (
+                    <option key={b.name} value={b.name}>
+                      {b.name} ({b.zone || `Comuna ${b.comuna}`})
+                    </option>
+                  ))}
               </select>
             </div>
           </div>

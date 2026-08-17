@@ -1,127 +1,1969 @@
 {
-  "cambulos": {
-    "lat": 3.4215,
-    "lng": -76.5412,
-    "comuna": "19"
+  "terrón colorado": {
+    "name": "Terrón Colorado",
+    "lat": 3.4578,
+    "lng": -76.5543,
+    "comuna": "1",
+    "zone": "Cali Oeste"
   },
-  "villa del prado": {
-    "lat": 3.4789,
-    "lng": -76.5054,
-    "comuna": "5"
+  "vista hermosa": {
+    "name": "Vista Hermosa",
+    "lat": 3.4612,
+    "lng": -76.5587,
+    "comuna": "1",
+    "zone": "Cali Oeste"
   },
-  "las vegas de comfandi": {
-    "lat": 3.398,
-    "lng": -76.522,
-    "comuna": "17"
+  "bajo aguacatal": {
+    "name": "Bajo Aguacatal",
+    "lat": 3.4645,
+    "lng": -76.5521,
+    "comuna": "1",
+    "zone": "Cali Oeste"
   },
-  "ingenio": {
-    "lat": 3.385,
-    "lng": -76.536,
-    "comuna": "17"
+  "alto aguacatal": {
+    "name": "Alto Aguacatal",
+    "lat": 3.4688,
+    "lng": -76.5562,
+    "comuna": "1",
+    "zone": "Cali Oeste"
   },
-  "nuevo tequendama": {
-    "lat": 3.415,
-    "lng": -76.542,
-    "comuna": "19"
+  "patio bonito": {
+    "name": "Patio Bonito",
+    "lat": 3.4532,
+    "lng": -76.5611,
+    "comuna": "1",
+    "zone": "Cali Oeste"
   },
-  "valle del lili": {
-    "lat": 3.372,
-    "lng": -76.528,
-    "comuna": "17"
+  "santa rita": {
+    "name": "Santa Rita",
+    "lat": 3.4563,
+    "lng": -76.5415,
+    "comuna": "2",
+    "zone": "Cali Norte/Oeste"
   },
-  "la flora": {
-    "lat": 3.485,
-    "lng": -76.525,
-    "comuna": "2"
+  "santa teresita": {
+    "name": "Santa Teresita",
+    "lat": 3.4521,
+    "lng": -76.5458,
+    "comuna": "2",
+    "zone": "Cali Oeste"
   },
-  "menga": {
-    "lat": 3.498,
-    "lng": -76.52,
-    "comuna": "2"
+  "arboledas": {
+    "name": "Arboledas",
+    "lat": 3.4599,
+    "lng": -76.5478,
+    "comuna": "2",
+    "zone": "Cali Oeste"
   },
-  "campiña": {
-    "lat": 3.479,
-    "lng": -76.528,
-    "comuna": "2"
+  "normandía": {
+    "name": "Normandía",
+    "lat": 3.4542,
+    "lng": -76.5431,
+    "comuna": "2",
+    "zone": "Cali Oeste"
   },
-  "bretaña": {
-    "lat": 3.438,
-    "lng": -76.538,
-    "comuna": "9"
+  "juanambú": {
+    "name": "Juanambú",
+    "lat": 3.4589,
+    "lng": -76.5385,
+    "comuna": "2",
+    "zone": "Cali Norte"
   },
-  "colseguros": {
-    "lat": 3.429,
-    "lng": -76.526,
-    "comuna": "10"
-  },
-  "morichal": {
-    "lat": 3.412,
-    "lng": -76.502,
-    "comuna": "13"
-  },
-  "ciudad melendez": {
-    "lat": 3.365,
-    "lng": -76.535,
-    "comuna": "17"
-  },
-  "la ceiba": {
-    "lat": 3.452,
-    "lng": -76.508,
-    "comuna": "7"
-  },
-  "noriente de cali": {
-    "lat": 3.465,
-    "lng": -76.502,
-    "comuna": "6"
-  },
-  "san fernando": {
-    "lat": 3.431,
-    "lng": -76.545,
-    "comuna": "19"
-  },
-  "cali centro": {
-    "lat": 3.4516,
-    "lng": -76.532,
-    "comuna": "3"
-  },
-  "san antonio": {
-    "lat": 3.447,
-    "lng": -76.541,
-    "comuna": "3"
+  "centenario": {
+    "name": "Centenario",
+    "lat": 3.4561,
+    "lng": -76.5342,
+    "comuna": "2",
+    "zone": "Cali Norte"
   },
   "granada": {
+    "name": "Granada",
+    "lat": 3.4601,
+    "lng": -76.5349,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "versalles": {
+    "name": "Versalles",
+    "lat": 3.4642,
+    "lng": -76.5328,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "san vicente": {
+    "name": "San Vicente",
+    "lat": 3.4685,
+    "lng": -76.5312,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "santa mónica residencial": {
+    "name": "Santa Mónica Residencial",
+    "lat": 3.4735,
+    "lng": -76.5321,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "prados del norte": {
+    "name": "Prados del Norte",
+    "lat": 3.4762,
+    "lng": -76.5298,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "la flora": {
+    "name": "La Flora",
+    "lat": 3.4851,
+    "lng": -76.5254,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "la campiña": {
+    "name": "La Campiña",
+    "lat": 3.4795,
+    "lng": -76.5281,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "menga": {
+    "name": "Menga",
+    "lat": 3.4982,
+    "lng": -76.5204,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "ciudad los álamos": {
+    "name": "Ciudad Los Álamos",
+    "lat": 3.4891,
+    "lng": -76.5185,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "chipichape": {
+    "name": "Chipichape",
+    "lat": 3.4755,
+    "lng": -76.527,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "vipasa": {
+    "name": "Vipasa",
+    "lat": 3.482,
+    "lng": -76.524,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "urbanización la merced": {
+    "name": "Urbanización La Merced",
+    "lat": 3.4721,
+    "lng": -76.5212,
+    "comuna": "2",
+    "zone": "Cali Norte"
+  },
+  "san antonio": {
+    "name": "San Antonio",
+    "lat": 3.4475,
+    "lng": -76.5398,
+    "comuna": "3",
+    "zone": "Cali Centro/Oeste"
+  },
+  "el peñón": {
+    "name": "El Peñón",
+    "lat": 3.4498,
+    "lng": -76.5412,
+    "comuna": "3",
+    "zone": "Cali Oeste"
+  },
+  "san cayetano": {
+    "name": "San Cayetano",
+    "lat": 3.4435,
+    "lng": -76.5392,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "los libertadores": {
+    "name": "Los Libertadores",
+    "lat": 3.4412,
+    "lng": -76.5381,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "san juan bosco": {
+    "name": "San Juan Bosco",
+    "lat": 3.4428,
+    "lng": -76.5335,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "santa rosa": {
+    "name": "Santa Rosa",
+    "lat": 3.4471,
+    "lng": -76.5312,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "la merced (centro)": {
+    "name": "La Merced (Centro)",
+    "lat": 3.4512,
+    "lng": -76.533,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "san pascual": {
+    "name": "San Pascual",
+    "lat": 3.4438,
+    "lng": -76.5275,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "el calvario": {
+    "name": "El Calvario",
+    "lat": 3.4472,
+    "lng": -76.5261,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "san nicolás": {
+    "name": "San Nicolás",
+    "lat": 3.4525,
+    "lng": -76.5268,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "el hoyo": {
+    "name": "El Hoyo",
+    "lat": 3.4552,
+    "lng": -76.5295,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "el piloto": {
+    "name": "El Piloto",
+    "lat": 3.4568,
+    "lng": -76.5251,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "navarro - la chanca": {
+    "name": "Navarro - La Chanca",
+    "lat": 3.4485,
+    "lng": -76.5221,
+    "comuna": "3",
+    "zone": "Cali Centro"
+  },
+  "san pedro": {
+    "name": "San Pedro",
+    "lat": 3.4551,
+    "lng": -76.521,
+    "comuna": "4",
+    "zone": "Cali Centro-Norte"
+  },
+  "jorge isaacs": {
+    "name": "Jorge Isaacs",
+    "lat": 3.461,
+    "lng": -76.5215,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "santander": {
+    "name": "Santander",
+    "lat": 3.4658,
+    "lng": -76.5185,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "las delicias": {
+    "name": "Las Delicias",
+    "lat": 3.4642,
+    "lng": -76.5135,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "manzanares": {
+    "name": "Manzanares",
+    "lat": 3.4678,
+    "lng": -76.5105,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "salomia": {
+    "name": "Salomia",
+    "lat": 3.4735,
+    "lng": -76.5085,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "fátima": {
+    "name": "Fátima",
+    "lat": 3.4712,
+    "lng": -76.5152,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "sultana - berlín": {
+    "name": "Sultana - Berlín",
+    "lat": 3.4765,
+    "lng": -76.5125,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "popular": {
+    "name": "Popular",
+    "lat": 3.4745,
+    "lng": -76.5025,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "porvenir": {
+    "name": "Porvenir",
+    "lat": 3.4615,
+    "lng": -76.5162,
+    "comuna": "4",
+    "zone": "Cali Norte"
+  },
+  "la rivera": {
+    "name": "La Rivera",
+    "lat": 3.4795,
+    "lng": -76.4985,
+    "comuna": "5",
+    "zone": "Cali Nororiente"
+  },
+  "chiminangos": {
+    "name": "Chiminangos",
+    "lat": 3.4835,
+    "lng": -76.5035,
+    "comuna": "5",
+    "zone": "Cali Norte"
+  },
+  "metropolitano del norte": {
+    "name": "Metropolitano del Norte",
+    "lat": 3.4885,
+    "lng": -76.5015,
+    "comuna": "5",
+    "zone": "Cali Norte"
+  },
+  "villa del prado": {
+    "name": "Villa del Prado",
+    "lat": 3.4789,
+    "lng": -76.5054,
+    "comuna": "5",
+    "zone": "Cali Norte"
+  },
+  "los andes": {
+    "name": "Los Andes",
+    "lat": 3.4752,
+    "lng": -76.5081,
+    "comuna": "5",
+    "zone": "Cali Norte"
+  },
+  "paso del comercio": {
+    "name": "Paso del Comercio",
+    "lat": 3.4975,
+    "lng": -76.498,
+    "comuna": "5",
+    "zone": "Cali Norte"
+  },
+  "guayacanes": {
+    "name": "Guayacanes",
+    "lat": 3.4845,
+    "lng": -76.4945,
+    "comuna": "5",
+    "zone": "Cali Nororiente"
+  },
+  "torres de comfandi": {
+    "name": "Torres de Comfandi",
+    "lat": 3.4862,
+    "lng": -76.4915,
+    "comuna": "5",
+    "zone": "Cali Nororiente"
+  },
+  "brisas de los álamos": {
+    "name": "Brisas de los Álamos",
+    "lat": 3.4912,
+    "lng": -76.5115,
+    "comuna": "5",
+    "zone": "Cali Norte"
+  },
+  "sena salomia": {
+    "name": "Sena Salomia",
+    "lat": 3.476,
+    "lng": -76.501,
+    "comuna": "5",
+    "zone": "Cali Norte"
+  },
+  "los alcázares": {
+    "name": "Los Alcázares",
+    "lat": 3.4855,
+    "lng": -76.4865,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "petecuy i": {
+    "name": "Petecuy I",
+    "lat": 3.4895,
+    "lng": -76.4825,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "petecuy ii": {
+    "name": "Petecuy II",
+    "lat": 3.4925,
+    "lng": -76.4785,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "petecuy iii": {
+    "name": "Petecuy III",
+    "lat": 3.4965,
+    "lng": -76.4745,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "san luis i": {
+    "name": "San Luis I",
+    "lat": 3.4825,
+    "lng": -76.4815,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "san luis ii": {
+    "name": "San Luis II",
+    "lat": 3.485,
+    "lng": -76.4765,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "jorge eliécer gaitán": {
+    "name": "Jorge Eliécer Gaitán",
+    "lat": 3.4785,
+    "lng": -76.485,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "fonaviemcali": {
+    "name": "Fonaviemcali",
+    "lat": 3.488,
+    "lng": -76.489,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "calimío norte": {
+    "name": "Calimío Norte",
+    "lat": 3.494,
+    "lng": -76.485,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "paso del comercio (oriente)": {
+    "name": "Paso del Comercio (Oriente)",
+    "lat": 3.4985,
+    "lng": -76.485,
+    "comuna": "6",
+    "zone": "Cali Nororiente"
+  },
+  "alfonso lópez i": {
+    "name": "Alfonso López I",
+    "lat": 3.4685,
+    "lng": -76.4895,
+    "comuna": "7",
+    "zone": "Cali Oriente"
+  },
+  "alfonso lópez ii": {
+    "name": "Alfonso López II",
+    "lat": 3.4715,
+    "lng": -76.485,
+    "comuna": "7",
+    "zone": "Cali Oriente"
+  },
+  "alfonso lópez iii": {
+    "name": "Alfonso López III",
+    "lat": 3.4755,
+    "lng": -76.481,
+    "comuna": "7",
+    "zone": "Cali Oriente"
+  },
+  "puerto mallarino": {
+    "name": "Puerto Mallarino",
+    "lat": 3.4655,
+    "lng": -76.481,
+    "comuna": "7",
+    "zone": "Cali Oriente"
+  },
+  "7 de agosto": {
+    "name": "7 de Agosto",
+    "lat": 3.4615,
+    "lng": -76.488,
+    "comuna": "7",
+    "zone": "Cali Oriente"
+  },
+  "los sauces": {
+    "name": "Los Sauces",
+    "lat": 3.4625,
+    "lng": -76.4955,
+    "comuna": "7",
+    "zone": "Cali Oriente"
+  },
+  "la ceiba": {
+    "name": "La Ceiba",
+    "lat": 3.469,
+    "lng": -76.495,
+    "comuna": "7",
+    "zone": "Cali Oriente"
+  },
+  "las ceibas": {
+    "name": "Las Ceibas",
+    "lat": 3.467,
+    "lng": -76.492,
+    "comuna": "7",
+    "zone": "Cali Oriente"
+  },
+  "san marino": {
+    "name": "San Marino",
     "lat": 3.458,
-    "lng": -76.534,
-    "comuna": "2"
+    "lng": -76.4925,
+    "comuna": "7",
+    "zone": "Cali Oriente"
   },
-  "el peñon": {
-    "lat": 3.449,
-    "lng": -76.545,
-    "comuna": "3"
+  "santa fé": {
+    "name": "Santa Fé",
+    "lat": 3.4515,
+    "lng": -76.5125,
+    "comuna": "8",
+    "zone": "Cali Oriente"
   },
-  "limonar": {
-    "lat": 3.405,
-    "lng": -76.538,
-    "comuna": "17"
+  "industrial": {
+    "name": "Industrial",
+    "lat": 3.4565,
+    "lng": -76.5085,
+    "comuna": "8",
+    "zone": "Cali Oriente"
   },
-  "ciudad cordoba": {
-    "lat": 3.408,
+  "las américas": {
+    "name": "Las Américas",
+    "lat": 3.4545,
+    "lng": -76.5025,
+    "comuna": "8",
+    "zone": "Cali Oriente"
+  },
+  "atanasio girardot": {
+    "name": "Atanasio Girardot",
+    "lat": 3.4485,
+    "lng": -76.5095,
+    "comuna": "8",
+    "zone": "Cali Oriente"
+  },
+  "benjamín herrera": {
+    "name": "Benjamín Herrera",
+    "lat": 3.4455,
+    "lng": -76.5055,
+    "comuna": "8",
+    "zone": "Cali Oriente"
+  },
+  "chapinero": {
+    "name": "Chapinero",
+    "lat": 3.4485,
+    "lng": -76.502,
+    "comuna": "8",
+    "zone": "Cali Oriente"
+  },
+  "la nueva floresta": {
+    "name": "La Nueva Floresta",
+    "lat": 3.4425,
+    "lng": -76.4985,
+    "comuna": "8",
+    "zone": "Cali Oriente"
+  },
+  "la floresta": {
+    "name": "La Floresta",
+    "lat": 3.4465,
+    "lng": -76.4965,
+    "comuna": "8",
+    "zone": "Cali Oriente"
+  },
+  "el troncal": {
+    "name": "El Troncal",
+    "lat": 3.4495,
+    "lng": -76.4935,
+    "comuna": "8",
+    "zone": "Cali Oriente"
+  },
+  "municipal": {
+    "name": "Municipal",
+    "lat": 3.4535,
+    "lng": -76.495,
+    "comuna": "8",
+    "zone": "Cali Oriente"
+  },
+  "saavedra galindo": {
+    "name": "Saavedra Galindo",
+    "lat": 3.4425,
     "lng": -76.512,
-    "comuna": "15"
+    "comuna": "8",
+    "zone": "Cali Oriente"
   },
-  "mariano ramos": {
-    "lat": 3.415,
-    "lng": -76.516,
-    "comuna": "16"
+  "primitivo crespo": {
+    "name": "Primitivo Crespo",
+    "lat": 3.4405,
+    "lng": -76.5085,
+    "comuna": "8",
+    "zone": "Cali Oriente"
   },
-  "santa elena": {
-    "lat": 3.435,
-    "lng": -76.522,
-    "comuna": "10"
+  "sucre": {
+    "name": "Sucre",
+    "lat": 3.4425,
+    "lng": -76.5255,
+    "comuna": "9",
+    "zone": "Cali Centro"
+  },
+  "bretaña": {
+    "name": "Bretaña",
+    "lat": 3.438,
+    "lng": -76.538,
+    "comuna": "9",
+    "zone": "Cali Centro-Sur"
   },
   "alameda": {
-    "lat": 3.44,
+    "name": "Alameda",
+    "lat": 3.4395,
     "lng": -76.535,
-    "comuna": "9"
+    "comuna": "9",
+    "zone": "Cali Centro-Sur"
+  },
+  "junín": {
+    "name": "Junín",
+    "lat": 3.4375,
+    "lng": -76.531,
+    "comuna": "9",
+    "zone": "Cali Centro"
+  },
+  "guayaquil": {
+    "name": "Guayaquil",
+    "lat": 3.4385,
+    "lng": -76.5265,
+    "comuna": "9",
+    "zone": "Cali Centro"
+  },
+  "aranjuez": {
+    "name": "Aranjuez",
+    "lat": 3.435,
+    "lng": -76.5285,
+    "comuna": "9",
+    "zone": "Cali Centro-Sur"
+  },
+  "manuel maría buenaventura": {
+    "name": "Manuel María Buenaventura",
+    "lat": 3.4335,
+    "lng": -76.532,
+    "comuna": "9",
+    "zone": "Cali Sur"
+  },
+  "santa mónica belalcázar": {
+    "name": "Santa Mónica Belalcázar",
+    "lat": 3.4355,
+    "lng": -76.536,
+    "comuna": "9",
+    "zone": "Cali Sur"
+  },
+  "belalcázar": {
+    "name": "Belalcázar",
+    "lat": 3.441,
+    "lng": -76.5215,
+    "comuna": "9",
+    "zone": "Cali Centro"
+  },
+  "obrero": {
+    "name": "Obrero",
+    "lat": 3.4505,
+    "lng": -76.5255,
+    "comuna": "9",
+    "zone": "Cali Centro"
+  },
+  "el guabal": {
+    "name": "El Guabal",
+    "lat": 3.4245,
+    "lng": -76.5285,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "san cristóbal": {
+    "name": "San Cristóbal",
+    "lat": 3.4285,
+    "lng": -76.5255,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "las acacias": {
+    "name": "Las Acacias",
+    "lat": 3.432,
+    "lng": -76.524,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "santo domingo": {
+    "name": "Santo Domingo",
+    "lat": 3.4295,
+    "lng": -76.5215,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "jorge zawadzky": {
+    "name": "Jorge Zawadzky",
+    "lat": 3.4225,
+    "lng": -76.525,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "olímpico": {
+    "name": "Olímpico",
+    "lat": 3.4185,
+    "lng": -76.5295,
+    "comuna": "10",
+    "zone": "Cali Sur"
+  },
+  "cristóbal colón": {
+    "name": "Cristóbal Colón",
+    "lat": 3.4255,
+    "lng": -76.5185,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "la selva": {
+    "name": "La Selva",
+    "lat": 3.4215,
+    "lng": -76.516,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "el dorado": {
+    "name": "El Dorado",
+    "lat": 3.4265,
+    "lng": -76.514,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "colseguros andes": {
+    "name": "Colseguros Andes",
+    "lat": 3.4305,
+    "lng": -76.5165,
+    "comuna": "10",
+    "zone": "Cali Sur-Oriente"
+  },
+  "departamental": {
+    "name": "Departamental",
+    "lat": 3.4145,
+    "lng": -76.5245,
+    "comuna": "10",
+    "zone": "Cali Sur"
+  },
+  "pasoancho": {
+    "name": "Pasoancho",
+    "lat": 3.412,
+    "lng": -76.531,
+    "comuna": "10",
+    "zone": "Cali Sur"
+  },
+  "aguablanca": {
+    "name": "Aguablanca",
+    "lat": 3.4365,
+    "lng": -76.505,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "20 de julio": {
+    "name": "20 de Julio",
+    "lat": 3.4325,
+    "lng": -76.5085,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "prados de oriente": {
+    "name": "Prados de Oriente",
+    "lat": 3.4285,
+    "lng": -76.5095,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "josé holguín garcés": {
+    "name": "José Holguín Garcés",
+    "lat": 3.4245,
+    "lng": -76.5115,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "san pedro claver": {
+    "name": "San Pedro Claver",
+    "lat": 3.4345,
+    "lng": -76.5135,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "león xiii": {
+    "name": "León XIII",
+    "lat": 3.4385,
+    "lng": -76.5105,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "los sauces (comuna 11)": {
+    "name": "Los Sauces (Comuna 11)",
+    "lat": 3.4305,
+    "lng": -76.505,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "el recuerdo": {
+    "name": "El Recuerdo",
+    "lat": 3.4265,
+    "lng": -76.5065,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "la independencia": {
+    "name": "La Independencia",
+    "lat": 3.431,
+    "lng": -76.516,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "maracaibo": {
+    "name": "Maracaibo",
+    "lat": 3.435,
+    "lng": -76.518,
+    "comuna": "11",
+    "zone": "Cali Oriente"
+  },
+  "doce de octubre": {
+    "name": "Doce de Octubre",
+    "lat": 3.4395,
+    "lng": -76.495,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "el rodeo": {
+    "name": "El Rodeo",
+    "lat": 3.4345,
+    "lng": -76.4925,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "sindical": {
+    "name": "Sindical",
+    "lat": 3.4315,
+    "lng": -76.4965,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "bello horizonte": {
+    "name": "Bello Horizonte",
+    "lat": 3.436,
+    "lng": -76.4885,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "villanueva": {
+    "name": "Villanueva",
+    "lat": 3.4415,
+    "lng": -76.4905,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "eduardo santos": {
+    "name": "Eduardo Santos",
+    "lat": 3.438,
+    "lng": -76.4855,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "alfonso barberena": {
+    "name": "Alfonso Barberena",
+    "lat": 3.444,
+    "lng": -76.488,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "el paraíso": {
+    "name": "El Paraíso",
+    "lat": 3.447,
+    "lng": -76.485,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "fenalco kennedy": {
+    "name": "Fenalco Kennedy",
+    "lat": 3.443,
+    "lng": -76.493,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "nueva floresta (sur)": {
+    "name": "Nueva Floresta (Sur)",
+    "lat": 3.44,
+    "lng": -76.498,
+    "comuna": "12",
+    "zone": "Cali Oriente"
+  },
+  "el vergel": {
+    "name": "El Vergel",
+    "lat": 3.4265,
+    "lng": -76.4985,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "el diamante": {
+    "name": "El Diamante",
+    "lat": 3.4215,
+    "lng": -76.4955,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "el poblado i": {
+    "name": "El Poblado I",
+    "lat": 3.4245,
+    "lng": -76.4915,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "el poblado ii": {
+    "name": "El Poblado II",
+    "lat": 3.4275,
+    "lng": -76.4875,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "los robles": {
+    "name": "Los Robles",
+    "lat": 3.4185,
+    "lng": -76.493,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "calipso": {
+    "name": "Calipso",
+    "lat": 3.4155,
+    "lng": -76.4965,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "yumbo / rodrigo lara": {
+    "name": "Yumbo / Rodrigo Lara",
+    "lat": 3.4205,
+    "lng": -76.4885,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "villa del lago": {
+    "name": "Villa del Lago",
+    "lat": 3.4295,
+    "lng": -76.4835,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "charco azul": {
+    "name": "Charco Azul",
+    "lat": 3.4335,
+    "lng": -76.48,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "ricardo balcázar": {
+    "name": "Ricardo Balcázar",
+    "lat": 3.429,
+    "lng": -76.4935,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "omar torrijos": {
+    "name": "Omar Torrijos",
+    "lat": 3.425,
+    "lng": -76.494,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "los comuneros ii": {
+    "name": "Los Comuneros II",
+    "lat": 3.4175,
+    "lng": -76.498,
+    "comuna": "13",
+    "zone": "Cali Oriente"
+  },
+  "alirio mora beltrán": {
+    "name": "Alirio Mora Beltrán",
+    "lat": 3.4265,
+    "lng": -76.4785,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "josé manuel marroquín i": {
+    "name": "José Manuel Marroquín I",
+    "lat": 3.4295,
+    "lng": -76.4745,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "josé manuel marroquín ii": {
+    "name": "José Manuel Marroquín II",
+    "lat": 3.4325,
+    "lng": -76.4705,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "los naranjos i": {
+    "name": "Los Naranjos I",
+    "lat": 3.4235,
+    "lng": -76.4735,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "los naranjos ii": {
+    "name": "Los Naranjos II",
+    "lat": 3.4255,
+    "lng": -76.4695,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "puertas del sol": {
+    "name": "Puertas del Sol",
+    "lat": 3.4355,
+    "lng": -76.4675,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "manuela beltrán": {
+    "name": "Manuela Beltrán",
+    "lat": 3.4215,
+    "lng": -76.467,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "las orquídeas": {
+    "name": "Las Orquídeas",
+    "lat": 3.428,
+    "lng": -76.465,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "san marcos de aguablanca": {
+    "name": "San Marcos de Aguablanca",
+    "lat": 3.431,
+    "lng": -76.4625,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "promociones populares": {
+    "name": "Promociones Populares",
+    "lat": 3.42,
+    "lng": -76.475,
+    "comuna": "14",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "el retiro": {
+    "name": "El Retiro",
+    "lat": 3.4135,
+    "lng": -76.4895,
+    "comuna": "15",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "los comuneros i": {
+    "name": "Los Comuneros I",
+    "lat": 3.4095,
+    "lng": -76.4925,
+    "comuna": "15",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "laureano gómez": {
+    "name": "Laureano Gómez",
+    "lat": 3.4065,
+    "lng": -76.4965,
+    "comuna": "15",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "el vallado": {
+    "name": "El Vallado",
+    "lat": 3.4115,
+    "lng": -76.4855,
+    "comuna": "15",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "ciudad córdoba": {
+    "name": "Ciudad Córdoba",
+    "lat": 3.4075,
+    "lng": -76.5025,
+    "comuna": "15",
+    "zone": "Cali Oriente"
+  },
+  "el morichal": {
+    "name": "El Morichal",
+    "lat": 3.415,
+    "lng": -76.482,
+    "comuna": "15",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "mojica": {
+    "name": "Mojica",
+    "lat": 3.4175,
+    "lng": -76.4785,
+    "comuna": "15",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "llano verde": {
+    "name": "Llano Verde",
+    "lat": 3.4025,
+    "lng": -76.491,
+    "comuna": "15",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "briceño": {
+    "name": "Briceño",
+    "lat": 3.405,
+    "lng": -76.485,
+    "comuna": "15",
+    "zone": "Cali Distrito de Aguablanca"
+  },
+  "mariano ramos": {
+    "name": "Mariano Ramos",
+    "lat": 3.4165,
+    "lng": -76.5085,
+    "comuna": "16",
+    "zone": "Cali Sur-Oriente"
+  },
+  "república de israel": {
+    "name": "República de Israel",
+    "lat": 3.4125,
+    "lng": -76.5125,
+    "comuna": "16",
+    "zone": "Cali Sur-Oriente"
+  },
+  "unión de vivienda popular": {
+    "name": "Unión de Vivienda Popular",
+    "lat": 3.4085,
+    "lng": -76.5165,
+    "comuna": "16",
+    "zone": "Cali Sur-Oriente"
+  },
+  "antonio nariño": {
+    "name": "Antonio Nariño",
+    "lat": 3.4195,
+    "lng": -76.505,
+    "comuna": "16",
+    "zone": "Cali Sur-Oriente"
+  },
+  "ciudad 2000": {
+    "name": "Ciudad 2000",
+    "lat": 3.3985,
+    "lng": -76.5165,
+    "comuna": "16",
+    "zone": "Cali Sur"
+  },
+  "la alborada": {
+    "name": "La Alborada",
+    "lat": 3.4035,
+    "lng": -76.5115,
+    "comuna": "16",
+    "zone": "Cali Sur-Oriente"
+  },
+  "san carlos": {
+    "name": "San Carlos",
+    "lat": 3.4055,
+    "lng": -76.508,
+    "comuna": "16",
+    "zone": "Cali Sur-Oriente"
+  },
+  "las granjas": {
+    "name": "Las Granjas",
+    "lat": 3.415,
+    "lng": -76.514,
+    "comuna": "16",
+    "zone": "Cali Sur-Oriente"
+  },
+  "el ingenio i": {
+    "name": "El Ingenio I",
+    "lat": 3.3885,
+    "lng": -76.5345,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "el ingenio ii": {
+    "name": "El Ingenio II",
+    "lat": 3.385,
+    "lng": -76.536,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "el ingenio iii": {
+    "name": "El Ingenio III",
+    "lat": 3.3815,
+    "lng": -76.5385,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "mayapán - las vegas": {
+    "name": "Mayapán - Las Vegas",
+    "lat": 3.3955,
+    "lng": -76.5365,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "las vegas de comfandi": {
+    "name": "Las Vegas de Comfandi",
+    "lat": 3.398,
+    "lng": -76.522,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "ciudad capri": {
+    "name": "Ciudad Capri",
+    "lat": 3.3915,
+    "lng": -76.541,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "la cascada": {
+    "name": "La Cascada",
+    "lat": 3.3975,
+    "lng": -76.5445,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "el limonar": {
+    "name": "El Limonar",
+    "lat": 3.4035,
+    "lng": -76.5395,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "pasoancho (sur)": {
+    "name": "Pasoancho (Sur)",
+    "lat": 3.3995,
+    "lng": -76.5345,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "gran limonar": {
+    "name": "Gran Limonar",
+    "lat": 3.396,
+    "lng": -76.539,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "santa anita - la selva": {
+    "name": "Santa Anita - La Selva",
+    "lat": 3.4075,
+    "lng": -76.5325,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "la selva (sur)": {
+    "name": "La Selva (Sur)",
+    "lat": 3.4045,
+    "lng": -76.5285,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "primero de mayo": {
+    "name": "Primero de Mayo",
+    "lat": 3.399,
+    "lng": -76.527,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "valle del lili": {
+    "name": "Valle del Lili",
+    "lat": 3.372,
+    "lng": -76.528,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "caney": {
+    "name": "Caney",
+    "lat": 3.3855,
+    "lng": -76.5245,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "caney especial": {
+    "name": "Caney Especial",
+    "lat": 3.389,
+    "lng": -76.521,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "ciudad universitaria (univalle)": {
+    "name": "Ciudad Universitaria (Univalle)",
+    "lat": 3.3745,
+    "lng": -76.5335,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "parque del amor": {
+    "name": "Parque del Amor",
+    "lat": 3.379,
+    "lng": -76.531,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "multicentro": {
+    "name": "Multicentro",
+    "lat": 3.383,
+    "lng": -76.5395,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "unicentro cali": {
+    "name": "Unicentro Cali",
+    "lat": 3.382,
+    "lng": -76.536,
+    "comuna": "17",
+    "zone": "Cali Sur"
+  },
+  "nápoles": {
+    "name": "Nápoles",
+    "lat": 3.3995,
+    "lng": -76.5515,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "prados del sur": {
+    "name": "Prados del Sur",
+    "lat": 3.3945,
+    "lng": -76.556,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "buenos aires": {
+    "name": "Buenos Aires",
+    "lat": 3.391,
+    "lng": -76.5595,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "francisco eladio ramírez": {
+    "name": "Francisco Eladio Ramírez",
+    "lat": 3.3875,
+    "lng": -76.563,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "los chorros": {
+    "name": "Los Chorros",
+    "lat": 3.3835,
+    "lng": -76.568,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "meléndez": {
+    "name": "Meléndez",
+    "lat": 3.3785,
+    "lng": -76.5495,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "polvorines": {
+    "name": "Polvorines",
+    "lat": 3.3745,
+    "lng": -76.561,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "sector alto jordán": {
+    "name": "Sector Alto Jordán",
+    "lat": 3.3795,
+    "lng": -76.5575,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "lourdes": {
+    "name": "Lourdes",
+    "lat": 3.3965,
+    "lng": -76.562,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "mario correa rengifo": {
+    "name": "Mario Correa Rengifo",
+    "lat": 3.3925,
+    "lng": -76.5535,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "horizontes": {
+    "name": "Horizontes",
+    "lat": 3.388,
+    "lng": -76.558,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "colinas del sur": {
+    "name": "Colinas del Sur",
+    "lat": 3.384,
+    "lng": -76.553,
+    "comuna": "18",
+    "zone": "Cali Suroeste"
+  },
+  "san fernando viejo": {
+    "name": "San Fernando Viejo",
+    "lat": 3.4315,
+    "lng": -76.5435,
+    "comuna": "19",
+    "zone": "Cali Sur-Oeste"
+  },
+  "san fernando nuevo": {
+    "name": "San Fernando Nuevo",
+    "lat": 3.4285,
+    "lng": -76.541,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "miraflores": {
+    "name": "Miraflores",
+    "lat": 3.4385,
+    "lng": -76.5435,
+    "comuna": "19",
+    "zone": "Cali Oeste"
+  },
+  "el cedro": {
+    "name": "El Cedro",
+    "lat": 3.4345,
+    "lng": -76.5385,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "champagnat": {
+    "name": "Champagnat",
+    "lat": 3.4265,
+    "lng": -76.538,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "tequendama": {
+    "name": "Tequendama",
+    "lat": 3.421,
+    "lng": -76.545,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "nuevo tequendama": {
+    "name": "Nuevo Tequendama",
+    "lat": 3.415,
+    "lng": -76.542,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "los cámbulos": {
+    "name": "Los Cámbulos",
+    "lat": 3.4215,
+    "lng": -76.5412,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "el lido": {
+    "name": "El Lido",
+    "lat": 3.4175,
+    "lng": -76.549,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "santa isabel": {
+    "name": "Santa Isabel",
+    "lat": 3.429,
+    "lng": -76.547,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "cristóbal colón (comuna 19)": {
+    "name": "Cristóbal Colón (Comuna 19)",
+    "lat": 3.424,
+    "lng": -76.534,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "3 de julio": {
+    "name": "3 de Julio",
+    "lat": 3.427,
+    "lng": -76.546,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "eucarístico": {
+    "name": "Eucarístico",
+    "lat": 3.423,
+    "lng": -76.539,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "nueva tequendama": {
+    "name": "Nueva Tequendama",
+    "lat": 3.4125,
+    "lng": -76.5435,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "el refugio": {
+    "name": "El Refugio",
+    "lat": 3.4075,
+    "lng": -76.5485,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "la cascada (comuna 19)": {
+    "name": "La Cascada (Comuna 19)",
+    "lat": 3.402,
+    "lng": -76.546,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "pampalinda": {
+    "name": "Pampalinda",
+    "lat": 3.4045,
+    "lng": -76.5495,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "cuarto de legua - guadalupe": {
+    "name": "Cuarto de Legua - Guadalupe",
+    "lat": 3.4095,
+    "lng": -76.547,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "urbanización tequendama": {
+    "name": "Urbanización Tequendama",
+    "lat": 3.418,
+    "lng": -76.543,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "unidad residencial santiago de cali": {
+    "name": "Unidad Residencial Santiago de Cali",
+    "lat": 3.411,
+    "lng": -76.545,
+    "comuna": "19",
+    "zone": "Cali Sur"
+  },
+  "siloé": {
+    "name": "Siloé",
+    "lat": 3.4245,
+    "lng": -76.5575,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "belisario caicedo": {
+    "name": "Belisario Caicedo",
+    "lat": 3.4285,
+    "lng": -76.5535,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "la sultana": {
+    "name": "La Sultana",
+    "lat": 3.4215,
+    "lng": -76.5615,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "tierra blanca": {
+    "name": "Tierra Blanca",
+    "lat": 3.4185,
+    "lng": -76.5645,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "lleras camargo": {
+    "name": "Lleras Camargo",
+    "lat": 3.4155,
+    "lng": -76.5675,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "el cortijo": {
+    "name": "El Cortijo",
+    "lat": 3.4265,
+    "lng": -76.551,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "la estrella": {
+    "name": "La Estrella",
+    "lat": 3.4225,
+    "lng": -76.559,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "brisas de mayo": {
+    "name": "Brisas de Mayo",
+    "lat": 3.412,
+    "lng": -76.5695,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "venezuela": {
+    "name": "Venezuela",
+    "lat": 3.427,
+    "lng": -76.555,
+    "comuna": "20",
+    "zone": "Cali Ladera Oeste"
+  },
+  "desepaz": {
+    "name": "Desepaz",
+    "lat": 3.4185,
+    "lng": -76.4625,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "pízamos i": {
+    "name": "Pízamos I",
+    "lat": 3.4245,
+    "lng": -76.46,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "pízamos ii": {
+    "name": "Pízamos II",
+    "lat": 3.4275,
+    "lng": -76.457,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "pízamos iii": {
+    "name": "Pízamos III",
+    "lat": 3.4305,
+    "lng": -76.454,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "compartir": {
+    "name": "Compartir",
+    "lat": 3.4215,
+    "lng": -76.4585,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "calimío desepaz": {
+    "name": "Calimío Desepaz",
+    "lat": 3.4155,
+    "lng": -76.4655,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "potrero grande": {
+    "name": "Potrero Grande",
+    "lat": 3.4125,
+    "lng": -76.469,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "valle grande": {
+    "name": "Valle Grande",
+    "lat": 3.4345,
+    "lng": -76.4615,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "ciudad talanga": {
+    "name": "Ciudad Talanga",
+    "lat": 3.4385,
+    "lng": -76.458,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "remansos de comfandi": {
+    "name": "Remansos de Comfandi",
+    "lat": 3.419,
+    "lng": -76.454,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "villamercedes i y ii": {
+    "name": "Villamercedes I y II",
+    "lat": 3.423,
+    "lng": -76.452,
+    "comuna": "21",
+    "zone": "Cali Oriente Extremo"
+  },
+  "ciudad jardín": {
+    "name": "Ciudad Jardín",
+    "lat": 3.3645,
+    "lng": -76.5365,
+    "comuna": "22",
+    "zone": "Cali Extremo Sur"
+  },
+  "la viga": {
+    "name": "La Viga",
+    "lat": 3.3485,
+    "lng": -76.5395,
+    "comuna": "22",
+    "zone": "Cali Extremo Sur"
+  },
+  "pance": {
+    "name": "Pance",
+    "lat": 3.3285,
+    "lng": -76.5465,
+    "comuna": "22",
+    "zone": "Cali Extremo Sur"
+  },
+  "campestre": {
+    "name": "Campestre",
+    "lat": 3.3715,
+    "lng": -76.5425,
+    "comuna": "22",
+    "zone": "Cali Extremo Sur"
+  },
+  "parcelaciones pance": {
+    "name": "Parcelaciones Pance",
+    "lat": 3.335,
+    "lng": -76.541,
+    "comuna": "22",
+    "zone": "Cali Extremo Sur"
+  },
+  "cañasgordas": {
+    "name": "Cañasgordas",
+    "lat": 3.3515,
+    "lng": -76.532,
+    "comuna": "22",
+    "zone": "Cali Extremo Sur"
+  },
+  "san joaquín": {
+    "name": "San Joaquín",
+    "lat": 3.368,
+    "lng": -76.531,
+    "comuna": "22",
+    "zone": "Cali Extremo Sur"
+  },
+  "boachal": {
+    "name": "Boachal",
+    "lat": 3.3585,
+    "lng": -76.5255,
+    "comuna": "22",
+    "zone": "Cali Sur"
+  },
+  "el bochal": {
+    "name": "El Bochal",
+    "lat": 3.3585,
+    "lng": -76.5255,
+    "comuna": "22",
+    "zone": "Cali Sur"
+  },
+  "zonamerica / icesi": {
+    "name": "Zonamerica / Icesi",
+    "lat": 3.342,
+    "lng": -76.531,
+    "comuna": "22",
+    "zone": "Cali Extremo Sur"
+  },
+  "la buitrera (cali)": {
+    "name": "La Buitrera (Cali)",
+    "lat": 3.3685,
+    "lng": -76.5685,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "montebello": {
+    "name": "Montebello",
+    "lat": 3.4885,
+    "lng": -76.5515,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "golondrinas": {
+    "name": "Golondrinas",
+    "lat": 3.5045,
+    "lng": -76.5415,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "felidia": {
+    "name": "Felidia",
+    "lat": 3.4815,
+    "lng": -76.6125,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "el saladito": {
+    "name": "El Saladito",
+    "lat": 3.4915,
+    "lng": -76.5895,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "km 18": {
+    "name": "Km 18",
+    "lat": 3.5185,
+    "lng": -76.6215,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "pichindé": {
+    "name": "Pichindé",
+    "lat": 3.4385,
+    "lng": -76.6215,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "los andes (corregimiento)": {
+    "name": "Los Andes (Corregimiento)",
+    "lat": 3.4215,
+    "lng": -76.5895,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "villacarmelo": {
+    "name": "Villacarmelo",
+    "lat": 3.385,
+    "lng": -76.6015,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "navarro": {
+    "name": "Navarro",
+    "lat": 3.3885,
+    "lng": -76.4755,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "el hormiguero": {
+    "name": "El Hormiguero",
+    "lat": 3.3325,
+    "lng": -76.4885,
+    "comuna": "Corregimiento",
+    "zone": "Corregimiento Cali"
+  },
+  "jamundí centro": {
+    "name": "Jamundí Centro",
+    "lat": 3.2612,
+    "lng": -76.5412,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "alfaguara": {
+    "name": "Alfaguara",
+    "lat": 3.275,
+    "lng": -76.548,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "ciudad country": {
+    "name": "Ciudad Country",
+    "lat": 3.2915,
+    "lng": -76.535,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "terranova": {
+    "name": "Terranova",
+    "lat": 3.2845,
+    "lng": -76.532,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "el rodeo (jamundí)": {
+    "name": "El Rodeo (Jamundí)",
+    "lat": 3.2685,
+    "lng": -76.545,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "pangola": {
+    "name": "Pangola",
+    "lat": 3.2715,
+    "lng": -76.5525,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "bonanza": {
+    "name": "Bonanza",
+    "lat": 3.255,
+    "lng": -76.5385,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "portal del jordán": {
+    "name": "Portal del Jordán",
+    "lat": 3.2675,
+    "lng": -76.536,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "sachamate": {
+    "name": "Sachamate",
+    "lat": 3.252,
+    "lng": -76.546,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "potrerito (jamundí)": {
+    "name": "Potrerito (Jamundí)",
+    "lat": 3.2385,
+    "lng": -76.571,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "verde horizonte": {
+    "name": "Verde Horizonte",
+    "lat": 3.281,
+    "lng": -76.559,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "las flores (jamundí)": {
+    "name": "Las Flores (Jamundí)",
+    "lat": 3.2645,
+    "lng": -76.5325,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "rincón de zaragoza": {
+    "name": "Rincón de Zaragoza",
+    "lat": 3.2785,
+    "lng": -76.542,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "la morada": {
+    "name": "La Morada",
+    "lat": 3.305,
+    "lng": -76.538,
+    "comuna": "Jamundí",
+    "zone": "Jamundí / Cali Sur"
+  },
+  "paso de la bolsa": {
+    "name": "Paso de la Bolsa",
+    "lat": 3.2315,
+    "lng": -76.512,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "bolo jamundí": {
+    "name": "Bolo Jamundí",
+    "lat": 3.251,
+    "lng": -76.521,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "robles (jamundí)": {
+    "name": "Robles (Jamundí)",
+    "lat": 3.1985,
+    "lng": -76.532,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "villa colombia (jamundí)": {
+    "name": "Villa Colombia (Jamundí)",
+    "lat": 3.258,
+    "lng": -76.535,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "la arboleda (jamundí)": {
+    "name": "La Arboleda (Jamundí)",
+    "lat": 3.272,
+    "lng": -76.539,
+    "comuna": "Jamundí",
+    "zone": "Jamundí"
+  },
+  "el castillo (jamundí / cali)": {
+    "name": "El Castillo (Jamundí / Cali)",
+    "lat": 3.315,
+    "lng": -76.536,
+    "comuna": "Jamundí",
+    "zone": "Jamundí / Cali Sur"
   }
 }
