@@ -9,11 +9,19 @@ const TARGET_EMAIL = "busquedanimalcali@gmail.com";
 
 export function getTransporter() {
   return nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
       user: EMAIL_USER,
       pass: EMAIL_PASS,
     },
+    tls: {
+      rejectUnauthorized: false,
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 }
 
@@ -23,10 +31,42 @@ export async function sendNewReportEmail(pet: any) {
   const isLost = pet.report_type === "LOST";
   const typeLabel = isLost ? "🚨 MASCOTA BUSCADA / PERDIDA" : "🐶 MASCOTA ENCONTRADA / RESCATADA";
 
+  const attachments: any[] = [];
+  let photoHtml = "";
+
+  if (pet.photo_url && typeof pet.photo_url === "string") {
+    if (pet.photo_url.startsWith("data:image")) {
+      const match = pet.photo_url.match(/^data:image\/(\w+);base64,(.+)$/);
+      if (match) {
+        const ext = match[1] || "jpeg";
+        const base64Data = match[2];
+        attachments.push({
+          filename: `foto_${pet.id}.${ext}`,
+          content: Buffer.from(base64Data, "base64"),
+          cid: "petphoto_cid",
+        });
+        photoHtml = `
+          <div style="text-align: center; margin-top: 15px;">
+            <p style="font-size: 12px; color: #71717a; margin-bottom: 8px;">Foto del reporte:</p>
+            <img src="cid:petphoto_cid" alt="${pet.name}" style="max-width: 100%; max-height: 350px; border-radius: 8px; border: 1px solid #d4d4d8; object-fit: contain;" />
+          </div>
+        `;
+      }
+    } else if (!pet.photo_url.startsWith("blob:") && !pet.photo_url.startsWith("/")) {
+      photoHtml = `
+        <div style="text-align: center; margin-top: 15px;">
+          <p style="font-size: 12px; color: #71717a; margin-bottom: 8px;">Foto del reporte:</p>
+          <img src="${pet.photo_url}" alt="${pet.name}" style="max-width: 100%; max-height: 350px; border-radius: 8px; border: 1px solid #d4d4d8; object-fit: contain;" />
+        </div>
+      `;
+    }
+  }
+
   const mailOptions = {
-    from: `"Búsqueda Animal Cali" <${EMAIL_USER || TARGET_EMAIL}>`,
+    from: `"Búsqueda Animal Cali" <${EMAIL_USER}>`,
     to: TARGET_EMAIL,
     subject: `[NUEVO REPORTE ${pet.id}] ${typeLabel}: ${pet.name} (${pet.species})`,
+    attachments,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9fb; border: 1px solid #e1e1e6; border-radius: 12px; overflow: hidden;">
         <div style="background: #121214; color: #fff; padding: 20px; text-align: center;">
@@ -55,12 +95,7 @@ export async function sendNewReportEmail(pet: any) {
             <p style="margin: 6px 0;"><strong>Teléfono / WhatsApp:</strong> ${pet.contact_phone || "No proporcionado"}</p>
           </div>
 
-          ${pet.photo_url ? `
-          <div style="text-align: center; margin-top: 15px;">
-            <p style="font-size: 12px; color: #71717a; margin-bottom: 8px;">Foto del reporte:</p>
-            <img src="${pet.photo_url}" alt="${pet.name}" style="max-width: 100%; max-height: 350px; border-radius: 8px; border: 1px solid #d4d4d8; object-fit: contain;" />
-          </div>
-          ` : ''}
+          ${photoHtml}
         </div>
         
         <div style="background: #f4f4f5; padding: 12px 20px; text-align: center; font-size: 11px; color: #71717a;">
