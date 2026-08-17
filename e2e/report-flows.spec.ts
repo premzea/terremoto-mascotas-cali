@@ -12,7 +12,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await expect(lostReportBtn).toBeVisible();
     await lostReportBtn.click();
 
-    const modal = page.locator("div.fixed");
+    const modal = page.locator("div.fixed").first();
 
     // 2. Verify Step 1 opens
     await expect(modal.locator("h2:has-text('Reportar Mascota Perdida')")).toBeVisible();
@@ -96,11 +96,10 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await expect(newCard).toContainText("B");
 
     // Clean up test record via API to keep database clean
-    const cardText = await newCard.innerText();
-    const idMatch = cardText.match(/ID:\s*(B\d+)/i);
-    if (idMatch && idMatch[1]) {
+    const cardId = await newCard.locator("span.font-mono").innerText().catch(() => "");
+    if (cardId && /^[BR]\d+$/.test(cardId.trim())) {
       await page.request.post("/api/close-case", {
-        data: { petId: idMatch[1], passcode: "120905260506" },
+        data: { petId: cardId.trim(), passcode: "120905260506" },
       });
     }
   });
@@ -111,7 +110,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await expect(foundReportBtn).toBeVisible();
     await foundReportBtn.click();
 
-    const modal = page.locator("div.fixed");
+    const modal = page.locator("div.fixed").first();
 
     // 2. Verify Step 1 opens for Found Pet
     await expect(modal.locator("h2:has-text('Reportar Mascota Encontrada')")).toBeVisible();
@@ -183,11 +182,10 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await expect(newCard).toContainText("En resguardo en Cali (Ubicación protegida por Triaje)");
 
     // Clean up test record via API to keep database clean
-    const cardText = await newCard.innerText();
-    const idMatch = cardText.match(/ID:\s*(R\d+)/i);
-    if (idMatch && idMatch[1]) {
+    const cardId = await newCard.locator("span.font-mono").innerText().catch(() => "");
+    if (cardId && /^[BR]\d+$/.test(cardId.trim())) {
       await page.request.post("/api/close-case", {
-        data: { petId: idMatch[1], passcode: "120905260506" },
+        data: { petId: cardId.trim(), passcode: "120905260506" },
       });
     }
   });
