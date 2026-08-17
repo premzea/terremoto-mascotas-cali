@@ -87,7 +87,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
     expect(matchResult).not.toBeNull();
     expect(matchResult!.totalScore).toBeGreaterThanOrEqual(88);
     expect(matchResult!.reasons.some((r) => r.includes("Biometría facial PetFace"))).toBeTruthy();
-    expect(matchResult!.reasons.some((r) => r.includes("Coincidencia de color"))).toBeTruthy();
+    expect(matchResult!.reasons.some((r) => r.toLowerCase().includes("color"))).toBeTruthy();
   });
 
   test("2. Hard Filter: Rejects candidates of different species with null result", () => {
@@ -189,7 +189,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
     expect(matchResult!.totalScore).toBeGreaterThanOrEqual(80);
     // Verified whole-body fallback reasons
     expect(matchResult!.reasons.some((r) => r.includes("Similitud visual de cuerpo"))).toBeTruthy();
-    expect(matchResult!.reasons.some((r) => r.includes("Coincidencia de color"))).toBeTruthy();
+    expect(matchResult!.reasons.some((r) => r.toLowerCase().includes("color"))).toBeTruthy();
   });
 
   test("4. Observation Clustering: Successfully clusters 3 separate rescuer sightings of the same husky in El Ingenio", () => {

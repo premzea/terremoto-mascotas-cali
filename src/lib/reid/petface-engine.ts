@@ -41,16 +41,39 @@ export function computeAttributeSimilarity(
   let scorePoints = 0;
   let maxPoints = 0;
 
-  // 1. Coat colors (Max 40 pts)
+  // 1. Dominant-Aware Coat Color Matching (Max 40 pts)
   maxPoints += 40;
   const colorsA = attrA.coat_colors.map((c) => c.toLowerCase());
   const colorsB = attrB.coat_colors.map((c) => c.toLowerCase());
+  const domA = colorsA[0] || "unknown";
+  const secA = colorsA[1] || null;
+  const domB = colorsB[0] || "unknown";
+  const secB = colorsB[1] || null;
+
+  const isWhiteA = /blanco|white/.test(domA);
+  const isBlackA = /negro|black/.test(domA);
+  const isWhiteB = /blanco|white/.test(domB);
+  const isBlackB = /negro|black/.test(domB);
+
   if (colorsA.length > 0 && colorsB.length > 0) {
-    const common = colorsA.filter((c) => colorsB.includes(c));
-    if (common.length > 0) {
-      const jaccard = common.length / new Set([...colorsA, ...colorsB]).size;
-      scorePoints += jaccard * 40;
-      matchedReasons.push(`🎨 Coincidencia de color: ${common.join(", ")}`);
+    if (domA === domB && domA !== "unknown") {
+      let pts = 30;
+      if (secA && secB && secA === secB) {
+        pts = 40;
+        matchedReasons.push(`🎨 Color base y acento idénticos (${domA} + ${secA})`);
+      } else {
+        matchedReasons.push(`🎨 Mismo color base dominante: ${domA}`);
+      }
+      scorePoints += pts;
+    } else if ((isWhiteA && isBlackB) || (isBlackA && isWhiteB)) {
+      // Inverted Polarity Conflict: Mostly White vs Mostly Black
+      scorePoints += 5; // Heavy reduction
+    } else {
+      const common = colorsA.filter((c) => colorsB.includes(c));
+      if (common.length > 0) {
+        scorePoints += 15;
+        matchedReasons.push(`🎨 Coincidencia parcial de color: ${common.join(", ")}`);
+      }
     }
   } else {
     scorePoints += 15; // Neutral baseline
@@ -237,17 +260,27 @@ export function scorePetReIDPair(
   };
 }
 
-/**
- * Transforms a standard PetReport into canonical PetReIDFeatures.
- */
 export function petReportToReIDFeatures(
   pet: PetReport,
   petface?: PetFaceEmbedding | null,
-  visualClip?: VisualClipEmbedding | null
+  visualClip?: VisualClipEmbedding | null,
+  v2Meta?: { coat_colors?: string[]; coat_pattern?: string; size?: string; ear_type?: string } | null
 ): PetReIDFeatures {
-  const colors: string[] = [];
-  if (pet.primary_color) colors.push(pet.primary_color);
-  if (pet.secondary_color) colors.push(pet.secondary_color);
+  let colors: string[] = [];
+  if (v2Meta && v2Meta.coat_colors && v2Meta.coat_colors.length > 0) {
+    colors = [...v2Meta.coat_colors];
+  } else {
+    const text = `${pet.primary_color || ""} ${pet.secondary_color || ""} ${pet.distinctive_features || ""}`
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+    if (/\b(blanco|white)\b/.test(text)) colors.push("WHITE");
+    if (/\b(negro|black|oscura|oscuro)\b/.test(text)) colors.push("BLACK");
+    if (/\b(cafe|marron|brown|chocolate)\b/.test(text)) colors.push("BROWN");
+    if (/\b(amarillo|dorado|golden|yellow|mono|mona)\b/.test(text)) colors.push("GOLDEN_YELLOW");
+    if (/\b(gris|plomo|gray|silver)\b/.test(text)) colors.push("GRAY_SILVER");
+    if (/\b(crema|beige|canela|arena)\b/.test(text)) colors.push("CREAM");
+  }
 
   return {
     petId: pet.id || "TEMP",
@@ -260,7 +293,8 @@ export function petReportToReIDFeatures(
       species: pet.species,
       size: (pet.size as "PEQUEÑO" | "MEDIANO" | "GRANDE") || "MEDIANO",
       coat_colors: colors,
-      coat_pattern: pet.pattern || undefined,
+      coat_pattern: v2Meta?.coat_pattern || pet.pattern || undefined,
+      ear_type: (v2Meta?.ear_type as any) || undefined,
       distinctive_markings: pet.distinctive_features ? [pet.distinctive_features] : [],
     },
     lat: pet.lat,

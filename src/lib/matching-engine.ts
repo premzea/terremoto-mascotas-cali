@@ -2,6 +2,9 @@ import { PetReport } from "./types";
 import dinov2Embeddings from "@/data/dinov2_embeddings.json";
 import visualFeaturesV2 from "@/data/visual_features_v2_cache.json";
 import legacyVisualFeatures from "@/data/visual_features_cache.json";
+import { petReportToReIDFeatures, scorePetReIDPair } from "./reid/petface-engine";
+
+export type MatchingAlgorithmMode = "V2_MULTIMODAL" | "V1_CLASSIC";
 
 export interface MatchResult {
   pet: PetReport;
@@ -9,6 +12,7 @@ export interface MatchResult {
   distanceKm: number;
   reasons: string[];
   visualSummary?: string | null;
+  algorithmUsed?: MatchingAlgorithmMode;
 }
 
 export type SpeciesEnum = "DOG" | "CAT" | "OTHER" | "UNKNOWN";
@@ -68,85 +72,83 @@ const COLOR_NAMES: Record<CoatColorEnum, string> = {
   BLACK: "Negro",
   WHITE: "Blanco",
   BROWN: "Marrón",
-  GOLDEN_YELLOW: "Amarillo/Miel",
-  GRAY_SILVER: "Gris/Plomo",
-  CREAM: "Crema",
-  ORANGE_RED: "Naranja/Rubio",
+  GOLDEN_YELLOW: "Dorado / Amarillo",
+  GRAY_SILVER: "Gris",
+  CREAM: "Crema / Beige",
+  ORANGE_RED: "Naranja / Rojizo",
 };
 
 const PATTERN_NAMES: Record<CoatPatternEnum, string> = {
-  SOLID: "Sólido",
-  SPOTTED: "Manchas",
-  STRIPED_TABBY: "Rayas / Atigrado",
+  SOLID: "Color Sólido",
+  SPOTTED: "Manchas / Pecas",
+  STRIPED_TABBY: "Atigrado / Rayas",
   MERLE_BRINDLE: "Abigarrado / Brindle",
-  PATCHED_CALICO: "Calicó / Carey",
-  BICOLOR_TUXEDO: "Bicolor / Tuxedo",
-  POINTED_SIAMESE: "Siamés (Pointed)",
-  UNKNOWN: "Mixto",
+  PATCHED_CALICO: "Calicó / Parches",
+  BICOLOR_TUXEDO: "Bicolor / Pechera blanca",
+  POINTED_SIAMESE: "Siamés / Puntas oscuras",
+  UNKNOWN: "Estándar",
 };
 
-function extractColorsFromPet(pet: PetReport, v2Data?: PetMetadataV2): CoatColorEnum[] {
-  if (v2Data?.coat_colors && v2Data.coat_colors.length > 0) {
-    return v2Data.coat_colors;
+function normalizeSize(s?: string): SizeEnum {
+  if (!s) return "UNKNOWN";
+  const up = s.toUpperCase();
+  if (up.includes("PEQUE") || up.includes("SMALL")) return "SMALL";
+  if (up.includes("GRAND") || up.includes("LARGE")) return "LARGE";
+  if (up.includes("MEDIAN") || up.includes("MEDIUM")) return "MEDIUM";
+  return "UNKNOWN";
+}
+
+function extractColorsFromPet(pet: PetReport, v2Meta?: PetMetadataV2): CoatColorEnum[] {
+  if (v2Meta && v2Meta.coat_colors && v2Meta.coat_colors.length > 0) {
+    return v2Meta.coat_colors;
   }
   const text = `${pet.primary_color || ""} ${pet.secondary_color || ""} ${pet.distinctive_features || ""}`
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-  const colors: CoatColorEnum[] = [];
-  if (/negro|black|oscuro|azabache/.test(text)) colors.push("BLACK");
-  if (/blanco|white|claro|nieve/.test(text)) colors.push("WHITE");
-  if (/cafe|marron|brown|chocolate|canela|tabaco/.test(text)) colors.push("BROWN");
-  if (/amarillo|dorado|miel|golden|rubio|yellow|oro/.test(text)) colors.push("GOLDEN_YELLOW");
-  if (/gris|plomo|plateado|silver|gray|grey|ceniza/.test(text)) colors.push("GRAY_SILVER");
-  if (/crema|beige|cream|arena|marfil/.test(text)) colors.push("CREAM");
-  if (/naranja|rojizo|orange|rojo|red|caramelo/.test(text)) colors.push("ORANGE_RED");
-  return colors;
+  const found: CoatColorEnum[] = [];
+  if (/\b(blanco|white)\b/.test(text)) found.push("WHITE");
+  if (/\b(negro|black|oscura|oscuro)\b/.test(text)) found.push("BLACK");
+  if (/\b(cafe|marron|brown|chocolate)\b/.test(text)) found.push("BROWN");
+  if (/\b(amarillo|dorado|golden|yellow|mono|mona)\b/.test(text)) found.push("GOLDEN_YELLOW");
+  if (/\b(gris|plomo|gray|silver)\b/.test(text)) found.push("GRAY_SILVER");
+  if (/\b(crema|beige|canela|arena)\b/.test(text)) found.push("CREAM");
+  if (/\b(naranja|rojizo|red|orange|miel)\b/.test(text)) found.push("ORANGE_RED");
+
+  return found;
 }
 
-function extractPatternFromPet(pet: PetReport, v2Data?: PetMetadataV2): CoatPatternEnum {
-  if (v2Data?.coat_pattern && v2Data.coat_pattern !== "UNKNOWN") {
-    return v2Data.coat_pattern;
+function extractPatternFromPet(pet: PetReport, v2Meta?: PetMetadataV2): CoatPatternEnum {
+  if (v2Meta && v2Meta.coat_pattern && v2Meta.coat_pattern !== "UNKNOWN") {
+    return v2Meta.coat_pattern;
   }
-  const text = `${pet.pattern || ""} ${pet.distinctive_features || ""} ${pet.primary_color || ""}`
+  const text = `${pet.pattern || ""} ${pet.distinctive_features || ""}`
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-  if (/mancha|spotted|pecas|pintas/.test(text)) return "SPOTTED";
-  if (/raya|atigrado|tabby|rayado|tigre/.test(text)) return "STRIPED_TABBY";
-  if (/brindle|abigarrado|merle/.test(text)) return "MERLE_BRINDLE";
-  if (/calico|carey|tricolor/.test(text)) return "PATCHED_CALICO";
-  if (/tuxedo|bicolor|pecho blanco/.test(text)) return "BICOLOR_TUXEDO";
-  if (/siames|pointed/.test(text)) return "POINTED_SIAMESE";
-  if (/solido|un solo color|parejo/.test(text)) return "SOLID";
-  return "UNKNOWN";
-}
+  if (/\b(atigrado|rayas|tabby|garfield)\b/.test(text)) return "STRIPED_TABBY";
+  if (/\b(manchas|spotted|pecas|moteado|parches)\b/.test(text)) return "SPOTTED";
+  if (/\b(calico|carey)\b/.test(text)) return "PATCHED_CALICO";
+  if (/\b(siames|puntas)\b/.test(text)) return "POINTED_SIAMESE";
+  if (/\b(brindle|abigarrado)\b/.test(text)) return "MERLE_BRINDLE";
+  if (/\b(bicolor|pechera|calcetines|tuxedo|canas)\b/.test(text)) return "BICOLOR_TUXEDO";
+  if (/\b(solido|liso|uniforme)\b/.test(text)) return "SOLID";
 
-function normalizeSize(s?: string): "SMALL" | "MEDIUM" | "LARGE" | "UNKNOWN" {
-  if (!s) return "UNKNOWN";
-  const upper = s.toUpperCase();
-  if (upper.includes("PEQUEÑO") || upper.includes("SMALL") || upper.includes("MINI") || upper.includes("ENANO")) return "SMALL";
-  if (upper.includes("GRANDE") || upper.includes("LARGE") || upper.includes("GIGANTE")) return "LARGE";
-  if (upper.includes("MEDIANO") || upper.includes("MEDIUM")) return "MEDIUM";
   return "UNKNOWN";
 }
 
 /**
- * Hybrid Intelligent Matching Engine:
- * Dynamically compares live reports against all database records using:
- * 1. Multi-spectral chromatic similarity (Colors Jaccard)
- * 2. Breed & distinctive traits keyword extraction
- * 3. Coat pattern & morphology
- * 4. Size compatibility
- * 5. Spatial proximity across Cali neighborhoods
- * 6. DINOv2 vision embeddings when available
+ * Enhanced Matching Engine supporting selectable modes:
+ * - V2_MULTIMODAL: Full multimodal Re-ID with dynamic dual-stream weighting and continuous spatial decay.
+ * - V1_CLASSIC: Classical multi-factor linear baseline with dominant color polarity.
  */
 export function findBestMatches(
   targetPet: PetReport,
   allPets: PetReport[],
-  limit = 5
+  limit = 5,
+  algorithmMode: MatchingAlgorithmMode = "V1_CLASSIC"
 ): MatchResult[] {
   const v2Cache = (visualFeaturesV2 as unknown) as Record<string, PetMetadataV2>;
   const dinoCache = (dinov2Embeddings as unknown) as Record<string, number[]>;
@@ -166,9 +168,19 @@ export function findBestMatches(
 
   const results: MatchResult[] = [];
 
+  // V2 Multimodal ReID features
+  const targetReID = algorithmMode === "V2_MULTIMODAL"
+    ? petReportToReIDFeatures(
+        targetPet,
+        null,
+        targetDino ? { vector: targetDino, model: "DINOv2_BASE" } : null,
+        targetV2
+      )
+    : null;
+
   for (const candidate of allPets) {
     // -------------------------------------------------------------
-    // PASS 1: HARD DETERMINISTIC EXCLUSIONS
+    // PASS 1: HARD DETERMINISTIC EXCLUSIONS (Shared by all modes)
     // -------------------------------------------------------------
     if (candidate.id === targetPet.id) continue;
     if (candidate.species !== targetPet.species) continue;
@@ -197,20 +209,52 @@ export function findBestMatches(
       if (targetSize === "LARGE" && candidateSize === "SMALL") continue;
     }
 
+    const distanceKm = calculateDistanceKm(
+      targetPet.lat,
+      targetPet.lng,
+      candidate.lat,
+      candidate.lng
+    );
+
     // -------------------------------------------------------------
-    // PASS 2: MULTI-FACTOR TRAIT & COLOR SIMILARITY
+    // MODE EXECUTION: V2_MULTIMODAL vs V1_CLASSIC
+    // -------------------------------------------------------------
+    if (algorithmMode === "V2_MULTIMODAL" && targetReID) {
+      const candidateReID = petReportToReIDFeatures(
+        candidate,
+        null,
+        candidateDino ? { vector: candidateDino, model: "DINOv2_BASE" } : null,
+        candidateV2
+      );
+
+      const reidMatch = scorePetReIDPair(targetReID, candidateReID, candidate);
+      if (reidMatch && reidMatch.totalScore >= 35) {
+        results.push({
+          pet: candidate,
+          score: reidMatch.totalScore,
+          distanceKm: reidMatch.distanceKm,
+          reasons: reidMatch.reasons.slice(0, 3),
+          visualSummary: legacyCache[candidate.id || ""]?.search_summary || null,
+          algorithmUsed: "V2_MULTIMODAL",
+        });
+      }
+      continue;
+    }
+
+    // -------------------------------------------------------------
+    // V1_CLASSIC: Linear multi-factor with dominant color polarity
     // -------------------------------------------------------------
     let score = 0;
     const reasons: string[] = [];
 
     // 1. Dominant-Aware & Polarity Color Matching (Max 35 pts)
-    const domTarget = targetColors[0] || "UNKNOWN";
+    const domTarget = targetColors[0];
     const secTarget = targetColors[1] || null;
-    const domCandidate = candidateColors[0] || "UNKNOWN";
+    const domCandidate = candidateColors[0];
     const secCandidate = candidateColors[1] || null;
 
     if (targetColors.length > 0 && candidateColors.length > 0) {
-      if (domTarget === domCandidate && domTarget !== "UNKNOWN") {
+      if (domTarget && domCandidate && domTarget === domCandidate) {
         // Case 1: Same primary dominant base color (e.g. Both mostly White, or both mostly Black)
         let colorPts = 25;
         if (secTarget && secCandidate && secTarget === secCandidate) {
@@ -315,13 +359,6 @@ export function findBestMatches(
     }
 
     // 6. Geographic Proximity in Cali (Max 20 pts)
-    const distanceKm = calculateDistanceKm(
-      targetPet.lat,
-      targetPet.lng,
-      candidate.lat,
-      candidate.lng
-    );
-
     const normTargetBarrio = (targetPet.neighborhood || "").trim().toLowerCase();
     const normCandidateBarrio = (candidate.neighborhood || "").trim().toLowerCase();
 
@@ -360,6 +397,7 @@ export function findBestMatches(
         distanceKm,
         reasons: reasons.slice(0, 3),
         visualSummary: legacyCache[candidate.id || ""]?.search_summary || null,
+        algorithmUsed: "V1_CLASSIC",
       });
     }
   }
