@@ -1,10 +1,10 @@
 import nodemailer from "nodemailer";
 
 const DEFAULT_EMAIL_USER = "busquedanimalcali@gmail.com";
-const DEFAULT_EMAIL_PASS = "spfx viwh ibna mcwd";
+const DEFAULT_EMAIL_PASS = "spfxviwhibnamcwd";
 
-const EMAIL_USER = process.env.EMAIL_USER || DEFAULT_EMAIL_USER;
-const EMAIL_PASS = process.env.EMAIL_PASS || DEFAULT_EMAIL_PASS;
+const EMAIL_USER = (process.env.EMAIL_USER || DEFAULT_EMAIL_USER).trim();
+const EMAIL_PASS = (process.env.EMAIL_PASS || DEFAULT_EMAIL_PASS).replace(/\s+/g, "");
 const TARGET_EMAIL = "busquedanimalcali@gmail.com";
 
 export function getTransporter() {
