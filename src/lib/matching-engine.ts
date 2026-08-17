@@ -203,18 +203,41 @@ export function findBestMatches(
     let score = 0;
     const reasons: string[] = [];
 
-    // 1. Color matching (Max 35 pts)
+    // 1. Dominant-Aware & Polarity Color Matching (Max 35 pts)
+    const domTarget = targetColors[0] || "UNKNOWN";
+    const secTarget = targetColors[1] || null;
+    const domCandidate = candidateColors[0] || "UNKNOWN";
+    const secCandidate = candidateColors[1] || null;
+
     if (targetColors.length > 0 && candidateColors.length > 0) {
-      const commonColors = targetColors.filter((c) => candidateColors.includes(c));
-      if (commonColors.length > 0) {
-        const jaccard = commonColors.length / new Set([...targetColors, ...candidateColors]).size;
-        const colorPts = Math.round(jaccard * 35);
+      if (domTarget === domCandidate && domTarget !== "UNKNOWN") {
+        // Case 1: Same primary dominant base color (e.g. Both mostly White, or both mostly Black)
+        let colorPts = 25;
+        if (secTarget && secCandidate && secTarget === secCandidate) {
+          colorPts = 35; // Both dominant and accent match exactly
+          reasons.push(`🎨 Pelaje base y acento idénticos (${COLOR_NAMES[domTarget]} + ${COLOR_NAMES[secTarget]})`);
+        } else if (secTarget && candidateColors.includes(secTarget)) {
+          colorPts = 30;
+          reasons.push(`🎨 Mismo color base (${COLOR_NAMES[domTarget]}) y acento coincidente`);
+        } else {
+          reasons.push(`🎨 Mismo color base dominante: ${COLOR_NAMES[domTarget]}`);
+        }
         score += colorPts;
-        const colorLabels = commonColors.map((c) => COLOR_NAMES[c] || c).join(", ");
-        reasons.push(`🎨 Coincidencia de pelaje: ${colorLabels}`);
+      } else if (
+        (domTarget === "WHITE" && domCandidate === "BLACK") ||
+        (domTarget === "BLACK" && domCandidate === "WHITE")
+      ) {
+        // Case 2: Inverted Dominance (Opposite polarity: Mostly White vs Mostly Black)
+        // Heavy reduction: only 5 pts even if they share an accent spot
+        score += 5;
+      } else if (targetColors.some((c) => candidateColors.includes(c))) {
+        // Case 3: Partial accent match without direct opposite polarity
+        const common = targetColors.filter((c) => candidateColors.includes(c));
+        const colorLabels = common.map((c) => COLOR_NAMES[c] || c).join(", ");
+        score += 12;
+        reasons.push(`🎨 Coincidencia parcial de color: ${colorLabels}`);
       } else {
-        // Complete color mismatch
-        // If target is pure Golden/Orange and candidate is pure Black/Gray, heavy penalty
+        // Complete mismatch
         score += 0;
       }
     } else {
@@ -222,9 +245,17 @@ export function findBestMatches(
     }
 
     // 2. Pattern Matching (Max 12 pts)
-    if (targetPattern !== "UNKNOWN" && candidatePattern !== "UNKNOWN" && targetPattern === candidatePattern) {
-      score += 12;
-      reasons.push(`✨ Patrón coincidente: ${PATTERN_NAMES[targetPattern] || targetPattern}`);
+    if (targetPattern !== "UNKNOWN" && candidatePattern !== "UNKNOWN") {
+      if (targetPattern === candidatePattern) {
+        score += 12;
+        reasons.push(`✨ Patrón coincidente: ${PATTERN_NAMES[targetPattern] || targetPattern}`);
+      } else if (
+        (targetPattern === "SPOTTED" && candidatePattern === "BICOLOR_TUXEDO") ||
+        (targetPattern === "BICOLOR_TUXEDO" && candidatePattern === "SPOTTED")
+      ) {
+        // Pattern conflict: Spotted/Piebald vs Tuxedo
+        score -= 5;
+      }
     }
 
     // 3. Breed & Distinctive Keywords Match (Max 30 pts)
