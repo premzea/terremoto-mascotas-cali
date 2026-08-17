@@ -5,19 +5,13 @@ import { getPendingReports, removeOfflineReport } from "./offline-queue";
 
 export const LOCAL_CREATED_PETS_KEY = "CALI_USER_CREATED_PETS";
 
-function getLocallyCreatedPets(): PetReport[] {
-  if (typeof window === "undefined") return [];
+function cleanupLegacyStorage() {
+  if (typeof window === "undefined") return;
   try {
-    const raw = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      return parsed.filter((p: any) => p && p.status !== "CLOSED" && p.status !== "REUNITED");
-    }
+    localStorage.removeItem(LOCAL_CREATED_PETS_KEY);
   } catch (err) {
-    console.warn("Error reading localStorage pets:", err);
+    console.warn("Storage cleanup error:", err);
   }
-  return [];
 }
 
 export async function getPets(filters?: {
@@ -26,6 +20,7 @@ export async function getPets(filters?: {
   neighborhood?: string;
   search?: string;
 }): Promise<PetReport[]> {
+  cleanupLegacyStorage();
   let baseList: PetReport[] = [];
 
   // 1. First attempt: fetch from server route /api/pets
