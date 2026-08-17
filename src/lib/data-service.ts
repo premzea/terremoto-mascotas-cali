@@ -1,6 +1,7 @@
 import seedPets from "@/data/seed_pets.json";
 import { PetReport } from "./types";
 import { supabase } from "./supabase";
+import { getPendingReports } from "./offline-queue";
 
 export const LOCAL_CREATED_PETS_KEY = "CALI_USER_CREATED_PETS";
 
@@ -14,7 +15,7 @@ function getLocallyCreatedPets(): PetReport[] {
       return parsed.filter((p: any) => p && p.status !== "CLOSED" && p.status !== "REUNITED");
     }
   } catch (err) {
-    console.warn("Error reading locally created pets:", err);
+    console.warn("Error reading localStorage pets:", err);
   }
   return [];
 }
@@ -25,11 +26,27 @@ export async function getPets(filters?: {
   neighborhood?: string;
   search?: string;
 }): Promise<PetReport[]> {
-  const localUserPets = getLocallyCreatedPets();
   let baseList: PetReport[] = [];
 
-  // 1. If Supabase client is configured, fetch live records from Supabase
-  if (supabase) {
+  // 1. First attempt: fetch from server route /api/pets
+  try {
+    const params = new URLSearchParams();
+    if (filters?.species) params.set("species", filters.species);
+    if (filters?.report_type) params.set("report_type", filters.report_type);
+    if (filters?.neighborhood) params.set("neighborhood", filters.neighborhood);
+    if (filters?.search) params.set("search", filters.search);
+
+    const res = await fetch(`/api/pets?${params.toString()}`, { cache: "no-store" });
+    const data = await res.json();
+    if (data?.success && Array.isArray(data?.pets) && data.pets.length > 0) {
+      baseList = data.pets;
+    }
+  } catch (apiErr) {
+    console.warn("Could not fetch from /api/pets, trying Supabase direct client:", apiErr);
+  }
+
+  // 2. Second attempt: Direct Supabase client query
+  if (baseList.length === 0 && supabase) {
     try {
       let query = supabase
         .from("pets")
@@ -52,30 +69,45 @@ export async function getPets(filters?: {
       if (!error && data && data.length > 0) {
         baseList = data as PetReport[];
       }
-    } catch (err) {
-      console.warn("Supabase query failed, using local fallback:", err);
+    } catch (sbErr) {
+      console.warn("Supabase direct query error:", sbErr);
     }
   }
 
-  // 2. Fallback to seedPets if baseList is empty
+  // 3. Third attempt: Static fallback seed
   if (baseList.length === 0) {
     baseList = (seedPets as PetReport[]).filter(
       (p) => p.status !== "CLOSED" && p.status !== "REUNITED"
     );
   }
 
-  // 3. Merge locally created pets on top and deduplicate by ID
+  // 4. Retrieve local offline queue and localStorage items on this browser
+  let localPets: PetReport[] = [];
+  if (typeof window !== "undefined") {
+    // From localStorage
+    const fromStorage = getLocallyCreatedPets();
+    // From IndexedDB
+    try {
+      const pendingItems = await getPendingReports();
+      const fromIndexedDB = pendingItems.map((item) => item.data);
+      localPets = [...fromStorage, ...fromIndexedDB];
+    } catch (idbErr) {
+      localPets = fromStorage;
+    }
+  }
+
+  // 5. Merge all sources and deduplicate by ID
   const seenIds = new Set<string>();
   const merged: PetReport[] = [];
 
-  for (const pet of [...localUserPets, ...baseList]) {
+  for (const pet of [...localPets, ...baseList]) {
     if (pet && pet.id && !seenIds.has(pet.id)) {
       seenIds.add(pet.id);
       merged.push(pet);
     }
   }
 
-  // 4. Apply in-memory filters to the merged dataset
+  // 6. Apply search and species filters
   let list = merged;
 
   if (filters?.species && filters.species !== "ALL") {
