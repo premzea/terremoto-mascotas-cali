@@ -5,6 +5,7 @@ import { MapPin, MessageCircle, ZoomIn, Info, Sparkles, Shield, CheckCircle } fr
 import { useState } from "react";
 import ContactGateModal from "./ContactGateModal";
 import CloseCaseModal from "./CloseCaseModal";
+import { sanitizeDescription } from "@/lib/sanitize";
 
 interface PetCardProps {
   pet: PetReport;
@@ -108,14 +109,14 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
             </div>
 
             {/* Descripción Completa */}
-            {pet.distinctive_features && (
+            {pet.distinctive_features && sanitizeDescription(pet.distinctive_features) && (
               <div className="text-xs text-neutral-200 bg-[#161619] p-3 rounded-xl border border-neutral-800/90 leading-relaxed space-y-1">
                 <div className="flex items-center gap-1 text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider">
                   <Info className="w-3 h-3 text-amber-400" />
                   <span>Descripción y Rasgos:</span>
                 </div>
                 <p className="text-neutral-200 font-normal">
-                  {pet.distinctive_features}
+                  {sanitizeDescription(pet.distinctive_features)}
                 </p>
               </div>
             )}
@@ -190,9 +191,9 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
             </div>
 
             <div className="p-4 border-t border-neutral-800 bg-[#18181c] space-y-3">
-              {pet.distinctive_features && (
+              {pet.distinctive_features && sanitizeDescription(pet.distinctive_features) && (
                 <div className="text-xs text-neutral-300 bg-neutral-900/80 p-2.5 rounded-lg border border-neutral-800 leading-relaxed">
-                  <strong className="text-amber-400">Descripción:</strong> {pet.distinctive_features}
+                  <strong className="text-amber-400">Descripción:</strong> {sanitizeDescription(pet.distinctive_features)}
                 </div>
               )}
               <div className="flex flex-wrap items-center justify-end gap-2">

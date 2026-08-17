@@ -4,6 +4,7 @@ import { PetReport } from "@/lib/types";
 import { findBestMatches, MatchResult } from "@/lib/matching-engine";
 import { Sparkles, MapPin, X, Send, CheckCircle2, Compass, ZoomIn, MessageSquare, Loader2, AlertCircle } from "lucide-react";
 import { useState } from "react";
+import { sanitizeDescription } from "@/lib/sanitize";
 
 interface MatchingModalProps {
   targetPet: PetReport;
@@ -215,9 +216,9 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                         </div>
 
                         {/* Descripción */}
-                        {m.pet.distinctive_features && (
+                        {m.pet.distinctive_features && sanitizeDescription(m.pet.distinctive_features) && (
                           <p className="text-xs text-neutral-400 mt-2 bg-[#121215] p-2 rounded border border-neutral-800 line-clamp-2">
-                            {m.pet.distinctive_features}
+                            {sanitizeDescription(m.pet.distinctive_features)}
                           </p>
                         )}
                       </div>
