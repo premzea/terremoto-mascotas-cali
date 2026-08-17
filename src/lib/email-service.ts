@@ -3,8 +3,11 @@ import nodemailer from "nodemailer";
 const DEFAULT_EMAIL_USER = "busquedanimalcali@gmail.com";
 const DEFAULT_EMAIL_PASS = "spfxviwhibnamcwd";
 
-const EMAIL_USER = (process.env.EMAIL_USER || DEFAULT_EMAIL_USER).trim();
-const EMAIL_PASS = (process.env.EMAIL_PASS || DEFAULT_EMAIL_PASS).replace(/\s+/g, "");
+const rawUser = (process.env.EMAIL_USER || "").trim();
+const rawPass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "");
+
+export const EMAIL_USER = rawUser && rawUser.includes("@") ? rawUser : DEFAULT_EMAIL_USER;
+export const EMAIL_PASS = rawPass && rawPass.length === 16 ? rawPass : DEFAULT_EMAIL_PASS;
 const TARGET_EMAIL = "busquedanimalcali@gmail.com";
 
 export function getTransporter() {
