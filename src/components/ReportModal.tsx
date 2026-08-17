@@ -119,24 +119,27 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 mimeType: compressed.type || "image/jpeg",
               }),
             });
-            const data = await res.json();
-            if (data?.success && data?.traits) {
-              const t = data.traits;
-              if (t.species === "DOG" || t.species === "CAT") {
-                setSpecies(t.species);
+            const data = await res.json().catch(() => null);
+            const meta = data?.traits || data?.metadata;
+            if (meta) {
+              const detectedSpecies = (meta.species || "").toUpperCase();
+              if (detectedSpecies === "CAT" || detectedSpecies === "GATO") {
+                setSpecies("CAT");
+              } else if (detectedSpecies === "DOG" || detectedSpecies === "PERRO") {
+                setSpecies("DOG");
               }
-              if (t.primary_color) {
-                setPrimaryColor(t.primary_color);
+              if (meta.primary_color) {
+                setPrimaryColor(meta.primary_color);
               }
-              if (t.breed_likely) {
-                setBreed(t.breed_likely);
+              if (meta.breed_likely) {
+                setBreed(meta.breed_likely);
               }
-              if (t.search_summary) {
-                setDistinctiveFeatures(t.search_summary);
-              } else if (t.distinctive_marks) {
-                setDistinctiveFeatures(t.distinctive_marks);
+              if (meta.search_summary) {
+                setDistinctiveFeatures(meta.search_summary);
+              } else if (meta.distinctive_marks) {
+                setDistinctiveFeatures(meta.distinctive_marks);
               }
-              setAiDetected(t.search_summary || `${t.breed_likely || ""} (${t.primary_color || ""})`);
+              setAiDetected(meta.search_summary || `${detectedSpecies === "CAT" ? "Gato" : "Perro"} (${meta.primary_color || ""})`);
             }
           } catch (aiErr) {
             console.warn("AI analysis skipped or offline", aiErr);
