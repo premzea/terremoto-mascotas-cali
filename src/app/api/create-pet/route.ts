@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseUrl } from "@/lib/supabase";
 import seedPets from "@/data/seed_pets.json";
 
 function calculateNextId(reportType: "LOST" | "FOUND", existingIds: string[]): string {
@@ -150,11 +150,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (lastError || !insertedPet) {
-      console.error("Supabase rejected insertion in /api/create-pet:", lastError);
+      const host = (supabaseUrl || "").replace(/^https?:\/\//, "").split(".")[0];
+      console.error(`Supabase project (${host}) rejected insertion in /api/create-pet:`, lastError);
       return NextResponse.json(
         {
           success: false,
-          error: lastError?.message || "Rechazo de inserción en Supabase",
+          error: `[Proyecto Supabase: ${host}] ${lastError?.message || "Rechazo de inserción en Supabase"}`,
           details: lastError?.details || "No se pudo insertar el registro en la base de datos.",
           hint: lastError?.hint,
           code: lastError?.code || "INSERT_FAILED",
