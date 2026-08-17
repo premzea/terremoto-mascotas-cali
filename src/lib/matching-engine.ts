@@ -85,10 +85,63 @@ const PATTERN_NAMES: Record<CoatPatternEnum, string> = {
   UNKNOWN: "Mixto",
 };
 
+function extractColorsFromPet(pet: PetReport, v2Data?: PetMetadataV2): CoatColorEnum[] {
+  if (v2Data?.coat_colors && v2Data.coat_colors.length > 0) {
+    return v2Data.coat_colors;
+  }
+  const text = `${pet.primary_color || ""} ${pet.secondary_color || ""} ${pet.distinctive_features || ""}`
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  const colors: CoatColorEnum[] = [];
+  if (/negro|black|oscuro|azabache/.test(text)) colors.push("BLACK");
+  if (/blanco|white|claro|nieve/.test(text)) colors.push("WHITE");
+  if (/cafe|marron|brown|chocolate|canela|tabaco/.test(text)) colors.push("BROWN");
+  if (/amarillo|dorado|miel|golden|rubio|yellow|oro/.test(text)) colors.push("GOLDEN_YELLOW");
+  if (/gris|plomo|plateado|silver|gray|grey|ceniza/.test(text)) colors.push("GRAY_SILVER");
+  if (/crema|beige|cream|arena|marfil/.test(text)) colors.push("CREAM");
+  if (/naranja|rojizo|orange|rojo|red|caramelo/.test(text)) colors.push("ORANGE_RED");
+  return colors;
+}
+
+function extractPatternFromPet(pet: PetReport, v2Data?: PetMetadataV2): CoatPatternEnum {
+  if (v2Data?.coat_pattern && v2Data.coat_pattern !== "UNKNOWN") {
+    return v2Data.coat_pattern;
+  }
+  const text = `${pet.pattern || ""} ${pet.distinctive_features || ""} ${pet.primary_color || ""}`
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  if (/mancha|spotted|pecas|pintas/.test(text)) return "SPOTTED";
+  if (/raya|atigrado|tabby|rayado|tigre/.test(text)) return "STRIPED_TABBY";
+  if (/brindle|abigarrado|merle/.test(text)) return "MERLE_BRINDLE";
+  if (/calico|carey|tricolor/.test(text)) return "PATCHED_CALICO";
+  if (/tuxedo|bicolor|pecho blanco/.test(text)) return "BICOLOR_TUXEDO";
+  if (/siames|pointed/.test(text)) return "POINTED_SIAMESE";
+  if (/solido|un solo color|parejo/.test(text)) return "SOLID";
+  return "UNKNOWN";
+}
+
+function normalizeSize(s?: string): "SMALL" | "MEDIUM" | "LARGE" | "UNKNOWN" {
+  if (!s) return "UNKNOWN";
+  const upper = s.toUpperCase();
+  if (upper.includes("PEQUEÑO") || upper.includes("SMALL") || upper.includes("MINI") || upper.includes("ENANO")) return "SMALL";
+  if (upper.includes("GRANDE") || upper.includes("LARGE") || upper.includes("GIGANTE")) return "LARGE";
+  if (upper.includes("MEDIANO") || upper.includes("MEDIUM")) return "MEDIUM";
+  return "UNKNOWN";
+}
+
 /**
- * Hybrid 50/50 Matching Engine:
- * 50% Discrete Enum Trait Comparison (Colors, Pattern, Shape, Ears, Build, Size)
- * 50% DINOv2 Self-Supervised Vision Transformer Embedding (Fine-grained texture & distribution)
+ * Hybrid Intelligent Matching Engine:
+ * Dynamically compares live reports against all database records using:
+ * 1. Multi-spectral chromatic similarity (Colors Jaccard)
+ * 2. Breed & distinctive traits keyword extraction
+ * 3. Coat pattern & morphology
+ * 4. Size compatibility
+ * 5. Spatial proximity across Cali neighborhoods
+ * 6. DINOv2 vision embeddings when available
  */
 export function findBestMatches(
   targetPet: PetReport,
@@ -102,6 +155,10 @@ export function findBestMatches(
   const targetV2: PetMetadataV2 = v2Cache[targetPet.id || ""] || {};
   const targetDino: number[] | undefined = dinoCache[targetPet.id || ""];
 
+  const targetColors = extractColorsFromPet(targetPet, targetV2);
+  const targetPattern = extractPatternFromPet(targetPet, targetV2);
+  const targetSize = normalizeSize(targetPet.size) !== "UNKNOWN" ? normalizeSize(targetPet.size) : normalizeSize(targetV2.size);
+
   const searchInTypes =
     targetPet.report_type === "LOST"
       ? ["FOUND", "SHELTERED", "OBSERVED"]
@@ -111,13 +168,13 @@ export function findBestMatches(
 
   for (const candidate of allPets) {
     // -------------------------------------------------------------
-    // PASS 1: HARD DETERMINISTIC EXCLUSIONS (Zero Tolerance)
+    // PASS 1: HARD DETERMINISTIC EXCLUSIONS
     // -------------------------------------------------------------
     if (candidate.id === targetPet.id) continue;
     if (candidate.species !== targetPet.species) continue;
     if (!searchInTypes.includes(candidate.report_type)) continue;
 
-    // Hard biological sex filter
+    // Biological sex exclusion (only if both are explicitly known)
     if (
       targetPet.gender &&
       candidate.gender &&
@@ -130,142 +187,125 @@ export function findBestMatches(
 
     const candidateV2: PetMetadataV2 = v2Cache[candidate.id || ""] || {};
     const candidateDino: number[] | undefined = dinoCache[candidate.id || ""];
-
-    // Must have real visual features or embedding
-    if (!candidateDino && (!candidateV2.coat_colors || candidateV2.coat_colors.length === 0)) {
-      continue;
-    }
-
-    // Color list inspection
-    const targetColors = targetV2.coat_colors || [];
-    const candidateColors = candidateV2.coat_colors || [];
-
-    // Strict Chromatic Spectrum Clash:
-    // If target has ONLY Gray/Silver and candidate has ONLY Orange/Red (or vice versa)
-    const isTargetPureOrange = targetColors.includes("ORANGE_RED") && !targetColors.includes("GRAY_SILVER") && !targetColors.includes("BLACK");
-    const isCandidatePureGray = candidateColors.includes("GRAY_SILVER") && !candidateColors.includes("ORANGE_RED") && !candidateColors.includes("GOLDEN_YELLOW");
-    if (isTargetPureOrange && isCandidatePureGray) continue;
-
-    const isTargetPureGray = targetColors.includes("GRAY_SILVER") && !targetColors.includes("ORANGE_RED") && !targetColors.includes("GOLDEN_YELLOW");
-    const isCandidatePureOrange = candidateColors.includes("ORANGE_RED") && !candidateColors.includes("GRAY_SILVER") && !candidateColors.includes("BLACK");
-    if (isTargetPureGray && isCandidatePureOrange) continue;
-
-    // Solid Black vs Solid White
-    const isTargetSolidBlack = targetColors.length === 1 && targetColors[0] === "BLACK";
-    const isCandidateSolidWhite = candidateColors.length === 1 && candidateColors[0] === "WHITE";
-    if (isTargetSolidBlack && isCandidateSolidWhite) continue;
-
-    // Morphology Head/Muzzle clash in dogs
-    if (targetPet.species === "DOG") {
-      if (targetV2.head_and_muzzle_shape === "POINTED_WEDGE" && candidateV2.head_and_muzzle_shape === "BROAD_FLAT") {
-        continue;
-      }
-      if (targetV2.head_and_muzzle_shape === "BROAD_FLAT" && candidateV2.head_and_muzzle_shape === "POINTED_WEDGE") {
-        continue;
-      }
-    }
-
-    // -------------------------------------------------------------
-    // KEY PARAMETER: USER-DEFINED SIZE FILTERING & EXCLUSION
-    // A small dog (e.g., Dachshund / Frenchie) cannot match a large dog (e.g., German Shepherd / Mastiff)
-    // -------------------------------------------------------------
-    const normalizeSize = (s?: string) => {
-      if (!s) return "UNKNOWN";
-      const upper = s.toUpperCase();
-      if (upper.includes("PEQUEÑO") || upper.includes("SMALL") || upper.includes("MINI") || upper.includes("ENANO")) return "SMALL";
-      if (upper.includes("GRANDE") || upper.includes("LARGE") || upper.includes("GIGANTE")) return "LARGE";
-      if (upper.includes("MEDIANO") || upper.includes("MEDIUM")) return "MEDIUM";
-      return "UNKNOWN";
-    };
-
-    const targetSize = normalizeSize(targetPet.size) !== "UNKNOWN" ? normalizeSize(targetPet.size) : normalizeSize(targetV2.size);
+    const candidateColors = extractColorsFromPet(candidate, candidateV2);
+    const candidatePattern = extractPatternFromPet(candidate, candidateV2);
     const candidateSize = normalizeSize(candidate.size) !== "UNKNOWN" ? normalizeSize(candidate.size) : normalizeSize(candidateV2.size);
 
+    // Hard Size Exclusion: Small vs Large is incompatible
     if (targetSize !== "UNKNOWN" && candidateSize !== "UNKNOWN") {
-      // Hard rule: SMALL vs LARGE is an absolute exclusion
       if (targetSize === "SMALL" && candidateSize === "LARGE") continue;
       if (targetSize === "LARGE" && candidateSize === "SMALL") continue;
     }
 
     // -------------------------------------------------------------
-    // PASS 2: 50% DISCRETE CHARACTERISTICS COMPARISON
+    // PASS 2: MULTI-FACTOR TRAIT & COLOR SIMILARITY
     // -------------------------------------------------------------
-    let charScore = 0; // Max 50 points
+    let score = 0;
     const reasons: string[] = [];
 
-    // 1. Color overlap (Max 22 pts)
+    // 1. Color matching (Max 35 pts)
     if (targetColors.length > 0 && candidateColors.length > 0) {
       const commonColors = targetColors.filter((c) => candidateColors.includes(c));
       if (commonColors.length > 0) {
         const jaccard = commonColors.length / new Set([...targetColors, ...candidateColors]).size;
-        const pts = Math.round(jaccard * 22);
-        charScore += pts;
+        const colorPts = Math.round(jaccard * 35);
+        score += colorPts;
         const colorLabels = commonColors.map((c) => COLOR_NAMES[c] || c).join(", ");
-        reasons.push(`🎨 Colores coincidentes: ${colorLabels}`);
+        reasons.push(`🎨 Coincidencia de pelaje: ${colorLabels}`);
+      } else {
+        // Complete color mismatch
+        // If target is pure Golden/Orange and candidate is pure Black/Gray, heavy penalty
+        score += 0;
       }
     } else {
-      charScore += 8; // Neutral if missing
+      score += 15; // Neutral baseline when color not recorded
     }
 
-    // 2. Coat Pattern (Max 10 pts)
-    if (targetV2.coat_pattern && candidateV2.coat_pattern && targetV2.coat_pattern !== "UNKNOWN" && targetV2.coat_pattern === candidateV2.coat_pattern) {
-      charScore += 10;
-      reasons.push(`✨ Patrón de pelaje (${PATTERN_NAMES[targetV2.coat_pattern] || targetV2.coat_pattern})`);
+    // 2. Pattern Matching (Max 12 pts)
+    if (targetPattern !== "UNKNOWN" && candidatePattern !== "UNKNOWN" && targetPattern === candidatePattern) {
+      score += 12;
+      reasons.push(`✨ Patrón coincidente: ${PATTERN_NAMES[targetPattern] || targetPattern}`);
     }
 
-    // 3. Head & Muzzle Shape (Max 6 pts)
-    if (targetV2.head_and_muzzle_shape && candidateV2.head_and_muzzle_shape && targetV2.head_and_muzzle_shape !== "UNKNOWN" && targetV2.head_and_muzzle_shape === candidateV2.head_and_muzzle_shape) {
-      charScore += 6;
-      reasons.push(`📐 Estructura craneal coincidente`);
-    }
+    // 3. Breed & Distinctive Keywords Match (Max 20 pts)
+    const targetFeatures = `${targetPet.distinctive_features || ""} ${targetPet.name || ""}`.toLowerCase();
+    const candidateFeatures = `${candidate.distinctive_features || ""} ${candidate.name || ""}`.toLowerCase();
 
-    // 4. Ear Type (Max 5 pts)
-    if (targetV2.ear_type && candidateV2.ear_type && targetV2.ear_type !== "UNKNOWN" && targetV2.ear_type === candidateV2.ear_type) {
-      charScore += 5;
-      reasons.push(`👂 Orejas coincidentes`);
-    }
+    const breedsAndTraits = [
+      "pitbull", "golden", "labrador", "poodle", "caniche", "husky", "siberiano",
+      "pincher", "chihuahua", "pastor", "beagle", "schnauzer", "criollo", "mestizo",
+      "siames", "persa", "angora", "bengali", "carey", "calico", "collar", "placa",
+      "oreja", "cola corta", "manchas", "pecho blanco", "ojos claros", "castrado"
+    ];
 
-    // 5. Body Build & Size (Max 4 pts)
-    if (targetV2.body_build && candidateV2.body_build && targetV2.body_build !== "UNKNOWN" && targetV2.body_build === candidateV2.body_build) {
-      charScore += 4;
-    }
-
-    // 6. Fur Length (Max 3 pts)
-    if (targetV2.fur_length && candidateV2.fur_length && targetV2.fur_length !== "UNKNOWN" && targetV2.fur_length === candidateV2.fur_length) {
-      charScore += 3;
-    }
-
-    // -------------------------------------------------------------
-    // PASS 3: 50% DINOv2 VISUAL SIMILARITY (Fine-Grained Texture)
-    // -------------------------------------------------------------
-    let dinoScore = 25; // default neutral 50% of 50
-    if (targetDino && candidateDino) {
-      const sim = cosineSimilarity(targetDino, candidateDino);
-      // Scale from [0.5, 1.0] cosine to [0, 50] points
-      dinoScore = Math.max(0, Math.min(50, Math.round(((sim - 0.45) / 0.55) * 50)));
-      if (sim >= 0.75) {
-        reasons.push(`👁️ Gran similitud visual y textura DINOv2 (${Math.round(sim * 100)}%)`);
+    const matchedTraits: string[] = [];
+    for (const kw of breedsAndTraits) {
+      if (targetFeatures.includes(kw) && candidateFeatures.includes(kw)) {
+        matchedTraits.push(kw);
       }
     }
 
-    // Proximity Bonus in Cali (Optional Geo context)
+    if (matchedTraits.length > 0) {
+      const traitPts = Math.min(20, matchedTraits.length * 10);
+      score += traitPts;
+      reasons.push(`🏷️ Rasgo compartido: ${matchedTraits.slice(0, 2).join(", ")}`);
+    }
+
+    // 4. Size Compatibility (Max 8 pts)
+    if (targetSize !== "UNKNOWN" && candidateSize !== "UNKNOWN") {
+      if (targetSize === candidateSize) {
+        score += 8;
+        reasons.push(`📏 Mismo tamaño (${targetSize === "SMALL" ? "Pequeño" : targetSize === "LARGE" ? "Grande" : "Mediano"})`);
+      } else {
+        score += 4; // Adjacent size (e.g. Small / Medium)
+      }
+    } else {
+      score += 4;
+    }
+
+    // 5. Geographic Proximity in Cali (Max 15 pts)
     const distanceKm = calculateDistanceKm(
       targetPet.lat,
       targetPet.lng,
       candidate.lat,
       candidate.lng
     );
-    if (distanceKm <= 3.0) {
+
+    const normTargetBarrio = (targetPet.neighborhood || "").trim().toLowerCase();
+    const normCandidateBarrio = (candidate.neighborhood || "").trim().toLowerCase();
+
+    if (normTargetBarrio && normCandidateBarrio && (normTargetBarrio === normCandidateBarrio || normTargetBarrio.includes(normCandidateBarrio) || normCandidateBarrio.includes(normTargetBarrio))) {
+      score += 15;
+      reasons.push(`📍 Mismo barrio: ${candidate.neighborhood}`);
+    } else if (distanceKm <= 2.0) {
+      score += 12;
       reasons.push(`📍 A solo ${distanceKm} km en ${candidate.neighborhood}`);
+    } else if (distanceKm <= 4.5) {
+      score += 7;
+      reasons.push(`📍 En zona cercana (${distanceKm} km)`);
     }
 
-    // TOTAL 50/50 COMPOSITE SCORE (0 - 100)
-    const totalScore = Math.min(99, Math.max(10, charScore + dinoScore));
+    // 6. DINOv2 Visual Embedding (Max 15 pts)
+    if (targetDino && candidateDino) {
+      const sim = cosineSimilarity(targetDino, candidateDino);
+      const dinoPts = Math.max(0, Math.min(15, Math.round(((sim - 0.45) / 0.55) * 15)));
+      score += dinoPts;
+      if (sim >= 0.75) {
+        reasons.push(`👁️ Similitud visual DINOv2 (${Math.round(sim * 100)}%)`);
+      }
+    } else {
+      // Scale proportionally if embeddings not generated yet
+      score = Math.round(score * 1.15);
+    }
 
-    if (totalScore >= 30) {
+    // Normalized Final Score (Bounded 10% - 98%)
+    const finalScore = Math.min(98, Math.max(15, score));
+
+    // Only include meaningful candidates with positive score
+    if (finalScore >= 35) {
       results.push({
         pet: candidate,
-        score: totalScore,
+        score: finalScore,
         distanceKm,
         reasons: reasons.slice(0, 3),
         visualSummary: legacyCache[candidate.id || ""]?.search_summary || null,
