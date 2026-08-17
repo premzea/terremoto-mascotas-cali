@@ -525,21 +525,20 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 </button>
               </div>
 
-              <div className="relative">
-                <MapPin className="w-3.5 h-3.5 text-amber-400 absolute left-3 top-3 pointer-events-none" />
-                <input
-                  type="text"
-                  value={neighborhood || barrioSearch}
-                  onChange={(e) => {
-                    setNeighborhood("");
-                    setBarrioSearch(e.target.value);
-                    setShowBarrioSuggestions(true);
-                  }}
-                  onFocus={() => setShowBarrioSuggestions(true)}
-                  placeholder="Escribe el barrio (Ej: Nápoles, Valle del Lili, Alfaguara...)"
-                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder:text-neutral-500 focus:border-amber-500 focus:outline-none"
-                />
-                {(neighborhood || barrioSearch) && (
+              {neighborhood ? (
+                /* Barrio ya seleccionado */
+                <div className="bg-neutral-900 border border-amber-500/40 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                    <div>
+                      <strong className="text-white text-xs block">{neighborhood}</strong>
+                      {selectedLat && (
+                        <span className="text-[10px] text-neutral-400">
+                          Coordenadas: {selectedLat.toFixed(3)}, {selectedLng?.toFixed(3)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                   <button
                     type="button"
                     onClick={() => {
@@ -547,48 +546,68 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                       setBarrioSearch("");
                       setSelectedLat(undefined);
                       setSelectedLng(undefined);
+                      setShowBarrioSuggestions(false);
                     }}
-                    className="absolute right-3 top-3 text-neutral-400 hover:text-white"
+                    className="p-1 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition"
+                    title="Cambiar barrio"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
-                )}
-              </div>
-
-              {/* Sugerencias de Autocompletado de Barrios */}
-              {showBarrioSuggestions && matchingBarrios.length > 0 && (
-                <div className="absolute left-0 right-0 top-16 bg-[#19191e] border border-neutral-700 rounded-xl shadow-2xl z-40 max-h-48 overflow-y-auto">
-                  {matchingBarrios.map((b: any) => (
+                </div>
+              ) : (
+                /* Buscador de barrio */
+                <div className="relative">
+                  <MapPin className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={barrioSearch}
+                    onChange={(e) => {
+                      setBarrioSearch(e.target.value);
+                      setShowBarrioSuggestions(true);
+                    }}
+                    onFocus={() => setShowBarrioSuggestions(true)}
+                    placeholder="Escribe el barrio (Ej: Nápoles, Valle del Lili, Alfaguara...)"
+                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder:text-neutral-500 focus:border-amber-500 focus:outline-none"
+                  />
+                  {barrioSearch && (
                     <button
-                      key={b.name}
                       type="button"
                       onClick={() => {
-                        setNeighborhood(b.name);
-                        setBarrioSearch(b.name);
-                        setSelectedLat(b.lat);
-                        setSelectedLng(b.lng);
+                        setBarrioSearch("");
                         setShowBarrioSuggestions(false);
                       }}
-                      className="w-full text-left px-3 py-2.5 hover:bg-neutral-800 border-b border-neutral-800/80 last:border-0 flex items-center justify-between text-xs transition"
+                      className="absolute right-3 top-3 text-neutral-400 hover:text-white"
                     >
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                        <span className="font-bold text-white">{b.name}</span>
-                      </div>
-                      <span className="text-[10px] text-amber-400/90 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
-                        {b.zone || `Comuna ${b.comuna}`}
-                      </span>
+                      <X className="w-3.5 h-3.5" />
                     </button>
-                  ))}
-                </div>
-              )}
+                  )}
 
-              {neighborhood && (
-                <div className="text-[11px] text-neutral-400 mt-1.5 flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-emerald-400" />
-                  <span>Barrio seleccionado: <strong className="text-white">{neighborhood}</strong></span>
-                  {selectedLat && (
-                    <span className="text-neutral-500">({selectedLat.toFixed(3)}, {selectedLng?.toFixed(3)})</span>
+                  {/* Sugerencias de Autocompletado de Barrios */}
+                  {showBarrioSuggestions && matchingBarrios.length > 0 && (
+                    <div className="absolute left-0 right-0 top-12 bg-[#19191e] border border-neutral-700 rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto">
+                      {matchingBarrios.map((b: any) => (
+                        <button
+                          key={b.name}
+                          type="button"
+                          onClick={() => {
+                            setNeighborhood(b.name);
+                            setBarrioSearch(b.name);
+                            setSelectedLat(b.lat);
+                            setSelectedLng(b.lng);
+                            setShowBarrioSuggestions(false);
+                          }}
+                          className="w-full text-left px-3 py-2.5 hover:bg-neutral-800 border-b border-neutral-800/80 last:border-0 flex items-center justify-between text-xs transition"
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                            <span className="font-bold text-white">{b.name}</span>
+                          </div>
+                          <span className="text-[10px] text-amber-400/90 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                            {b.zone || `Comuna ${b.comuna}`}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                   )}
                 </div>
               )}

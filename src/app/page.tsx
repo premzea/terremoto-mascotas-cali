@@ -8,7 +8,7 @@ import SplitHero from "@/components/SplitHero";
 import PetCard from "@/components/PetCard";
 import ReportModal from "@/components/ReportModal";
 import MatchingModal from "@/components/MatchingModal";
-import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass, Sparkles, SlidersHorizontal, X, Navigation } from "lucide-react";
+import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass, Sparkles, SlidersHorizontal, X, Navigation, Check } from "lucide-react";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import rawSeedPets from "@/data/seed_pets.json";
 import visualFeaturesV2 from "@/data/visual_features_v2_cache.json";
@@ -52,12 +52,15 @@ export default function Home() {
   const [zoneInputQuery, setZoneInputQuery] = useState<string>("");
   const [showZoneDropdown, setShowZoneDropdown] = useState<boolean>(false);
 
-  // Advanced Biometric Filters
+  // Advanced Biometric & Trait Filters
   const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
-  const [selectedColor, setSelectedColor] = useState<string>("ALL");
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedPattern, setSelectedPattern] = useState<string>("ALL");
   const [selectedEyeColor, setSelectedEyeColor] = useState<string>("ALL");
   const [selectedSize, setSelectedSize] = useState<string>("ALL");
+  const [selectedNeutered, setSelectedNeutered] = useState<string>("ALL");
+  const [selectedBreed, setSelectedBreed] = useState<string>("ALL");
+  const [selectedFurLength, setSelectedFurLength] = useState<string>("ALL");
 
   // Modals
   const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
@@ -151,30 +154,88 @@ export default function Home() {
     
     let list = pets.filter((p) => {
       const v2 = v2Map[p.id || ""] || {};
+      const features = (p.distinctive_features || "").toLowerCase();
+      const pColor = (p.primary_color || "").toLowerCase();
       
-      // Color Filter
-      if (selectedColor !== "ALL") {
-        const colors: string[] = v2.coat_colors || [];
-        const hasColor = colors.includes(selectedColor) || 
-          (p.primary_color && p.primary_color.toLowerCase().includes(selectedColor.toLowerCase()));
-        if (!hasColor) return false;
+      // 1. Multi-Color Filter (matches if pet has ANY of the selected colors)
+      if (selectedColors.length > 0) {
+        const colors: string[] = (v2.coat_colors || []).map((c: string) => c.toLowerCase());
+        const hasColorMatch = selectedColors.some((sc) => {
+          const scKey = sc.toLowerCase();
+          // Match by enum or localized Spanish string
+          const colorTranslations: Record<string, string[]> = {
+            black: ["negro", "black", "negra"],
+            white: ["blanco", "white", "blanca"],
+            brown: ["marrón", "cafe", "café", "chocolate", "brown"],
+            golden_yellow: ["amarillo", "dorado", "miel", "rubio", "golden", "yellow"],
+            orange_red: ["naranja", "rojo", "rojizo", "orange", "red"],
+            gray_silver: ["gris", "plomo", "plateado", "gray", "silver"],
+            cream: ["crema", "beige", "cream"],
+          };
+          const words = colorTranslations[scKey] || [scKey];
+          return (
+            colors.includes(scKey) ||
+            words.some((w) => pColor.includes(w) || features.includes(w))
+          );
+        });
+        if (!hasColorMatch) return false;
       }
 
-      // Pattern Filter
+      // 2. Castration / Neutered Filter
+      if (selectedNeutered !== "ALL") {
+        if (selectedNeutered === "CASTRADO") {
+          const isNeutered =
+            features.includes("castrado") ||
+            features.includes("esterilizado") ||
+            features.includes("macho castrado");
+          if (!isNeutered) return false;
+        } else if (selectedNeutered === "NO_CASTRADO") {
+          const isNotNeutered =
+            features.includes("sin castrar") ||
+            features.includes("sin esterilizar") ||
+            features.includes("no castrado");
+          if (!isNotNeutered) return false;
+        }
+      }
+
+      // 3. Breed Filter
+      if (selectedBreed !== "ALL") {
+        const qBreed = selectedBreed.toLowerCase();
+        const matchesBreed =
+          (v2.breed_likely && v2.breed_likely.toLowerCase().includes(qBreed)) ||
+          features.includes(qBreed);
+        if (!matchesBreed) return false;
+      }
+
+      // 4. Fur Length Filter
+      if (selectedFurLength !== "ALL") {
+        if (v2.fur_length && v2.fur_length !== selectedFurLength) {
+          const furTranslations: Record<string, string[]> = {
+            SHORT: ["pelo corto", "raso", "corto"],
+            MEDIUM: ["pelo medio", "mediano", "semilargo"],
+            LONG: ["pelo largo", "largo", "esponjoso", "abundante"],
+          };
+          const words = furTranslations[selectedFurLength] || [];
+          const hasFurWord = words.some((w) => features.includes(w));
+          if (!hasFurWord) return false;
+        }
+      }
+
+      // 5. Pattern Filter
       if (selectedPattern !== "ALL") {
         if (v2.coat_pattern && v2.coat_pattern !== selectedPattern) {
           return false;
         }
       }
 
-      // Eye Color Filter
+      // 6. Eye Color Filter
       if (selectedEyeColor !== "ALL") {
         if (v2.eye_color && v2.eye_color !== selectedEyeColor) {
           return false;
         }
       }
 
-      // Size Filter
+      // 7. Size Filter
       if (selectedSize !== "ALL") {
         if (v2.size && v2.size !== selectedSize) {
           return false;
@@ -198,7 +259,17 @@ export default function Home() {
     }
 
     return list;
-  }, [pets, selectedColor, selectedPattern, selectedEyeColor, selectedSize, userGpsLocation]);
+  }, [
+    pets,
+    selectedColors,
+    selectedNeutered,
+    selectedBreed,
+    selectedFurLength,
+    selectedPattern,
+    selectedEyeColor,
+    selectedSize,
+    userGpsLocation,
+  ]);
 
   const handleOpenReport = (type: "LOST" | "FOUND") => {
     setReportModalType(type);
@@ -226,14 +297,20 @@ export default function Home() {
     setZoneInputQuery("");
     setShowZoneDropdown(false);
     setSearchTerm("");
-    setSelectedColor("ALL");
+    setSelectedColors([]);
+    setSelectedNeutered("ALL");
+    setSelectedBreed("ALL");
+    setSelectedFurLength("ALL");
     setSelectedPattern("ALL");
     setSelectedEyeColor("ALL");
     setSelectedSize("ALL");
   };
 
   const hasActiveAdvancedFilters =
-    selectedColor !== "ALL" ||
+    selectedColors.length > 0 ||
+    selectedNeutered !== "ALL" ||
+    selectedBreed !== "ALL" ||
+    selectedFurLength !== "ALL" ||
     selectedPattern !== "ALL" ||
     selectedEyeColor !== "ALL" ||
     selectedSize !== "ALL";
@@ -470,45 +547,153 @@ export default function Home() {
 
           {/* Panel de Filtros Avanzados por Rasgos Biométricos (Enums) */}
           {showAdvancedFilters && (
-            <div className="p-3.5 bg-[#18181c] rounded-xl border border-neutral-800 space-y-3 animate-fade-in text-xs">
-              <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-                <span className="font-extrabold text-amber-400 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Filtrar por Rasgos Físicos (Clasificación IA)
+            <div className="p-4 bg-[#18181c] rounded-xl border border-neutral-800 space-y-4 animate-fade-in text-xs">
+              <div className="flex items-center justify-between border-b border-neutral-800 pb-2.5">
+                <span className="font-extrabold text-amber-400 flex items-center gap-1.5 text-sm">
+                  <Sparkles className="w-4 h-4" />
+                  Filtrar por Rasgos Físicos y Biométricos
                 </span>
                 {hasActiveAdvancedFilters && (
                   <button
                     onClick={clearAllFilters}
-                    className="text-neutral-400 hover:text-white flex items-center gap-1 text-[11px]"
+                    className="text-neutral-400 hover:text-white flex items-center gap-1 text-xs bg-neutral-800 px-2 py-1 rounded-md transition"
                   >
-                    <X className="w-3 h-3" /> Limpiar filtros
+                    <X className="w-3.5 h-3.5" /> Limpiar filtros
                   </button>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {/* 1. Color de Pelaje */}
+              {/* 1. Selección Múltiple de Colores de Pelaje */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-neutral-300 flex items-center gap-1">
+                    🎨 Colores de Pelaje (puedes marcar varios):
+                  </label>
+                  {selectedColors.length > 0 && (
+                    <span className="text-[10px] text-amber-400 font-semibold">
+                      {selectedColors.length} seleccionado(s)
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { id: "BLACK", label: "Negro", bg: "#1f2937", border: "#374151" },
+                    { id: "WHITE", label: "Blanco", bg: "#ffffff", text: "#000000", border: "#e5e7eb" },
+                    { id: "BROWN", label: "Café / Marrón", bg: "#78350f", border: "#92400e" },
+                    { id: "GOLDEN_YELLOW", label: "Dorado / Amarillo", bg: "#d97706", border: "#f59e0b" },
+                    { id: "ORANGE_RED", label: "Naranja / Rojo", bg: "#ea580c", border: "#f97316" },
+                    { id: "GRAY_SILVER", label: "Gris / Plateado", bg: "#6b7280", border: "#9ca3af" },
+                    { id: "CREAM", label: "Crema / Beige", bg: "#fef3c7", text: "#78350f", border: "#fde68a" },
+                  ].map((color) => {
+                    const isSelected = selectedColors.includes(color.id);
+                    return (
+                      <button
+                        key={color.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedColors((prev) =>
+                            isSelected
+                              ? prev.filter((c) => c !== color.id)
+                              : [...prev, color.id]
+                          );
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
+                          isSelected
+                            ? "bg-amber-500 text-black border-amber-400 shadow-md scale-105"
+                            : "bg-[#121215] text-neutral-300 border-neutral-700 hover:border-neutral-500"
+                        }`}
+                      >
+                        <span
+                          className="w-2.5 h-2.5 rounded-full inline-block border border-black/20"
+                          style={{ backgroundColor: color.bg }}
+                        />
+                        {color.label}
+                        {isSelected && <Check className="w-3 h-3 ml-0.5" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Grid de Filtros de Castración, Raza, Largo de Pelo y Tamaño */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1 border-t border-neutral-800/60">
+                {/* Castrado / Esterilizado */}
                 <div>
                   <label className="block text-[11px] font-bold text-neutral-400 mb-1">
-                    🎨 Color de Pelaje
+                    ✂️ ¿Castrado / Esterilizado?
                   </label>
                   <select
-                    value={selectedColor}
-                    onChange={(e) => setSelectedColor(e.target.value)}
-                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-1.5 text-xs text-white"
+                    value={selectedNeutered}
+                    onChange={(e) => setSelectedNeutered(e.target.value)}
+                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 focus:outline-none"
                   >
-                    <option value="ALL">Cualquier color</option>
-                    <option value="BLACK">Negro</option>
-                    <option value="WHITE">Blanco</option>
-                    <option value="ORANGE_RED">Naranja / Rubio / Rojizo</option>
-                    <option value="GOLDEN_YELLOW">Amarillo / Miel / Dorado</option>
-                    <option value="GRAY_SILVER">Gris / Plomo / Plateado</option>
-                    <option value="BROWN">Marrón / Café / Chocolate</option>
-                    <option value="CREAM">Crema</option>
+                    <option value="ALL">Cualquiera (Todos)</option>
+                    <option value="CASTRADO">Sí (Castrado / Esterilizado)</option>
+                    <option value="NO_CASTRADO">No (Sin castrar)</option>
                   </select>
                 </div>
 
-                {/* 2. Patrón de Pelaje */}
+                {/* Raza de Mascota */}
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">
+                    🐕 Raza (Frecuentes o Escribe)
+                  </label>
+                  <select
+                    value={selectedBreed}
+                    onChange={(e) => setSelectedBreed(e.target.value)}
+                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 focus:outline-none"
+                  >
+                    <option value="ALL">Cualquier raza</option>
+                    <option value="Criollo">Criollo / Mestizo</option>
+                    <option value="Pitbull">Pitbull</option>
+                    <option value="Labrador">Labrador</option>
+                    <option value="Poodle">Poodle / Caniche</option>
+                    <option value="Pinscher">Pinscher</option>
+                    <option value="Husky">Husky Siberiano</option>
+                    <option value="Pug">Pug</option>
+                    <option value="Pastor">Pastor Alemán</option>
+                    <option value="Siamés">Gato Siamés</option>
+                    <option value="Persa">Gato Persa</option>
+                  </select>
+                </div>
+
+                {/* Largo del Pelo */}
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">
+                    🦁 Largo del Pelaje
+                  </label>
+                  <select
+                    value={selectedFurLength}
+                    onChange={(e) => setSelectedFurLength(e.target.value)}
+                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 focus:outline-none"
+                  >
+                    <option value="ALL">Cualquier largo</option>
+                    <option value="SHORT">Corto / Raso</option>
+                    <option value="MEDIUM">Medio / Semilargo</option>
+                    <option value="LONG">Largo / Abundante / Esponjoso</option>
+                  </select>
+                </div>
+
+                {/* Tamaño Corporal */}
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">
+                    📏 Tamaño Corporal
+                  </label>
+                  <select
+                    value={selectedSize}
+                    onChange={(e) => setSelectedSize(e.target.value)}
+                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 focus:outline-none"
+                  >
+                    <option value="ALL">Cualquier tamaño</option>
+                    <option value="PEQUEÑO">Pequeño (Mini / Cachorro / Gato)</option>
+                    <option value="MEDIANO">Mediano (Criollo / Beagle)</option>
+                    <option value="GRANDE">Grande (Labrador / Husky / Pastor)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* 3. Grid de Patrón y Color de Ojos */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-neutral-800/60">
                 <div>
                   <label className="block text-[11px] font-bold text-neutral-400 mb-1">
                     ✨ Patrón de Pelaje
@@ -516,7 +701,7 @@ export default function Home() {
                   <select
                     value={selectedPattern}
                     onChange={(e) => setSelectedPattern(e.target.value)}
-                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-1.5 text-xs text-white"
+                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 focus:outline-none"
                   >
                     <option value="ALL">Cualquier patrón</option>
                     <option value="SOLID">Sólido / Unicolor</option>
@@ -529,7 +714,6 @@ export default function Home() {
                   </select>
                 </div>
 
-                {/* 3. Color de Ojos */}
                 <div>
                   <label className="block text-[11px] font-bold text-neutral-400 mb-1">
                     👁️ Color de Ojos
@@ -537,7 +721,7 @@ export default function Home() {
                   <select
                     value={selectedEyeColor}
                     onChange={(e) => setSelectedEyeColor(e.target.value)}
-                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-1.5 text-xs text-white"
+                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 focus:outline-none"
                   >
                     <option value="ALL">Cualquier color de ojos</option>
                     <option value="BROWN">Castaño / Marrón</option>
@@ -545,23 +729,6 @@ export default function Home() {
                     <option value="AMBER">Ámbar / Amarillo</option>
                     <option value="BLUE">Azul</option>
                     <option value="HETEROCHROMIA">Heterocromía (Ojos distintos)</option>
-                  </select>
-                </div>
-
-                {/* 4. Tamaño Estimado */}
-                <div>
-                  <label className="block text-[11px] font-bold text-neutral-400 mb-1">
-                    📏 Tamaño Corporal
-                  </label>
-                  <select
-                    value={selectedSize}
-                    onChange={(e) => setSelectedSize(e.target.value)}
-                    className="w-full bg-[#121215] border border-neutral-700 rounded-lg p-1.5 text-xs text-white"
-                  >
-                    <option value="ALL">Cualquier tamaño</option>
-                    <option value="SMALL">Pequeño (Mini / Gato / Chihuahua)</option>
-                    <option value="MEDIUM">Mediano (Beagle / Criollo)</option>
-                    <option value="LARGE">Grande (Pastor / Labrador / Husky)</option>
                   </select>
                 </div>
               </div>
