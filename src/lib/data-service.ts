@@ -84,6 +84,28 @@ export async function getPets(filters?: {
   // 4. Retrieve local offline queue and localStorage items on this browser
   let localPets: PetReport[] = [];
   if (typeof window !== "undefined") {
+    // Reconcile localStorage against authoritative server records to remove ghost deleted test pets
+    if (baseList.length > 0) {
+      const serverIds = new Set(baseList.map((p) => p.id));
+      const rawLocal = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
+      if (rawLocal) {
+        try {
+          const parsed = JSON.parse(rawLocal);
+          if (Array.isArray(parsed)) {
+            const cleaned = parsed.filter((p: any) => {
+              if (!p || !p.id) return false;
+              // If it's a server-formatted ID (B... or R...) but doesn't exist on server, prune it
+              if (/^[BR]\d+$/i.test(p.id) && !serverIds.has(p.id)) return false;
+              return p.status !== "CLOSED" && p.status !== "REUNITED";
+            });
+            localStorage.setItem(LOCAL_CREATED_PETS_KEY, JSON.stringify(cleaned));
+          }
+        } catch (e) {
+          console.warn("Reconciliation warning:", e);
+        }
+      }
+    }
+
     // From localStorage
     const fromStorage = getLocallyCreatedPets();
     // From IndexedDB

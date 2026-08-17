@@ -227,15 +227,23 @@ export function findBestMatches(
       reasons.push(`✨ Patrón coincidente: ${PATTERN_NAMES[targetPattern] || targetPattern}`);
     }
 
-    // 3. Breed & Distinctive Keywords Match (Max 20 pts)
-    const targetFeatures = `${targetPet.distinctive_features || ""} ${targetPet.name || ""}`.toLowerCase();
-    const candidateFeatures = `${candidate.distinctive_features || ""} ${candidate.name || ""}`.toLowerCase();
+    // 3. Breed & Distinctive Keywords Match (Max 30 pts)
+    const targetFeatures = `${targetPet.distinctive_features || ""} ${targetPet.name || ""}`
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+    const candidateFeatures = `${candidate.distinctive_features || ""} ${candidate.name || ""}`
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
 
     const breedsAndTraits = [
-      "pitbull", "golden", "labrador", "poodle", "caniche", "husky", "siberiano",
-      "pincher", "chihuahua", "pastor", "beagle", "schnauzer", "criollo", "mestizo",
-      "siames", "persa", "angora", "bengali", "carey", "calico", "collar", "placa",
-      "oreja", "cola corta", "manchas", "pecho blanco", "ojos claros", "castrado"
+      "pastor holandes", "holandes", "pastor", "belga", "aleman", "pitbull", "golden",
+      "labrador", "poodle", "caniche", "husky", "siberiano", "pincher", "chihuahua",
+      "beagle", "schnauzer", "criollo", "mestizo", "siames", "persa", "angora",
+      "bengali", "carey", "calico", "collar", "placa", "orejas erectas", "orejas caidas",
+      "cola corta", "manchas", "pecho blanco", "ojos claros", "ojos negro", "pelaje corto",
+      "castrado", "castrada", "esterilizada"
     ];
 
     const matchedTraits: string[] = [];
@@ -246,12 +254,24 @@ export function findBestMatches(
     }
 
     if (matchedTraits.length > 0) {
-      const traitPts = Math.min(20, matchedTraits.length * 10);
+      const traitPts = Math.min(30, matchedTraits.length * 15);
       score += traitPts;
       reasons.push(`🏷️ Rasgo compartido: ${matchedTraits.slice(0, 2).join(", ")}`);
     }
 
-    // 4. Size Compatibility (Max 8 pts)
+    // 4. Gender Match (Max 10 pts)
+    if (
+      targetPet.gender &&
+      candidate.gender &&
+      targetPet.gender !== "UNKNOWN" &&
+      candidate.gender !== "UNKNOWN" &&
+      targetPet.gender === candidate.gender
+    ) {
+      score += 10;
+      reasons.push(`⚧️ Mismo sexo (${targetPet.gender === "HEMBRA" ? "Hembra" : "Macho"})`);
+    }
+
+    // 5. Size Compatibility (Max 8 pts)
     if (targetSize !== "UNKNOWN" && candidateSize !== "UNKNOWN") {
       if (targetSize === candidateSize) {
         score += 8;
@@ -263,7 +283,7 @@ export function findBestMatches(
       score += 4;
     }
 
-    // 5. Geographic Proximity in Cali (Max 15 pts)
+    // 6. Geographic Proximity in Cali (Max 20 pts)
     const distanceKm = calculateDistanceKm(
       targetPet.lat,
       targetPet.lng,
@@ -275,17 +295,17 @@ export function findBestMatches(
     const normCandidateBarrio = (candidate.neighborhood || "").trim().toLowerCase();
 
     if (normTargetBarrio && normCandidateBarrio && (normTargetBarrio === normCandidateBarrio || normTargetBarrio.includes(normCandidateBarrio) || normCandidateBarrio.includes(normTargetBarrio))) {
-      score += 15;
+      score += 20;
       reasons.push(`📍 Mismo barrio: ${candidate.neighborhood}`);
     } else if (distanceKm <= 2.0) {
-      score += 12;
+      score += 15;
       reasons.push(`📍 A solo ${distanceKm} km en ${candidate.neighborhood}`);
     } else if (distanceKm <= 4.5) {
-      score += 7;
+      score += 8;
       reasons.push(`📍 En zona cercana (${distanceKm} km)`);
     }
 
-    // 6. DINOv2 Visual Embedding (Max 15 pts)
+    // 7. DINOv2 Visual Embedding (Max 15 pts)
     if (targetDino && candidateDino) {
       const sim = cosineSimilarity(targetDino, candidateDino);
       const dinoPts = Math.max(0, Math.min(15, Math.round(((sim - 0.45) / 0.55) * 15)));
@@ -295,10 +315,10 @@ export function findBestMatches(
       }
     } else {
       // Scale proportionally if embeddings not generated yet
-      score = Math.round(score * 1.15);
+      score = Math.round(score * 1.1);
     }
 
-    // Normalized Final Score (Bounded 10% - 98%)
+    // Normalized Final Score (Bounded 15% - 98%)
     const finalScore = Math.min(98, Math.max(15, score));
 
     // Only include meaningful candidates with positive score
