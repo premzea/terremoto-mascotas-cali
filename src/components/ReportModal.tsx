@@ -7,6 +7,7 @@ import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, Map
 import imageCompression from "browser-image-compression";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import seedPets from "@/data/seed_pets.json";
+import { supabase } from "@/lib/supabase";
 
 interface ReportModalProps {
   initialType: "LOST" | "FOUND";
@@ -139,6 +140,15 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
       // Guardar en la cola local de IndexedDB inmediatamente (Resiliencia Offline)
       await saveOfflineReport(newPet, photoBlob || undefined);
+
+      // Guardar en Supabase si está configurado
+      if (supabase) {
+        try {
+          await supabase.from("pets").insert([newPet]);
+        } catch (sbErr) {
+          console.warn("Could not insert directly to Supabase:", sbErr);
+        }
+      }
 
       // Notificar por correo a busquedanimalcali@gmail.com
       try {

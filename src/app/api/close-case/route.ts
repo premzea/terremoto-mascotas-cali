@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendCaseClosedEmail } from "@/lib/email-service";
+import { supabase } from "@/lib/supabase";
 import fs from "fs/promises";
 import path from "path";
 
@@ -25,7 +26,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Persist closure to seed_pets.json on disk
+    // 1. Update in Supabase if configured
+    if (supabase) {
+      try {
+        await supabase
+          .from("pets")
+          .update({ status: "CLOSED", closed_at: new Date().toISOString() })
+          .eq("id", petId);
+      } catch (sbErr) {
+        console.warn("Supabase update error:", sbErr);
+      }
+    }
+
+    // 2. Persist closure to seed_pets.json on disk (for local dev)
     try {
       const filePath = path.join(process.cwd(), "src", "data", "seed_pets.json");
       const fileData = await fs.readFile(filePath, "utf-8");
@@ -47,7 +60,7 @@ export async function POST(req: NextRequest) {
       console.warn("Could not write directly to seed_pets.json:", fsErr);
     }
 
-    // Send email notification to busquedanimalcali@gmail.com
+    // 3. Send email notification to busquedanimalcali@gmail.com
     try {
       await sendCaseClosedEmail(petId, petName);
     } catch (emailErr) {
