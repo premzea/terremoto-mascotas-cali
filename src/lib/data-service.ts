@@ -2,13 +2,33 @@ import seedPets from "@/data/seed_pets.json";
 import { PetReport } from "./types";
 import { supabase } from "./supabase";
 
+export const LOCAL_CREATED_PETS_KEY = "CALI_USER_CREATED_PETS";
+
+function getLocallyCreatedPets(): PetReport[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((p: any) => p && p.status !== "CLOSED" && p.status !== "REUNITED");
+    }
+  } catch (err) {
+    console.warn("Error reading locally created pets:", err);
+  }
+  return [];
+}
+
 export async function getPets(filters?: {
   species?: string;
   report_type?: string;
   neighborhood?: string;
   search?: string;
 }): Promise<PetReport[]> {
-  // If Supabase client is configured, fetch live records from Supabase
+  const localUserPets = getLocallyCreatedPets();
+  let baseList: PetReport[] = [];
+
+  // 1. If Supabase client is configured, fetch live records from Supabase
   if (supabase) {
     try {
       let query = supabase
@@ -30,28 +50,33 @@ export async function getPets(filters?: {
 
       const { data, error } = await query;
       if (!error && data && data.length > 0) {
-        let liveList = data as PetReport[];
-        if (filters?.search) {
-          const q = filters.search.toLowerCase();
-          liveList = liveList.filter(
-            (p) =>
-              p.name.toLowerCase().includes(q) ||
-              p.primary_color.toLowerCase().includes(q) ||
-              p.neighborhood.toLowerCase().includes(q) ||
-              (p.distinctive_features && p.distinctive_features.toLowerCase().includes(q))
-          );
-        }
-        return liveList;
+        baseList = data as PetReport[];
       }
     } catch (err) {
-      console.warn("Supabase query failed, using local seed fallback:", err);
+      console.warn("Supabase query failed, using local fallback:", err);
     }
   }
 
-  // Local Seed Fallback (for local testing, offline support or zero-config dev)
-  let list = (seedPets as PetReport[]).filter(
-    (p) => p.status !== "CLOSED" && p.status !== "REUNITED"
-  );
+  // 2. Fallback to seedPets if baseList is empty
+  if (baseList.length === 0) {
+    baseList = (seedPets as PetReport[]).filter(
+      (p) => p.status !== "CLOSED" && p.status !== "REUNITED"
+    );
+  }
+
+  // 3. Merge locally created pets on top and deduplicate by ID
+  const seenIds = new Set<string>();
+  const merged: PetReport[] = [];
+
+  for (const pet of [...localUserPets, ...baseList]) {
+    if (pet && pet.id && !seenIds.has(pet.id)) {
+      seenIds.add(pet.id);
+      merged.push(pet);
+    }
+  }
+
+  // 4. Apply in-memory filters to the merged dataset
+  let list = merged;
 
   if (filters?.species && filters.species !== "ALL") {
     list = list.filter((p) => p.species === filters.species);

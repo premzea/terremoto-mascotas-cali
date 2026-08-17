@@ -8,6 +8,7 @@ import imageCompression from "browser-image-compression";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import seedPets from "@/data/seed_pets.json";
 import { supabase } from "@/lib/supabase";
+import { LOCAL_CREATED_PETS_KEY } from "@/lib/data-service";
 import MapLocationPicker from "./MapLocationPicker";
 
 interface ReportModalProps {
@@ -188,36 +189,55 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         created_at: new Date().toISOString(),
       };
 
-      // Guardar en la cola local de IndexedDB inmediatamente (Resiliencia Offline)
-      await saveOfflineReport(newPet, photoBlob || undefined);
-
-      // Guardar en Supabase si está configurado
-      if (supabase) {
-        try {
-          await supabase.from("pets").insert([newPet]);
-        } catch (sbErr) {
-          console.warn("Could not insert directly to Supabase:", sbErr);
+      // 1. Guardar en Supabase a través del backend Server API /api/create-pet
+      let createdPet = newPet;
+      try {
+        const res = await fetch("/api/create-pet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newPet),
+        });
+        const resData = await res.json();
+        if (resData?.success && resData?.pet) {
+          createdPet = resData.pet;
         }
+      } catch (apiErr) {
+        console.warn("Could not reach /api/create-pet, saving locally:", apiErr);
       }
 
-      // Notificar por correo a busquedanimalcali@gmail.com
+      // 2. Persistir en localStorage del dispositivo (permanencia garantizada ante recargas)
+      try {
+        if (typeof window !== "undefined") {
+          const raw = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
+          const list = raw ? JSON.parse(raw) : [];
+          const updated = [createdPet, ...list.filter((p: any) => p && p.id !== createdPet.id)];
+          localStorage.setItem(LOCAL_CREATED_PETS_KEY, JSON.stringify(updated));
+        }
+      } catch (lsErr) {
+        console.warn("localStorage write error:", lsErr);
+      }
+
+      // 3. Guardar en la cola local de IndexedDB (Resiliencia Offline)
+      await saveOfflineReport(createdPet, photoBlob || undefined);
+
+      // 4. Notificar por correo a busquedanimalcali@gmail.com
       try {
         await fetch("/api/notify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type: "NEW_REPORT",
-            data: { pet: newPet },
+            data: { pet: createdPet },
           }),
         });
       } catch (emailErr) {
         console.warn("Could not dispatch registration email:", emailErr);
       }
       
-      onSuccess(newPet);
+      onSuccess(createdPet);
       onClose();
     } catch (e) {
-      console.error(e);
+      console.error("handleFinish error:", e);
     } finally {
       setSubmitting(false);
     }
