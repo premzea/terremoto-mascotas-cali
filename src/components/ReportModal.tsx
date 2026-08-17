@@ -338,7 +338,9 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         {step === 1 && (
           <div className="space-y-4 animate-fade-in">
             <p className="text-xs text-stone-600 leading-relaxed">
-              La fotografía permite a la Inteligencia Artificial identificar el pelaje, los rasgos y encontrar coincidencias de inmediato.
+              {reportType === "LOST"
+                ? "Sube una foto clara de tu mascota perdida desde tu galería. La IA analizará sus colores, raza y rasgos para cotejarla automáticamente."
+                : "Fotografía al animal rescatado o sube una imagen de tu galería. La IA extraerá los rasgos para buscar a su familia."}
             </p>
 
             {/* Inputs ocultos para Cámara directa y Galería */}
@@ -390,73 +392,118 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   </div>
                 )}
 
-                {/* Opciones para recortar, cambiar o volver a tomar foto */}
-                <div className="grid grid-cols-3 gap-2 w-full mt-3">
-                  <button
-                    type="button"
-                    onClick={() => setRawImageForCrop(photoPreview)}
-                    className="py-2 px-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-amber-900 text-[11px] font-extrabold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
-                  >
-                    <Crop className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Recortar</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => cameraInputRef.current?.click()}
-                    className="py-2 px-2 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
-                  >
-                    <Camera className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Cámara</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => galleryInputRef.current?.click()}
-                    className="py-2 px-2 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
-                  >
-                    <ImageIcon className="w-3.5 h-3.5 text-stone-600" />
-                    <span>Galería</span>
-                  </button>
-                </div>
+                {/* Opciones para recortar o cambiar foto */}
+                {reportType === "LOST" ? (
+                  <div className="grid grid-cols-2 gap-2 w-full mt-3">
+                    <button
+                      type="button"
+                      onClick={() => setRawImageForCrop(photoPreview)}
+                      className="py-2.5 px-3 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-amber-900 text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-2xs active:scale-[0.98] cursor-pointer"
+                    >
+                      <Crop className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Recortar / Encuadrar</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => galleryInputRef.current?.click()}
+                      className="py-2.5 px-3 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-2xs active:scale-[0.98] cursor-pointer"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5 text-stone-600" />
+                      <span>Cambiar Foto</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2 w-full mt-3">
+                    <button
+                      type="button"
+                      onClick={() => setRawImageForCrop(photoPreview)}
+                      className="py-2 px-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-amber-900 text-[11px] font-extrabold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
+                    >
+                      <Crop className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Recortar</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => cameraInputRef.current?.click()}
+                      className="py-2 px-2 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
+                    >
+                      <Camera className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Cámara</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => galleryInputRef.current?.click()}
+                      className="py-2 px-2 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5 text-stone-600" />
+                      <span>Galería</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
-                {/* Botón Principal: Tomar Foto con la Cámara */}
-                <button
-                  type="button"
-                  onClick={() => cameraInputRef.current?.click()}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold p-4 rounded-2xl flex items-center justify-center gap-3.5 shadow-md shadow-amber-500/20 active:scale-[0.98] transition group text-left cursor-pointer"
-                >
-                  <div className="p-2.5 bg-white/20 rounded-xl group-hover:scale-110 transition flex-shrink-0">
-                    <Camera className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <span className="block text-sm font-black leading-tight">
-                      📸 Tomar Foto con la Cámara
-                    </span>
-                    <span className="block text-[11px] text-amber-100 font-medium mt-0.5">
-                      Abre directamente la cámara de tu celular
-                    </span>
-                  </div>
-                </button>
+                {reportType === "LOST" ? (
+                  /* Reporte de Mascota Perdida: Únicamente Galería / Archivos */
+                  <button
+                    type="button"
+                    onClick={() => galleryInputRef.current?.click()}
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold p-5 rounded-2xl flex items-center justify-center gap-4 shadow-md shadow-amber-500/20 active:scale-[0.98] transition group text-left cursor-pointer"
+                  >
+                    <div className="p-3 bg-white/20 rounded-2xl group-hover:scale-110 transition flex-shrink-0">
+                      <ImageIcon className="w-7 h-7 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <span className="block text-sm sm:text-base font-black leading-tight">
+                        🖼️ Seleccionar Foto de la Galería
+                      </span>
+                      <span className="block text-[11px] text-amber-100 font-medium mt-0.5">
+                        Elige una foto guardada en tu teléfono o computador
+                      </span>
+                    </div>
+                  </button>
+                ) : (
+                  /* Reporte de Mascota Encontrada: Cámara Directa + Galería */
+                  <>
+                    {/* Botón Principal: Tomar Foto con la Cámara */}
+                    <button
+                      type="button"
+                      onClick={() => cameraInputRef.current?.click()}
+                      className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold p-4 rounded-2xl flex items-center justify-center gap-3.5 shadow-md shadow-amber-500/20 active:scale-[0.98] transition group text-left cursor-pointer"
+                    >
+                      <div className="p-2.5 bg-white/20 rounded-xl group-hover:scale-110 transition flex-shrink-0">
+                        <Camera className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="block text-sm font-black leading-tight">
+                          📸 Tomar Foto con la Cámara
+                        </span>
+                        <span className="block text-[11px] text-amber-100 font-medium mt-0.5">
+                          Abre directamente la cámara de tu celular
+                        </span>
+                      </div>
+                    </button>
 
-                {/* Botón Secundario: Subir desde Galería o Archivos */}
-                <button
-                  type="button"
-                  onClick={() => galleryInputRef.current?.click()}
-                  className="w-full bg-stone-50 hover:bg-stone-100 border border-stone-300 hover:border-stone-400 text-stone-800 font-bold p-3.5 rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition text-left cursor-pointer"
-                >
-                  <div className="p-2 bg-stone-200/70 rounded-xl flex-shrink-0">
-                    <ImageIcon className="w-5 h-5 text-stone-700" />
-                  </div>
-                  <div className="flex-1">
-                    <span className="block text-xs font-bold text-stone-900">
-                      🖼️ Subir desde Galería o Archivos
-                    </span>
-                    <span className="block text-[10px] text-stone-500 font-normal">
-                      Selecciona una foto guardada en tu teléfono o computador
-                    </span>
-                  </div>
-                </button>
+                    {/* Botón Secundario: Subir desde Galería o Archivos */}
+                    <button
+                      type="button"
+                      onClick={() => galleryInputRef.current?.click()}
+                      className="w-full bg-stone-50 hover:bg-stone-100 border border-stone-300 hover:border-stone-400 text-stone-800 font-bold p-3.5 rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition text-left cursor-pointer"
+                    >
+                      <div className="p-2 bg-stone-200/70 rounded-xl flex-shrink-0">
+                        <ImageIcon className="w-5 h-5 text-stone-700" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="block text-xs font-bold text-stone-900">
+                          🖼️ Subir desde Galería o Archivos
+                        </span>
+                        <span className="block text-[10px] text-stone-500 font-normal">
+                          Si ya le tomaste una foto previamente
+                        </span>
+                      </div>
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
