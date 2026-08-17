@@ -31,102 +31,157 @@ export async function POST(req: NextRequest) {
     const petData = await req.json();
 
     if (!petData.report_type || !petData.neighborhood) {
+      console.warn("Rejected /api/create-pet (400): Missing mandatory fields", petData);
       return NextResponse.json(
-        { success: false, error: "Datos obligatorios faltantes" },
+        {
+          success: false,
+          error: "Datos obligatorios faltantes: el tipo de reporte y el barrio son requeridos.",
+          code: "MISSING_REQUIRED_FIELDS",
+        },
         { status: 400 }
       );
     }
 
     const prefix = petData.report_type === "LOST" ? "B" : "R";
 
-    // 1. If Supabase is available, calculate the true sequential ID from Supabase
-    if (supabase) {
-      try {
-        const { data: existingRecords } = await supabase
-          .from("pets")
-          .select("id")
-          .neq("status", "CLOSED")
-          .neq("status", "REUNITED")
-          .like("id", `${prefix}%`);
+    if (!supabase) {
+      console.error("Supabase client is not configured or unavailable in /api/create-pet");
+      return NextResponse.json(
+        {
+          success: false,
+          error: "El servicio de base de datos no está disponible actualmente.",
+          code: "DATABASE_UNAVAILABLE",
+        },
+        { status: 503 }
+      );
+    }
 
-        const allKnownIds = [
-          ...(seedPets as any[]).map((p) => p.id),
-          ...((existingRecords || []).map((r: any) => r.id)),
-        ];
+    // 1. Query existing active IDs from Supabase to assign the next sequential ID
+    const { data: existingRecords, error: queryError } = await supabase
+      .from("pets")
+      .select("id")
+      .neq("status", "CLOSED")
+      .neq("status", "REUNITED")
+      .like("id", `${prefix}%`);
 
-        let nextNum = petData.report_type === "LOST" ? 107 : 146;
-        for (const id of allKnownIds) {
-          if (id && typeof id === "string") {
-            const trimmed = id.trim().toUpperCase();
-            if (trimmed.startsWith(prefix)) {
-              const numPart = trimmed.slice(prefix.length);
-              if (/^\d+$/.test(numPart)) {
-                const num = parseInt(numPart, 10);
-                if (!isNaN(num) && num > nextNum) {
-                  nextNum = num;
-                }
-              }
+    if (queryError) {
+      console.error("Supabase query error in /api/create-pet:", {
+        message: queryError.message,
+        details: queryError.details,
+        hint: queryError.hint,
+        code: queryError.code,
+      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Error al consultar IDs en la base de datos: ${queryError.message}`,
+          details: queryError.details,
+          code: queryError.code,
+        },
+        { status: 400 }
+      );
+    }
+
+    const allKnownIds = [
+      ...(seedPets as any[]).map((p) => p.id),
+      ...((existingRecords || []).map((r: any) => r.id)),
+    ];
+
+    let nextNum = petData.report_type === "LOST" ? 107 : 146;
+    for (const id of allKnownIds) {
+      if (id && typeof id === "string") {
+        const trimmed = id.trim().toUpperCase();
+        if (trimmed.startsWith(prefix)) {
+          const numPart = trimmed.slice(prefix.length);
+          if (/^\d+$/.test(numPart)) {
+            const num = parseInt(numPart, 10);
+            if (!isNaN(num) && num > nextNum) {
+              nextNum = num;
             }
           }
         }
-
-        let assignedId = `${prefix}${nextNum + 1}`;
-        let recordToInsert = {
-          ...petData,
-          id: assignedId,
-          created_at: new Date().toISOString(),
-          status: "ACTIVE",
-        };
-
-        // Try inserting, retry with incremented ID if collision occurs
-        let insertSuccess = false;
-        let insertedPet = recordToInsert;
-
-        for (let attempt = 0; attempt < 5; attempt++) {
-          const { data, error } = await supabase
-            .from("pets")
-            .insert([recordToInsert])
-            .select()
-            .single();
-
-          if (!error && data) {
-            insertSuccess = true;
-            insertedPet = data;
-            break;
-          } else if (error && error.code === "23505") {
-            // Unique constraint violation: increment number and retry
-            nextNum++;
-            assignedId = `${prefix}${nextNum + 1}`;
-            recordToInsert = { ...recordToInsert, id: assignedId };
-          } else {
-            console.error("Supabase insert error in /api/create-pet:", error);
-            break;
-          }
-        }
-
-        if (insertSuccess) {
-          return NextResponse.json({ success: true, pet: insertedPet });
-        }
-      } catch (sbErr) {
-        console.warn("Supabase connection issue in /api/create-pet:", sbErr);
       }
     }
 
-    // 2. Fallback if Supabase not reachable: generate clean sequential ID based on seed
-    const allKnownIds = (seedPets as any[]).map((p) => p.id);
-    const fallbackId = calculateNextId(petData.report_type, allKnownIds);
-    const fallbackPet = {
-      ...petData,
-      id: fallbackId,
-      created_at: new Date().toISOString(),
+    let assignedId = `${prefix}${nextNum + 1}`;
+    let recordToInsert = {
+      id: assignedId,
+      report_type: petData.report_type,
+      species: petData.species || "DOG",
+      name: petData.name ? String(petData.name).trim() : (petData.report_type === "LOST" ? "Sin nombre" : "Rescatado"),
+      gender: petData.gender || "UNKNOWN",
+      primary_color: petData.primary_color ? String(petData.primary_color).trim() : "Deducido por IA",
+      secondary_color: petData.secondary_color ? String(petData.secondary_color).trim() : "",
+      pattern: petData.pattern ? String(petData.pattern).trim() : "",
+      size: petData.size || "MEDIANO",
+      distinctive_features: petData.distinctive_features ? String(petData.distinctive_features).trim() : "",
+      neighborhood: petData.neighborhood ? String(petData.neighborhood).trim() : "Cali Centro (General)",
+      lat: typeof petData.lat === "number" ? petData.lat : 3.4516,
+      lng: typeof petData.lng === "number" ? petData.lng : -76.532,
+      photo_url: petData.photo_url || "/placeholder-pet.png",
+      contact_name: petData.contact_name ? String(petData.contact_name).trim() : "Reportante Anónimo",
+      contact_phone: petData.contact_phone ? String(petData.contact_phone).trim() : "",
       status: "ACTIVE",
+      created_at: new Date().toISOString(),
     };
 
-    return NextResponse.json({ success: true, pet: fallbackPet });
+    let lastError: any = null;
+    let insertedPet: any = null;
+
+    // Retry insertion if collision occurs on unique ID
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const { data, error } = await supabase
+        .from("pets")
+        .insert([recordToInsert])
+        .select()
+        .single();
+
+      if (!error && data) {
+        insertedPet = data;
+        lastError = null;
+        break;
+      } else if (error && error.code === "23505") {
+        console.warn(`ID collision on ${assignedId} (code 23505), retrying attempt ${attempt + 1}...`);
+        nextNum++;
+        assignedId = `${prefix}${nextNum + 1}`;
+        recordToInsert = { ...recordToInsert, id: assignedId };
+        lastError = error;
+      } else {
+        lastError = error;
+        console.error("Supabase insert error details in /api/create-pet:", {
+          message: error?.message,
+          details: error?.details,
+          hint: error?.hint,
+          code: error?.code,
+          record: recordToInsert,
+        });
+        break;
+      }
+    }
+
+    if (lastError || !insertedPet) {
+      console.error("Supabase rejected insertion in /api/create-pet:", lastError);
+      return NextResponse.json(
+        {
+          success: false,
+          error: lastError?.message || "Rechazo de inserción en Supabase",
+          details: lastError?.details || "No se pudo insertar el registro en la base de datos.",
+          hint: lastError?.hint,
+          code: lastError?.code || "INSERT_FAILED",
+        },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json({ success: true, pet: insertedPet }, { status: 201 });
   } catch (error: any) {
-    console.error("Error in /api/create-pet:", error);
+    console.error("Unexpected error in /api/create-pet:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Error interno del servidor" },
+      {
+        success: false,
+        error: error.message || "Error interno del servidor",
+        code: "INTERNAL_ERROR",
+      },
       { status: 500 }
     );
   }

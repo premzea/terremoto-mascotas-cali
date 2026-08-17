@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { PetReport } from "@/lib/types";
 import { saveOfflineReport } from "@/lib/offline-queue";
-import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, MapPin } from "lucide-react";
+import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, MapPin, AlertCircle } from "lucide-react";
 import imageCompression from "browser-image-compression";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import seedPets from "@/data/seed_pets.json";
@@ -51,6 +51,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const [compressing, setCompressing] = useState<boolean>(false);
   const [analyzingAi, setAnalyzingAi] = useState<boolean>(false);
   const [aiDetected, setAiDetected] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Form Fields
   const [species, setSpecies] = useState<"DOG" | "CAT" | "OTHER">("DOG");
@@ -156,6 +157,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
   const handleFinish = async () => {
     setSubmitting(true);
+    setErrorMessage(null);
     try {
       // Build structured features including breed and castration status
       let assembledFeatures = distinctiveFeatures.trim();
@@ -189,28 +191,58 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         created_at: new Date().toISOString(),
       };
 
-      // 1. Guardar en Supabase a través de /api/create-pet (obtiene ID oficial secuencial)
-      let createdPet = petPayload;
+      // 1. Guardar en Supabase a través de /api/create-pet
+      let createdPet: PetReport | null = null;
+      let isOfflineSubmission = false;
+
       try {
         const res = await fetch("/api/create-pet", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(petPayload),
         });
-        const resData = await res.json();
-        if (resData?.success && resData?.pet) {
+
+        const resData = await res.json().catch(() => null);
+
+        if (res.ok && resData?.success && resData?.pet) {
           createdPet = resData.pet;
+        } else if (res.status === 400 || !res.ok) {
+          // Rejection from Supabase / Validation
+          const errorMsg =
+            resData?.error ||
+            resData?.details ||
+            `El servidor rechazó el registro (Código ${res.status}).`;
+          console.error(`[ReportModal] Server rejected pet creation (${res.status}):`, {
+            error: resData?.error,
+            details: resData?.details,
+            hint: resData?.hint,
+            code: resData?.code,
+          });
+          setErrorMessage(errorMsg);
+          setSubmitting(false);
+          return; // Stop execution: prevent false success or saving rejected data!
         }
-      } catch (apiErr) {
-        console.warn("Could not reach /api/create-pet, saving with temporary ID:", apiErr);
+      } catch (networkErr) {
+        console.warn("[ReportModal] Network error / offline mode detected:", networkErr);
+        isOfflineSubmission = true;
+        createdPet = petPayload;
       }
 
-      // 2. Persistir en localStorage del dispositivo (permanencia garantizada ante recargas)
+      if (!createdPet) {
+        setErrorMessage("No se pudo procesar el reporte. Por favor intenta nuevamente.");
+        setSubmitting(false);
+        return;
+      }
+
+      // 2. Persistir en localStorage del dispositivo
       try {
         if (typeof window !== "undefined") {
           const raw = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
           const list = raw ? JSON.parse(raw) : [];
-          const updated = [createdPet, ...list.filter((p: any) => p && p.id !== createdPet.id && p.id !== tempFallbackId)];
+          const updated = [
+            createdPet,
+            ...list.filter((p: any) => p && p.id !== createdPet?.id && p.id !== tempFallbackId),
+          ];
           localStorage.setItem(LOCAL_CREATED_PETS_KEY, JSON.stringify(updated));
         }
       } catch (lsErr) {
@@ -218,7 +250,9 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
       }
 
       // 3. Guardar en la cola local de IndexedDB (Resiliencia Offline)
-      await saveOfflineReport(createdPet, photoBlob || undefined);
+      if (isOfflineSubmission) {
+        await saveOfflineReport(createdPet, photoBlob || undefined);
+      }
 
       // 4. Notificar por correo a busquedanimalcali@gmail.com
       try {
@@ -233,11 +267,12 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
       } catch (emailErr) {
         console.warn("Could not dispatch registration email:", emailErr);
       }
-      
+
       onSuccess(createdPet);
       onClose();
-    } catch (e) {
+    } catch (e: any) {
       console.error("handleFinish error:", e);
+      setErrorMessage(e?.message || "Ocurrió un error inesperado al guardar el reporte.");
     } finally {
       setSubmitting(false);
     }
@@ -263,6 +298,20 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Error Alert Banner */}
+        {errorMessage && (
+          <div
+            className="mb-4 p-3.5 bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs font-medium flex items-start gap-2.5 animate-fade-in shadow-xs"
+            role="alert"
+          >
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-bold text-red-900 text-xs">No se pudo guardar el reporte</p>
+              <p className="text-red-700 mt-0.5 text-[11px] leading-relaxed">{errorMessage}</p>
+            </div>
+          </div>
+        )}
 
         {/* Paso 1: Foto del animal */}
         {step === 1 && (

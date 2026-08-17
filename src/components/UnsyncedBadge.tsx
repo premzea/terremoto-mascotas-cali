@@ -29,16 +29,41 @@ export default function UnsyncedBadge() {
     setSyncing(true);
     try {
       const items = await getPendingReports();
+      let successCount = 0;
+
       for (const item of items) {
-        // Mock sending to Server Action / API
-        await new Promise((res) => setTimeout(res, 800));
-        await removeOfflineReport(item.id);
+        try {
+          const res = await fetch("/api/create-pet", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(item.data),
+          });
+
+          const resData = await res.json().catch(() => null);
+
+          if (res.ok && resData?.success) {
+            await removeOfflineReport(item.id);
+            successCount++;
+          } else if (res.status === 400 || !res.ok) {
+            console.error(
+              `[UnsyncedBadge] Server rejected offline queue item ${item.id} (Status ${res.status}):`,
+              resData
+            );
+          }
+        } catch (postErr) {
+          console.warn(`[UnsyncedBadge] Network unreachable for item ${item.id}:`, postErr);
+        }
       }
-      setPendingCount(0);
-      setSyncedJustNow(true);
-      setTimeout(() => setSyncedJustNow(false), 4000);
+
+      const remaining = await getPendingReports();
+      setPendingCount(remaining.length);
+
+      if (successCount > 0 && remaining.length === 0) {
+        setSyncedJustNow(true);
+        setTimeout(() => setSyncedJustNow(false), 4000);
+      }
     } catch (err) {
-      console.error("Sync error", err);
+      console.error("Sync error in UnsyncedBadge:", err);
     } finally {
       setSyncing(false);
     }
