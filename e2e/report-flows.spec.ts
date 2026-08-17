@@ -23,6 +23,12 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     const sampleImagePath = path.join(process.cwd(), "public", "photos", "B1.png");
     await fileInput.setInputFiles(sampleImagePath);
 
+    // Confirm crop in the new cropping tool
+    const confirmCropBtn = page.locator("button:has-text('Confirmar Recorte')");
+    if (await confirmCropBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await confirmCropBtn.click();
+    }
+
     // Wait for preview
     await expect(modal.locator("img[alt='Preview']")).toBeVisible({ timeout: 10000 });
 
@@ -107,6 +113,12 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     const fileInput = modal.locator("input[type='file']").first();
     const sampleImagePath = path.join(process.cwd(), "public", "photos", "B1.png");
     await fileInput.setInputFiles(sampleImagePath);
+
+    // Confirm crop in the new cropping tool
+    const confirmCropBtn = page.locator("button:has-text('Confirmar Recorte')");
+    if (await confirmCropBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await confirmCropBtn.click();
+    }
 
     // Wait for preview
     await expect(modal.locator("img[alt='Preview']")).toBeVisible({ timeout: 10000 });

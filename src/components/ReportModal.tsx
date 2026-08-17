@@ -3,13 +3,14 @@
 import { useState, useMemo, useRef } from "react";
 import { PetReport } from "@/lib/types";
 import { saveOfflineReport } from "@/lib/offline-queue";
-import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, MapPin, AlertCircle, Image as ImageIcon, RefreshCw } from "lucide-react";
+import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, MapPin, AlertCircle, Image as ImageIcon, RefreshCw, Crop } from "lucide-react";
 import imageCompression from "browser-image-compression";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import seedPets from "@/data/seed_pets.json";
 import { supabase } from "@/lib/supabase";
 import { LOCAL_CREATED_PETS_KEY } from "@/lib/data-service";
 import MapLocationPicker from "./MapLocationPicker";
+import ImageCropperModal from "./ImageCropperModal";
 
 interface ReportModalProps {
   initialType: "LOST" | "FOUND";
@@ -48,6 +49,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const [reportType, setReportType] = useState<"LOST" | "FOUND">(initialType);
   const [photoBlob, setPhotoBlob] = useState<Blob | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [rawImageForCrop, setRawImageForCrop] = useState<string | null>(null);
   const [compressing, setCompressing] = useState<boolean>(false);
   const [analyzingAi, setAnalyzingAi] = useState<boolean>(false);
   const [aiDetected, setAiDetected] = useState<string | null>(null);
@@ -92,74 +94,99 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
       .slice(0, 8);
   }, [barrioSearch]);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setCompressing(true);
-      setAiDetected(null);
-      try {
-        const options = {
-          maxSizeMB: 0.5,
-          maxWidthOrHeight: 1200,
-          useWebWorker: true,
-        };
-        const compressed = await imageCompression(file, options);
-        setPhotoBlob(compressed);
-        
-        // Create preview and base64 for Gemini Vision
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64data = reader.result as string;
-          setPhotoPreview(base64data);
-
-          // Asynchronously call Gemini Vision API
-          try {
-            setAnalyzingAi(true);
-            const res = await fetch("/api/analyze-pet", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                imageBase64: base64data,
-                mimeType: compressed.type || "image/jpeg",
-              }),
-            });
-            const data = await res.json().catch(() => null);
-            const meta = data?.traits || data?.metadata;
-            if (meta) {
-              const detectedSpecies = (meta.species || "").toUpperCase();
-              if (detectedSpecies === "CAT" || detectedSpecies === "GATO") {
-                setSpecies("CAT");
-              } else if (detectedSpecies === "DOG" || detectedSpecies === "PERRO") {
-                setSpecies("DOG");
-              }
-              if (meta.primary_color) {
-                setPrimaryColor(meta.primary_color);
-              }
-              if (meta.breed_likely) {
-                setBreed(meta.breed_likely);
-              }
-              if (meta.search_summary) {
-                setDistinctiveFeatures(meta.search_summary);
-              } else if (meta.distinctive_marks) {
-                setDistinctiveFeatures(meta.distinctive_marks);
-              }
-              setAiDetected(meta.search_summary || `${detectedSpecies === "CAT" ? "Gato" : "Perro"} (${meta.primary_color || ""})`);
-            }
-          } catch (aiErr) {
-            console.warn("AI analysis skipped or offline", aiErr);
-          } finally {
-            setAnalyzingAi(false);
-          }
-        };
-        reader.readAsDataURL(compressed);
-      } catch (error) {
-        console.error("Compression error:", error);
-        setPhotoBlob(file);
-        setPhotoPreview(URL.createObjectURL(file));
-      } finally {
-        setCompressing(false);
-      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          setRawImageForCrop(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+      // Reset input value so same file can be reselected if needed
+      e.target.value = "";
     }
+  };
+
+  const processFinalPhoto = async (targetBlob: Blob, dataUrl: string) => {
+    setCompressing(true);
+    setAiDetected(null);
+    setPhotoPreview(dataUrl);
+
+    try {
+      const options = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1200,
+        useWebWorker: true,
+      };
+      const compressed = await imageCompression(targetBlob as File, options);
+      setPhotoBlob(compressed);
+
+      // Asynchronously call Gemini Vision API with cropped focused image
+      try {
+        setAnalyzingAi(true);
+        const res = await fetch("/api/analyze-pet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            imageBase64: dataUrl,
+            mimeType: compressed.type || "image/jpeg",
+          }),
+        });
+        const data = await res.json().catch(() => null);
+        const meta = data?.traits || data?.metadata;
+        if (meta) {
+          const detectedSpecies = (meta.species || "").toUpperCase();
+          if (detectedSpecies === "CAT" || detectedSpecies === "GATO") {
+            setSpecies("CAT");
+          } else if (detectedSpecies === "DOG" || detectedSpecies === "PERRO") {
+            setSpecies("DOG");
+          }
+          if (meta.primary_color) {
+            setPrimaryColor(meta.primary_color);
+          }
+          if (meta.breed_likely) {
+            setBreed(meta.breed_likely);
+          }
+          if (meta.search_summary) {
+            setDistinctiveFeatures(meta.search_summary);
+          } else if (meta.distinctive_marks) {
+            setDistinctiveFeatures(meta.distinctive_marks);
+          }
+          setAiDetected(meta.search_summary || `${detectedSpecies === "CAT" ? "Gato" : "Perro"} (${meta.primary_color || ""})`);
+        }
+      } catch (aiErr) {
+        console.warn("AI analysis skipped or offline", aiErr);
+      } finally {
+        setAnalyzingAi(false);
+      }
+    } catch (err) {
+      console.error("Compression error:", err);
+      setPhotoBlob(targetBlob);
+    } finally {
+      setCompressing(false);
+    }
+  };
+
+  const handleCropComplete = (croppedBlob: Blob, croppedDataUrl: string) => {
+    setRawImageForCrop(null);
+    processFinalPhoto(croppedBlob, croppedDataUrl);
+  };
+
+  const handleCropCancel = () => {
+    if (rawImageForCrop && !photoPreview) {
+      // Use original image as fallback
+      fetch(rawImageForCrop)
+        .then((res) => res.blob())
+        .then((blob) => {
+          processFinalPhoto(blob, rawImageForCrop);
+        })
+        .catch(() => {
+          setPhotoPreview(rawImageForCrop);
+        });
+    }
+    setRawImageForCrop(null);
   };
 
   const handleFinish = async () => {
@@ -362,23 +389,31 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   </div>
                 )}
 
-                {/* Opciones para cambiar o volver a tomar foto */}
-                <div className="grid grid-cols-2 gap-2 w-full mt-3">
+                {/* Opciones para recortar, cambiar o volver a tomar foto */}
+                <div className="grid grid-cols-3 gap-2 w-full mt-3">
+                  <button
+                    type="button"
+                    onClick={() => setRawImageForCrop(photoPreview)}
+                    className="py-2 px-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-amber-900 text-[11px] font-extrabold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
+                  >
+                    <Crop className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Recortar</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => cameraInputRef.current?.click()}
-                    className="py-2.5 px-3 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs active:scale-[0.98]"
+                    className="py-2 px-2 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
                   >
                     <Camera className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Tomar otra foto</span>
+                    <span>Cámara</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => galleryInputRef.current?.click()}
-                    className="py-2.5 px-3 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs active:scale-[0.98]"
+                    className="py-2 px-2 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1 transition shadow-2xs active:scale-[0.98] cursor-pointer"
                   >
                     <ImageIcon className="w-3.5 h-3.5 text-stone-600" />
-                    <span>Elegir de galería</span>
+                    <span>Galería</span>
                   </button>
                 </div>
               </div>
@@ -812,6 +847,15 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               </button>
             </div>
           </div>
+        )}
+
+        {/* Image Cropper Modal */}
+        {rawImageForCrop && (
+          <ImageCropperModal
+            imageSrc={rawImageForCrop}
+            onCropComplete={handleCropComplete}
+            onCancel={handleCropCancel}
+          />
         )}
 
         {/* Map Location Picker Modal */}
