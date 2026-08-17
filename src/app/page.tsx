@@ -74,6 +74,14 @@ export default function Home() {
         search: searchTerm,
       });
       setPets(data);
+      if (
+        speciesFilter === "ALL" &&
+        typeFilter === "ALL" &&
+        selectedBarrio === "ALL" &&
+        !searchTerm
+      ) {
+        setAllPets(data);
+      }
     } catch (e) {
       console.error("Error loading pets", e);
     } finally {
