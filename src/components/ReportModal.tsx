@@ -237,23 +237,23 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         return;
       }
 
-      // 2. Persistir en localStorage del dispositivo
-      try {
-        if (typeof window !== "undefined") {
-          const raw = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
-          const list = raw ? JSON.parse(raw) : [];
-          const updated = [
-            createdPet,
-            ...list.filter((p: any) => p && p.id !== createdPet?.id && p.id !== tempFallbackId),
-          ];
-          localStorage.setItem(LOCAL_CREATED_PETS_KEY, JSON.stringify(updated));
-        }
-      } catch (lsErr) {
-        console.warn("localStorage write error:", lsErr);
-      }
-
-      // 3. Guardar en la cola local de IndexedDB (Resiliencia Offline)
+      // 2. Persistir localmente solo si es un envío offline pendiente
       if (isOfflineSubmission) {
+        try {
+          if (typeof window !== "undefined") {
+            const raw = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
+            const list = raw ? JSON.parse(raw) : [];
+            const updated = [
+              createdPet,
+              ...list.filter((p: any) => p && p.id !== createdPet?.id && p.id !== tempFallbackId),
+            ];
+            localStorage.setItem(LOCAL_CREATED_PETS_KEY, JSON.stringify(updated));
+          }
+        } catch (lsErr) {
+          console.warn("localStorage write error:", lsErr);
+        }
+
+        // Guardar en la cola local de IndexedDB
         await saveOfflineReport(createdPet, photoBlob || undefined);
       }
 

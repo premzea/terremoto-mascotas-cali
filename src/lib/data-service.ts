@@ -1,7 +1,7 @@
 import seedPets from "@/data/seed_pets.json";
 import { PetReport } from "./types";
 import { supabase } from "./supabase";
-import { getPendingReports } from "./offline-queue";
+import { getPendingReports, removeOfflineReport } from "./offline-queue";
 
 export const LOCAL_CREATED_PETS_KEY = "CALI_USER_CREATED_PETS";
 
@@ -82,11 +82,12 @@ export async function getPets(filters?: {
   }
 
   // 4. Retrieve local offline queue and localStorage items on this browser
-  let localPets: PetReport[] = [];
+  let localOfflineOnlyPets: PetReport[] = [];
   if (typeof window !== "undefined") {
-    // Reconcile localStorage against authoritative server records to remove ghost deleted test pets
+    const serverIds = new Set(baseList.map((p) => p.id));
+
+    // Reconcile localStorage against authoritative server records
     if (baseList.length > 0) {
-      const serverIds = new Set(baseList.map((p) => p.id));
       const rawLocal = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
       if (rawLocal) {
         try {
@@ -94,7 +95,7 @@ export async function getPets(filters?: {
           if (Array.isArray(parsed)) {
             const cleaned = parsed.filter((p: any) => {
               if (!p || !p.id) return false;
-              // If it's a server-formatted ID (B... or R...) but doesn't exist on server, prune it
+              // If it's a server ID (B... or R...) and NOT in server list, it's purged
               if (/^[BR]\d+$/i.test(p.id) && !serverIds.has(p.id)) return false;
               return p.status !== "CLOSED" && p.status !== "REUNITED";
             });
@@ -106,43 +107,40 @@ export async function getPets(filters?: {
       }
     }
 
-    // From localStorage
-    const fromStorage = getLocallyCreatedPets();
-    // From IndexedDB
+    // From IndexedDB: purge ghost deleted server IDs and keep only truly pending offline items
     try {
       const pendingItems = await getPendingReports();
-      const fromIndexedDB = pendingItems.map((item) => item.data);
-      localPets = [...fromStorage, ...fromIndexedDB];
+      for (const item of pendingItems) {
+        const itemId = item.data?.id || item.id;
+        // If it's a server ID (B... or R...) that either already exists on server or was deleted, remove from offline queue
+        if (/^[BR]\d+$/i.test(itemId)) {
+          await removeOfflineReport(item.id);
+        } else if (item.data && item.data.status !== "CLOSED" && item.data.status !== "REUNITED") {
+          localOfflineOnlyPets.push(item.data);
+        }
+      }
     } catch (idbErr) {
-      localPets = fromStorage;
+      console.warn("IndexedDB reconciliation warning:", idbErr);
     }
   }
 
-  // 5. Merge all sources: prioritizing live baseList from server/cloud, then newly added local items
+  // 5. Merge all sources: authoritative live baseList from server FIRST, then pending offline items
   const seenIds = new Set<string>();
   const merged: PetReport[] = [];
 
-  // Add local un-synced items first
-  for (const pet of localPets) {
+  // 1. Authoritative server records first
+  for (const pet of baseList) {
     if (pet && pet.id && !seenIds.has(pet.id) && pet.status !== "CLOSED" && pet.status !== "REUNITED") {
       seenIds.add(pet.id);
       merged.push(pet);
     }
   }
 
-  // Add server / cloud baseList
-  for (const pet of baseList) {
-    if (pet && pet.id) {
-      if (!seenIds.has(pet.id)) {
-        seenIds.add(pet.id);
-        merged.push(pet);
-      } else {
-        // If it already exists from local cache, replace with fresh authoritative server record
-        const idx = merged.findIndex((p) => p.id === pet.id);
-        if (idx !== -1) {
-          merged[idx] = pet;
-        }
-      }
+  // 2. Add only genuine pending offline items that have no server ID yet
+  for (const pet of localOfflineOnlyPets) {
+    if (pet && pet.id && !seenIds.has(pet.id) && pet.status !== "CLOSED" && pet.status !== "REUNITED") {
+      seenIds.add(pet.id);
+      merged.unshift(pet);
     }
   }
 
