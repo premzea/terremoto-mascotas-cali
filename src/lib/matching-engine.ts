@@ -98,6 +98,33 @@ function normalizeSize(s?: string): SizeEnum {
   return "UNKNOWN";
 }
 
+export type ColorFamily = "GINGER_WARM" | "DARK" | "LIGHT" | "GRAY" | "BROWN";
+
+export function getColorFamily(color?: CoatColorEnum): ColorFamily {
+  switch (color) {
+    case "GOLDEN_YELLOW":
+    case "ORANGE_RED":
+      return "GINGER_WARM";
+    case "BLACK":
+      return "DARK";
+    case "BROWN":
+      return "BROWN";
+    case "WHITE":
+    case "CREAM":
+      return "LIGHT";
+    case "GRAY_SILVER":
+      return "GRAY";
+    default:
+      return "DARK";
+  }
+}
+
+export function areColorsCompatible(c1?: CoatColorEnum, c2?: CoatColorEnum): boolean {
+  if (!c1 || !c2) return false;
+  if (c1 === c2) return true;
+  return getColorFamily(c1) === getColorFamily(c2);
+}
+
 function extractColorsFromPet(pet: PetReport, v2Meta?: PetMetadataV2): CoatColorEnum[] {
   if (v2Meta && v2Meta.coat_colors && v2Meta.coat_colors.length > 0) {
     return v2Meta.coat_colors;
@@ -107,16 +134,27 @@ function extractColorsFromPet(pet: PetReport, v2Meta?: PetMetadataV2): CoatColor
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-  const found: CoatColorEnum[] = [];
-  if (/\b(blanco|white)\b/.test(text)) found.push("WHITE");
-  if (/\b(negro|black|oscura|oscuro)\b/.test(text)) found.push("BLACK");
-  if (/\b(cafe|marron|brown|chocolate)\b/.test(text)) found.push("BROWN");
-  if (/\b(amarillo|dorado|golden|yellow|mono|mona)\b/.test(text)) found.push("GOLDEN_YELLOW");
-  if (/\b(gris|plomo|gray|silver)\b/.test(text)) found.push("GRAY_SILVER");
-  if (/\b(crema|beige|canela|arena)\b/.test(text)) found.push("CREAM");
-  if (/\b(naranja|rojizo|red|orange|miel)\b/.test(text)) found.push("ORANGE_RED");
+  const colorPatterns: { color: CoatColorEnum; regex: RegExp }[] = [
+    { color: "BLACK", regex: /\b(negro|black|oscura|oscuro|azabache)\b/ },
+    { color: "WHITE", regex: /\b(blanco|white|nieve|claro)\b/ },
+    { color: "BROWN", regex: /\b(cafe|marron|brown|chocolate|tabaco)\b/ },
+    { color: "GOLDEN_YELLOW", regex: /\b(amarillo|dorado|golden|yellow|mono|mona|rubio)\b/ },
+    { color: "ORANGE_RED", regex: /\b(naranja|rojizo|red|orange|miel|caramelo|garfield)\b/ },
+    { color: "GRAY_SILVER", regex: /\b(gris|plomo|gray|silver|ceniza)\b/ },
+    { color: "CREAM", regex: /\b(crema|beige|canela|arena|marfil)\b/ },
+  ];
 
-  return found;
+  const foundWithIndices: { color: CoatColorEnum; index: number }[] = [];
+  for (const { color, regex } of colorPatterns) {
+    const match = text.match(regex);
+    if (match && match.index !== undefined) {
+      foundWithIndices.push({ color, index: match.index });
+    }
+  }
+
+  // Sort by order of appearance in the text so dominant color is first
+  foundWithIndices.sort((a, b) => a.index - b.index);
+  return Array.from(new Set(foundWithIndices.map((item) => item.color)));
 }
 
 function extractPatternFromPet(pet: PetReport, v2Meta?: PetMetadataV2): CoatPatternEnum {
@@ -243,25 +281,25 @@ export function findBestMatches(
     }
 
     // -------------------------------------------------------------
-    // V1_CLASSIC: Linear multi-factor with dominant color polarity
+    // V1_CLASSIC: Linear multi-factor with dominant color polarity & synonym families
     // -------------------------------------------------------------
     let score = 0;
     const reasons: string[] = [];
 
-    // 1. Dominant-Aware & Polarity Color Matching (Max 35 pts)
+    // 1. Dominant-Aware & Synonym Color Matching (Max 35 pts)
     const domTarget = targetColors[0];
     const secTarget = targetColors[1] || null;
     const domCandidate = candidateColors[0];
     const secCandidate = candidateColors[1] || null;
 
     if (targetColors.length > 0 && candidateColors.length > 0) {
-      if (domTarget && domCandidate && domTarget === domCandidate) {
-        // Case 1: Same primary dominant base color (e.g. Both mostly White, or both mostly Black)
-        let colorPts = 25;
-        if (secTarget && secCandidate && secTarget === secCandidate) {
-          colorPts = 35; // Both dominant and accent match exactly
-          reasons.push(`🎨 Pelaje base y acento idénticos (${COLOR_NAMES[domTarget]} + ${COLOR_NAMES[secTarget]})`);
-        } else if (secTarget && candidateColors.includes(secTarget)) {
+      if (domTarget && domCandidate && areColorsCompatible(domTarget, domCandidate)) {
+        // Case 1: Same primary dominant base color or compatible color family
+        let colorPts = domTarget === domCandidate ? 25 : 22;
+        if (secTarget && secCandidate && areColorsCompatible(secTarget, secCandidate)) {
+          colorPts = 35; // Both dominant and accent match
+          reasons.push(`🎨 Pelaje base y acento compatibles (${COLOR_NAMES[domTarget]} + ${COLOR_NAMES[secTarget]})`);
+        } else if (secTarget && candidateColors.some((c) => areColorsCompatible(secTarget, c))) {
           colorPts = 30;
           reasons.push(`🎨 Mismo color base (${COLOR_NAMES[domTarget]}) y acento coincidente`);
         } else {
@@ -274,9 +312,9 @@ export function findBestMatches(
       ) {
         // Case 2: Inverted Dominance (Opposite polarity: Mostly White vs Mostly Black)
         score += 5;
-      } else if (targetColors.some((c) => candidateColors.includes(c))) {
+      } else if (targetColors.some((tc) => candidateColors.some((cc) => areColorsCompatible(tc, cc)))) {
         // Case 3: Partial accent match without direct opposite polarity
-        const common = targetColors.filter((c) => candidateColors.includes(c));
+        const common = targetColors.filter((tc) => candidateColors.some((cc) => areColorsCompatible(tc, cc)));
         const colorLabels = common.map((c) => COLOR_NAMES[c] || c).join(", ");
         score += 12;
         reasons.push(`🎨 Coincidencia parcial de color: ${colorLabels}`);
