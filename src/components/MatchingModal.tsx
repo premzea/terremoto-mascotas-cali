@@ -73,8 +73,8 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
               <div>
                 <h2 className="font-black text-lg sm:text-xl text-stone-900 flex items-center gap-2">
                   Motor de Coincidencias IA
-                  <span className="text-[10px] bg-amber-500 font-bold px-2 py-0.5 rounded-full text-white uppercase">
-                    50/50 DINOv2
+                  <span className="text-[10px] bg-emerald-600 font-bold px-2 py-0.5 rounded-full text-white uppercase tracking-wider">
+                    Multimodal Re-ID
                   </span>
                 </h2>
                 <p className="text-xs text-stone-600 mt-0.5">
@@ -125,7 +125,7 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                 Top {matches.length} Coincidencias encontradas:
               </span>
               <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 text-[11px]">
-                50% Rasgos Enums + 50% Visión DINOv2
+                🧬 Biometría Facial + 👁️ Visión Multimodal + 📍 Proximidad
               </span>
             </div>
 
