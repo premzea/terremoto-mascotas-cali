@@ -96,14 +96,31 @@ export async function getPets(filters?: {
     }
   }
 
-  // 5. Merge all sources and deduplicate by ID
+  // 5. Merge all sources: prioritizing live baseList from server/cloud, then newly added local items
   const seenIds = new Set<string>();
   const merged: PetReport[] = [];
 
-  for (const pet of [...localPets, ...baseList]) {
-    if (pet && pet.id && !seenIds.has(pet.id)) {
+  // Add local un-synced items first
+  for (const pet of localPets) {
+    if (pet && pet.id && !seenIds.has(pet.id) && pet.status !== "CLOSED" && pet.status !== "REUNITED") {
       seenIds.add(pet.id);
       merged.push(pet);
+    }
+  }
+
+  // Add server / cloud baseList
+  for (const pet of baseList) {
+    if (pet && pet.id) {
+      if (!seenIds.has(pet.id)) {
+        seenIds.add(pet.id);
+        merged.push(pet);
+      } else {
+        // If it already exists from local cache, replace with fresh authoritative server record
+        const idx = merged.findIndex((p) => p.id === pet.id);
+        if (idx !== -1) {
+          merged[idx] = pet;
+        }
+      }
     }
   }
 

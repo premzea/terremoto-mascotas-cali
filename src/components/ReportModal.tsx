@@ -157,8 +157,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const handleFinish = async () => {
     setSubmitting(true);
     try {
-      const generatedId = getNextPetId(reportType);
-
       // Build structured features including breed and castration status
       let assembledFeatures = distinctiveFeatures.trim();
       if (breed.trim()) {
@@ -168,8 +166,10 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         assembledFeatures = `${isNeutered === "YES" ? "Macho Castrado" : "Macho Sin Castrar"}. ${assembledFeatures}`;
       }
 
-      const newPet: PetReport = {
-        id: generatedId,
+      const tempFallbackId = getNextPetId(reportType);
+
+      const petPayload: PetReport = {
+        id: tempFallbackId,
         report_type: reportType,
         species,
         name: name.trim() || (reportType === "LOST" ? "Sin nombre" : "Rescatado"),
@@ -189,20 +189,20 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         created_at: new Date().toISOString(),
       };
 
-      // 1. Guardar en Supabase a través del backend Server API /api/create-pet
-      let createdPet = newPet;
+      // 1. Guardar en Supabase a través de /api/create-pet (obtiene ID oficial secuencial)
+      let createdPet = petPayload;
       try {
         const res = await fetch("/api/create-pet", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newPet),
+          body: JSON.stringify(petPayload),
         });
         const resData = await res.json();
         if (resData?.success && resData?.pet) {
           createdPet = resData.pet;
         }
       } catch (apiErr) {
-        console.warn("Could not reach /api/create-pet, saving locally:", apiErr);
+        console.warn("Could not reach /api/create-pet, saving with temporary ID:", apiErr);
       }
 
       // 2. Persistir en localStorage del dispositivo (permanencia garantizada ante recargas)
@@ -210,7 +210,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         if (typeof window !== "undefined") {
           const raw = localStorage.getItem(LOCAL_CREATED_PETS_KEY);
           const list = raw ? JSON.parse(raw) : [];
-          const updated = [createdPet, ...list.filter((p: any) => p && p.id !== createdPet.id)];
+          const updated = [createdPet, ...list.filter((p: any) => p && p.id !== createdPet.id && p.id !== tempFallbackId)];
           localStorage.setItem(LOCAL_CREATED_PETS_KEY, JSON.stringify(updated));
         }
       } catch (lsErr) {

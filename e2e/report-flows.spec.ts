@@ -73,13 +73,23 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await expect(page.locator("h2:has-text('Motor de Coincidencias IA')")).toBeVisible({ timeout: 10000 });
 
     // Close the matching modal
-    await page.locator("button:has(svg.lucide-x)").first().click();
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(500);
 
     // 10. Verify the new pet card is rendered in the feed with a generated 'B' ID
     const newCard = page.locator(".edge-card").first();
     await expect(newCard).toContainText("TestDogLost");
     await expect(newCard).toContainText("PERDIDO / BUSCADO");
     await expect(newCard).toContainText("B");
+
+    // Clean up test record via API to keep database clean
+    const cardText = await newCard.innerText();
+    const idMatch = cardText.match(/ID:\s*(B\d+)/i);
+    if (idMatch && idMatch[1]) {
+      await page.request.post("/api/close-case", {
+        data: { petId: idMatch[1], passcode: "120905260506" },
+      });
+    }
   });
 
   test("2. Report a FOUND pet (Encontrada) -> Auto-increments ID (R...), adds to feed with protected location", async ({ page }) => {
@@ -135,19 +145,24 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     // 8. Submit Report
     await modal.locator("button:has-text('Publicar y Buscar Coincidencias')").click();
 
-    // 9. Wait for modal or feed update
-    await page.waitForTimeout(1000);
-
-    // Close any matching modal if opened
-    const closeMatchBtn = page.locator("button:has(svg.lucide-x)").first();
-    if (await closeMatchBtn.isVisible()) {
-      await closeMatchBtn.click();
-    }
+    // 9. Wait for modal and close matching modal
+    await expect(page.locator("h2:has-text('Motor de Coincidencias IA')")).toBeVisible({ timeout: 10000 });
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(500);
 
     // 10. Verify the new found pet card is at top of feed with 'R' prefix and protected location
     const newCard = page.locator(".edge-card").first();
     await expect(newCard).toContainText("ENCONTRADO / RESCATADO");
     await expect(newCard).toContainText("R");
     await expect(newCard).toContainText("En resguardo en Cali (Ubicación protegida por Triaje)");
+
+    // Clean up test record via API to keep database clean
+    const cardText = await newCard.innerText();
+    const idMatch = cardText.match(/ID:\s*(R\d+)/i);
+    if (idMatch && idMatch[1]) {
+      await page.request.post("/api/close-case", {
+        data: { petId: idMatch[1], passcode: "120905260506" },
+      });
+    }
   });
 });
