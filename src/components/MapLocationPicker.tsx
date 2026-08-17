@@ -264,48 +264,48 @@ export default function MapLocationPicker({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/90 z-[70] flex items-center justify-center p-2 sm:p-4">
-      <div className="bg-[#141417] border border-neutral-800 w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col h-[92vh] sm:h-[82vh] text-white shadow-2xl">
+    <div className="fixed inset-0 bg-stone-900/70 z-[70] flex items-center justify-center p-2 sm:p-4 backdrop-blur-xs">
+      <div className="bg-white border border-stone-200 w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col h-[92vh] sm:h-[82vh] text-stone-900 shadow-2xl">
         {/* Header */}
-        <div className="p-4 border-b border-neutral-800 flex items-center justify-between bg-[#19191e]">
+        <div className="p-4 border-b border-stone-200 flex items-center justify-between bg-amber-50/60">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-amber-500/10 rounded-lg text-amber-400">
-              <MapPin className="w-5 h-5" />
+            <div className="p-2 bg-amber-100 text-amber-800 rounded-xl border border-amber-300 shadow-2xs">
+              <MapPin className="w-5 h-5 text-amber-600" />
             </div>
             <div>
-              <h3 className="font-extrabold text-base text-white">
+              <h3 className="font-extrabold text-base text-stone-900">
                 Seleccionar Ubicación en Cali y Jamundí
               </h3>
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-stone-600">
                 Escribe el barrio, toca el mapa o activa tu GPS
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white transition"
+            className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Search Bar & GPS Button */}
-        <div className="p-3 bg-[#16161a] border-b border-neutral-800 space-y-2 relative z-[2000]">
+        <div className="p-3 bg-stone-50 border-b border-stone-200 space-y-2 relative z-[2000]">
           <form onSubmit={handleSearchSubmit} className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
+              <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Escribe el barrio (Ej: Nápoles, Alfaguara, Meléndez, Valle del Lili...)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-neutral-900 border border-neutral-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-amber-500"
+                className="w-full bg-white border border-stone-200 rounded-xl pl-9 pr-3 py-2 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 shadow-2xs"
               />
             </div>
             <button
               type="submit"
               disabled={searching}
-              className="bg-amber-500 hover:bg-amber-400 text-black px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition whitespace-nowrap"
+              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-3.5 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition shadow-2xs whitespace-nowrap active:scale-[0.98]"
             >
               {searching ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -318,12 +318,12 @@ export default function MapLocationPicker({
               type="button"
               onClick={handleGetCurrentLocation}
               disabled={gettingGPS}
-              className="bg-neutral-800 hover:bg-neutral-700 text-amber-400 border border-neutral-700 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition whitespace-nowrap"
+              className="bg-white hover:bg-amber-50 text-amber-800 border border-stone-200 hover:border-amber-300 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-2xs whitespace-nowrap"
             >
               {gettingGPS ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-600" />
               ) : (
-                <Navigation className="w-3.5 h-3.5" />
+                <Navigation className="w-3.5 h-3.5 text-amber-600" />
               )}
               <span className="hidden sm:inline">GPS Actual</span>
             </button>
@@ -331,19 +331,19 @@ export default function MapLocationPicker({
 
           {/* Autocomplete Search Dropdown - Always on top of Leaflet map layers */}
           {searchResults.length > 0 && (
-            <div className="absolute left-3 right-3 top-14 bg-[#19191e] border border-neutral-700 rounded-xl shadow-2xl z-[3000] max-h-56 overflow-y-auto backdrop-blur-md">
+            <div className="absolute left-3 right-3 top-14 bg-white border border-stone-200 rounded-xl shadow-2xl z-[3000] max-h-56 overflow-y-auto divide-y divide-stone-100">
               {searchResults.map((b, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => handleSelectSearchResult(b)}
-                  className="w-full text-left px-3.5 py-2.5 hover:bg-neutral-800 border-b border-neutral-800/80 last:border-0 flex items-center justify-between text-xs transition"
+                  className="w-full text-left px-3.5 py-2.5 hover:bg-amber-50 flex items-center justify-between text-xs transition"
                 >
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="font-bold text-white text-xs">{b.name}</span>
+                    <MapPin className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                    <span className="font-bold text-stone-900 text-xs">{b.name}</span>
                   </div>
-                  <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                  <span className="text-[10px] text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/80 font-semibold">
                     {b.zone || `Comuna ${b.comuna}`}
                   </span>
                 </button>
@@ -357,32 +357,32 @@ export default function MapLocationPicker({
           <div ref={mapContainerRef} className="w-full h-full min-h-[300px]" />
           
           {/* Floating Current Barrio Pill */}
-          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-black/90 backdrop-blur-md border border-neutral-700 rounded-xl p-2.5 z-[1500] flex items-center gap-2 shadow-2xl">
-            <MapPin className="w-4 h-4 text-amber-400 flex-shrink-0" />
+          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-white/95 backdrop-blur-md border border-stone-200 rounded-xl p-2.5 z-[1500] flex items-center gap-2 shadow-lg">
+            <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
             <div className="text-xs">
-              <span className="text-neutral-400 block text-[10px] uppercase font-bold">Barrio Seleccionado:</span>
-              <strong className="text-amber-300 font-extrabold text-sm">{selectedBarrio}</strong>
+              <span className="text-stone-500 block text-[10px] uppercase font-bold">Barrio Seleccionado:</span>
+              <strong className="text-stone-900 font-extrabold text-sm">{selectedBarrio}</strong>
             </div>
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-neutral-800 bg-[#16161a] flex items-center justify-between gap-3">
-          <div className="text-xs text-neutral-400 hidden sm:block">
+        <div className="p-4 border-t border-stone-200 bg-stone-50 flex items-center justify-between gap-3">
+          <div className="text-xs text-stone-500 hidden sm:block">
             Coordenadas: {selectedLat.toFixed(4)}, {selectedLng.toFixed(4)}
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-neutral-700 text-xs font-bold text-neutral-300 hover:bg-neutral-800 transition"
+              className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-stone-200 text-xs font-bold text-stone-700 bg-white hover:bg-stone-100 transition"
             >
               Cancelar
             </button>
             <button
               type="button"
               onClick={handleConfirm}
-              className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-lg shadow-amber-500/20"
+              className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-md shadow-amber-500/20 active:scale-[0.98]"
             >
               <Check className="w-4 h-4" />
               <span>Confirmar Ubicación</span>

@@ -244,21 +244,21 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   };
 
   return (
-    <div className="fixed inset-0 bg-black/85 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-[#121214] border border-neutral-800 w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 text-white max-h-[92vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-stone-900/70 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-xs">
+      <div className="bg-white border border-stone-200 w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 text-stone-900 max-h-[92vh] overflow-y-auto shadow-2xl">
         {/* Header con pasos */}
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-3 mb-4">
+        <div className="flex items-center justify-between border-b border-stone-200 pb-3 mb-4">
           <div>
-            <span className="text-[11px] font-black tracking-wider uppercase text-amber-400">
+            <span className="text-[11px] font-black tracking-wider uppercase text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full">
               Paso {step} de 3
             </span>
-            <h2 className="font-extrabold text-lg">
+            <h2 className="font-black text-lg text-stone-900 mt-1">
               {reportType === "LOST" ? "Reportar Mascota Perdida" : "Reportar Mascota Encontrada"}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white"
+            className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -267,15 +267,15 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         {/* Paso 1: Foto del animal */}
         {step === 1 && (
           <div className="space-y-4 animate-fade-in">
-            <p className="text-xs text-neutral-400 leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               La fotografía es la clave para que la Inteligencia Artificial deduzca automáticamente los colores del pelaje, la raza y compare la mascota.
             </p>
 
-            <label className="border-2 border-dashed border-neutral-700 hover:border-amber-500 bg-neutral-900/60 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer min-h-[220px]">
+            <label className="border-2 border-dashed border-stone-300 hover:border-amber-500 bg-stone-50 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer min-h-[220px] transition">
               {compressing ? (
                 <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="w-8 h-8 animate-spin text-amber-400" />
-                  <span className="text-xs font-semibold text-neutral-300">
+                  <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
+                  <span className="text-xs font-semibold text-stone-700">
                     Comprimiendo imagen con Web Worker...
                   </span>
                 </div>
@@ -284,37 +284,37 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   <img
                     src={photoPreview}
                     alt="Preview"
-                    className="max-h-48 object-contain rounded-lg mb-2"
+                    className="max-h-48 object-contain rounded-xl mb-2 shadow-xs"
                   />
                   {analyzingAi && (
-                    <div className="flex items-center gap-1.5 text-xs text-amber-400 font-bold bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20 animate-pulse">
-                      <Sparkles className="w-3.5 h-3.5" />
+                    <div className="flex items-center gap-1.5 text-xs text-amber-800 font-bold bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 animate-pulse">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                       <span>IA deduciendo colores, especie y raza...</span>
                     </div>
                   )}
                   {aiDetected && !analyzingAi && (
-                    <div className="text-[11px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-lg text-center mt-1">
+                    <div className="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg text-center mt-1 font-semibold">
                       ✨ Detectado por IA: {aiDetected}
                     </div>
                   )}
-                  <span className="text-[11px] text-neutral-400 underline mt-2">
+                  <span className="text-[11px] text-stone-500 underline mt-2">
                     Toca para cambiar la foto
                   </span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="p-4 bg-neutral-800 rounded-full text-amber-400">
+                  <div className="p-4 bg-amber-100/70 text-amber-700 rounded-2xl">
                     <Camera className="w-8 h-8" />
                   </div>
                   <div>
-                    <span className="text-sm font-bold text-neutral-200 block">
+                    <span className="text-sm font-bold text-stone-900 block">
                       Subir o Tomar Foto del Animal
                     </span>
-                    <span className="text-xs text-neutral-400 block mt-1">
+                    <span className="text-xs text-stone-500 block mt-1">
                       Toca aquí para seleccionar de tu galería o cámara
                     </span>
                   </div>
-                  <span className="text-[10px] bg-neutral-800 text-neutral-400 px-2.5 py-1 rounded-full border border-neutral-700">
+                  <span className="text-[10px] bg-white text-stone-600 px-2.5 py-1 rounded-full border border-stone-200 shadow-2xs">
                     JPG, PNG, WEBP (Comprimido automáticamente)
                   </span>
                 </div>
@@ -331,7 +331,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               type="button"
               disabled={!photoPreview || compressing}
               onClick={() => setStep(2)}
-              className="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed font-extrabold text-black py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition"
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed font-extrabold text-white py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 transition active:scale-[0.98]"
             >
               <span>Continuar con Datos de la Mascota</span>
               <ArrowRight className="w-4 h-4" />
@@ -344,7 +344,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
           <div className="space-y-3.5 animate-fade-in">
             {/* Especie */}
             <div>
-              <label className="text-xs font-bold text-neutral-400 mb-1.5 block">
+              <label className="text-xs font-bold text-stone-700 mb-1.5 block">
                 Especie *
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -353,8 +353,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   onClick={() => setSpecies("DOG")}
                   className={`py-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
                     species === "DOG"
-                      ? "border-amber-500 bg-amber-500/15 text-amber-300"
-                      : "border-neutral-800 bg-neutral-900 text-neutral-400"
+                      ? "border-amber-500 bg-amber-50 text-amber-900 shadow-xs font-extrabold"
+                      : "border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100"
                   }`}
                 >
                   🐶 Perro
@@ -364,8 +364,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   onClick={() => setSpecies("CAT")}
                   className={`py-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
                     species === "CAT"
-                      ? "border-amber-500 bg-amber-500/15 text-amber-300"
-                      : "border-neutral-800 bg-neutral-900 text-neutral-400"
+                      ? "border-amber-500 bg-amber-50 text-amber-900 shadow-xs font-extrabold"
+                      : "border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100"
                   }`}
                 >
                   🐱 Gato
@@ -375,8 +375,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   onClick={() => setSpecies("OTHER")}
                   className={`py-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
                     species === "OTHER"
-                      ? "border-amber-500 bg-amber-500/15 text-amber-300"
-                      : "border-neutral-800 bg-neutral-900 text-neutral-400"
+                      ? "border-amber-500 bg-amber-50 text-amber-900 shadow-xs font-extrabold"
+                      : "border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100"
                   }`}
                 >
                   🐾 Otro
@@ -387,7 +387,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
             {/* Nombre, Sexo y Tamaño */}
             <div className="grid grid-cols-3 gap-2.5">
               <div>
-                <label className="text-xs font-bold text-neutral-400 mb-1 block">
+                <label className="text-xs font-bold text-stone-700 mb-1 block">
                   Nombre
                 </label>
                 <input
@@ -395,17 +395,17 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder={reportType === "LOST" ? "Ej: Dakota" : "Desconocido"}
-                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="text-xs font-bold text-neutral-400 mb-1 block">
+                <label className="text-xs font-bold text-stone-700 mb-1 block">
                   Sexo
                 </label>
                 <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value as any)}
-                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-2.5 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-2.5 py-2.5 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none font-medium"
                 >
                   <option value="UNKNOWN">No se sabe</option>
                   <option value="MACHO">Macho</option>
@@ -413,13 +413,13 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-neutral-400 mb-1 block">
+                <label className="text-xs font-bold text-stone-700 mb-1 block">
                   Tamaño *
                 </label>
                 <select
                   value={size}
                   onChange={(e) => setSize(e.target.value as any)}
-                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-2.5 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none font-semibold text-amber-400"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl px-2.5 py-2.5 text-xs text-amber-800 focus:bg-white focus:border-amber-500 focus:outline-none font-bold"
                 >
                   <option value="PEQUEÑO">Pequeño</option>
                   <option value="MEDIANO">Mediano</option>
@@ -430,8 +430,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
             {/* Pregunta si está castrado en caso de ser MACHO */}
             {gender === "MACHO" && (
-              <div className="bg-amber-500/10 p-3 rounded-xl border border-amber-500/20 space-y-1.5 animate-fade-in">
-                <label className="text-xs font-bold text-amber-300 block">
+              <div className="bg-amber-50 p-3 rounded-xl border border-amber-200 space-y-1.5 animate-fade-in shadow-2xs">
+                <label className="text-xs font-bold text-amber-900 block">
                   ¿El macho está castrado / esterilizado? *
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -440,8 +440,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                     onClick={() => setIsNeutered("NO")}
                     className={`py-2 rounded-lg text-xs font-bold border transition ${
                       isNeutered === "NO"
-                        ? "bg-red-600 text-white border-red-500 shadow"
-                        : "bg-neutral-900/80 border-neutral-700 text-neutral-400 hover:text-white"
+                        ? "bg-rose-600 text-white border-rose-600 shadow-xs"
+                        : "bg-white border-stone-200 text-stone-700 hover:bg-stone-50"
                     }`}
                   >
                     No (Sin castrar)
@@ -451,8 +451,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                     onClick={() => setIsNeutered("YES")}
                     className={`py-2 rounded-lg text-xs font-bold border transition ${
                       isNeutered === "YES"
-                        ? "bg-emerald-600 text-white border-emerald-500 shadow"
-                        : "bg-neutral-900/80 border-neutral-700 text-neutral-400 hover:text-white"
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
+                        : "bg-white border-stone-200 text-stone-700 hover:bg-stone-50"
                     }`}
                   >
                     Sí (Castrado)
@@ -462,8 +462,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                     onClick={() => setIsNeutered("UNKNOWN")}
                     className={`py-2 rounded-lg text-xs font-bold border transition ${
                       isNeutered === "UNKNOWN"
-                        ? "bg-amber-500 text-black border-amber-400 font-extrabold shadow"
-                        : "bg-neutral-900/80 border-neutral-700 text-neutral-400 hover:text-white"
+                        ? "bg-amber-500 text-white border-amber-500 font-extrabold shadow-xs"
+                        : "bg-white border-stone-200 text-stone-700 hover:bg-stone-50"
                     }`}
                   >
                     No se sabe
@@ -474,7 +474,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
             {/* Raza de la Mascota */}
             <div>
-              <label className="text-xs font-bold text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-stone-700 mb-1 block">
                 Raza de la Mascota *
               </label>
               <input
@@ -482,7 +482,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 value={breed}
                 onChange={(e) => setBreed(e.target.value)}
                 placeholder="Ej: Criollo / Mestizo, Pitbull, Poodle, Labrador, Siamés..."
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none"
               />
               <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {["Criollo / Mestizo", "Pitbull", "Poodle / Caniche", "Labrador", "Pinscher", "Siamés"].map((r) => (
@@ -490,7 +490,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                     key={r}
                     type="button"
                     onClick={() => setBreed(r)}
-                    className="text-[10px] bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-2 py-0.5 rounded-md border border-neutral-700 transition"
+                    className="text-[10px] bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 px-2 py-0.5 rounded-md border border-stone-200 transition font-medium"
                   >
                     {r}
                   </button>
@@ -499,12 +499,12 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
             </div>
 
             {/* Color de Pelaje Deducido por la Máquina */}
-            <div className="p-2.5 bg-neutral-900/80 border border-neutral-800 rounded-xl flex items-center justify-between text-xs">
-              <span className="text-neutral-400 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <div className="p-2.5 bg-amber-50/70 border border-amber-200/70 rounded-xl flex items-center justify-between text-xs">
+              <span className="text-stone-600 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
                 Color del pelaje (IA):
               </span>
-              <strong className="text-amber-300 font-bold">
+              <strong className="text-amber-900 font-bold">
                 {primaryColor || "Deducido automáticamente de la foto"}
               </strong>
             </div>
@@ -512,28 +512,28 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
             {/* Barrio / Ubicación en Cali y Jamundí con Búsqueda Escrita */}
             <div className="relative">
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-bold text-neutral-400">
+                <label className="text-xs font-bold text-stone-700">
                   Ubicación / Barrio en Cali o Jamundí *
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowMapPicker(true)}
-                  className="text-[11px] text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 bg-amber-500/10 hover:bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-500/20 transition"
+                  className="text-[11px] text-amber-800 hover:text-amber-950 font-bold flex items-center gap-1 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-lg border border-amber-300 transition shadow-2xs"
                 >
-                  <MapPin className="w-3.5 h-3.5" />
+                  <MapPin className="w-3.5 h-3.5 text-amber-600" />
                   <span>📍 Abrir Mapa / GPS</span>
                 </button>
               </div>
 
               {neighborhood ? (
                 /* Barrio ya seleccionado */
-                <div className="bg-neutral-900 border border-amber-500/40 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
+                <div className="bg-amber-50/80 border border-amber-300 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                    <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
                     <div>
-                      <strong className="text-white text-xs block">{neighborhood}</strong>
+                      <strong className="text-stone-900 text-xs block font-bold">{neighborhood}</strong>
                       {selectedLat && (
-                        <span className="text-[10px] text-neutral-400">
+                        <span className="text-[10px] text-stone-500">
                           Coordenadas: {selectedLat.toFixed(3)}, {selectedLng?.toFixed(3)}
                         </span>
                       )}
@@ -548,7 +548,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                       setSelectedLng(undefined);
                       setShowBarrioSuggestions(false);
                     }}
-                    className="p-1 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition"
+                    className="p-1 text-stone-400 hover:text-stone-900 hover:bg-white rounded-lg transition"
                     title="Cambiar barrio"
                   >
                     <X className="w-4 h-4" />
@@ -557,7 +557,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               ) : (
                 /* Buscador de barrio */
                 <div className="relative">
-                  <MapPin className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
+                  <MapPin className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-3 pointer-events-none" />
                   <input
                     type="text"
                     value={barrioSearch}
@@ -567,7 +567,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                     }}
                     onFocus={() => setShowBarrioSuggestions(true)}
                     placeholder="Escribe el barrio (Ej: Nápoles, Valle del Lili, Alfaguara...)"
-                    className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder:text-neutral-500 focus:border-amber-500 focus:outline-none"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl pl-9 pr-8 py-2.5 text-xs text-stone-900 placeholder:text-stone-400 focus:bg-white focus:border-amber-500 focus:outline-none"
                   />
                   {barrioSearch && (
                     <button
@@ -576,7 +576,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                         setBarrioSearch("");
                         setShowBarrioSuggestions(false);
                       }}
-                      className="absolute right-3 top-3 text-neutral-400 hover:text-white"
+                      className="absolute right-3 top-3 text-stone-400 hover:text-stone-700"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -584,7 +584,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
                   {/* Sugerencias de Autocompletado de Barrios */}
                   {showBarrioSuggestions && matchingBarrios.length > 0 && (
-                    <div className="absolute left-0 right-0 top-12 bg-[#19191e] border border-neutral-700 rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto">
+                    <div className="absolute left-0 right-0 top-12 bg-white border border-stone-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-stone-100">
                       {matchingBarrios.map((b: any) => (
                         <button
                           key={b.name}
@@ -596,13 +596,13 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                             setSelectedLng(b.lng);
                             setShowBarrioSuggestions(false);
                           }}
-                          className="w-full text-left px-3 py-2.5 hover:bg-neutral-800 border-b border-neutral-800/80 last:border-0 flex items-center justify-between text-xs transition"
+                          className="w-full text-left px-3 py-2.5 hover:bg-amber-50 flex items-center justify-between text-xs transition"
                         >
                           <div className="flex items-center gap-1.5">
-                            <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                            <span className="font-bold text-white">{b.name}</span>
+                            <MapPin className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                            <span className="font-bold text-stone-900">{b.name}</span>
                           </div>
-                          <span className="text-[10px] text-amber-400/90 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                          <span className="text-[10px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/80 font-semibold">
                             {b.zone || `Comuna ${b.comuna}`}
                           </span>
                         </button>
@@ -615,7 +615,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
             {/* Rasgos distintivos */}
             <div>
-              <label className="text-xs font-bold text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-stone-700 mb-1 block">
                 Rasgos Distintivos o Accesorios
               </label>
               <textarea
@@ -623,7 +623,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 onChange={(e) => setDistinctiveFeatures(e.target.value)}
                 rows={2}
                 placeholder="Ej: Collar rojo, orejas erectas, mancha en ojo izquierdo..."
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-xl p-3 text-xs text-white focus:border-amber-500 focus:outline-none leading-relaxed"
+                className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none leading-relaxed"
               />
             </div>
 
@@ -632,7 +632,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="w-1/3 bg-neutral-800 hover:bg-neutral-700 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1"
+                className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1 transition"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Atrás</span>
@@ -640,7 +640,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="w-2/3 bg-amber-500 hover:bg-amber-400 font-extrabold text-black py-3 rounded-xl text-xs flex items-center justify-center gap-1"
+                className="w-2/3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 font-extrabold text-white py-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow-md shadow-amber-500/20 transition active:scale-[0.98]"
               >
                 <span>Contacto Seguro</span>
                 <ArrowRight className="w-4 h-4" />
@@ -652,12 +652,12 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         {/* Paso 3: Contacto Seguro */}
         {step === 3 && (
           <div className="space-y-4 animate-fade-in">
-            <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300 leading-relaxed">
+            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 leading-relaxed shadow-2xs">
               <strong>🛡️ Protección Anti-Extorsión:</strong> Tu número de teléfono nunca será visible públicamente en internet. Los rescatistas y dueños deberán verificar una foto con el Triaje Central antes de ser conectados.
             </div>
 
             <div>
-              <label className="text-xs font-bold text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-stone-700 mb-1 block">
                 Tu Nombre o Alias
               </label>
               <input
@@ -665,12 +665,12 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 value={contactName}
                 onChange={(e) => setContactName(e.target.value)}
                 placeholder="Ej: Familia Gómez / Rescatista Juan"
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="text-xs font-bold text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-stone-700 mb-1 block">
                 Tu WhatsApp o Teléfono (Protegido) *
               </label>
               <input
@@ -678,7 +678,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
                 placeholder="Ej: 315 123 4567"
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
+                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none"
               />
             </div>
 
@@ -686,7 +686,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="w-1/3 bg-neutral-800 hover:bg-neutral-700 font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1"
+                className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1 transition"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Atrás</span>
@@ -695,7 +695,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 type="button"
                 disabled={submitting}
                 onClick={handleFinish}
-                className="w-2/3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/40"
+                className="w-2/3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 text-white font-extrabold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition active:scale-[0.98]"
               >
                 {submitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

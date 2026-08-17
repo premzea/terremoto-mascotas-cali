@@ -83,8 +83,8 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
   });
 
   test("2. Report a FOUND pet (Encontrada) -> Auto-increments ID (R...), adds to feed with protected location", async ({ page }) => {
-    // 1. Click "Reportar Hallazgo" button in Split Hero
-    const foundReportBtn = page.locator("button:has-text('Reportar Hallazgo')");
+    // 1. Click "Reportar Encontrada" button in Split Hero
+    const foundReportBtn = page.locator("button:has-text('Reportar Encontrada')");
     await expect(foundReportBtn).toBeVisible();
     await foundReportBtn.click();
 
@@ -148,6 +148,6 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     const newCard = page.locator(".edge-card").first();
     await expect(newCard).toContainText("ENCONTRADO / RESCATADO");
     await expect(newCard).toContainText("R");
-    await expect(newCard).toContainText("En resguardo en Cali (Ubicación exacta protegida por Triaje)");
+    await expect(newCard).toContainText("En resguardo en Cali (Ubicación protegida por Triaje)");
   });
 });

@@ -1,16 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-surface: #141414;
-  --bg-card: #1c1c1e;
-  --border-color: #2c2c2e;
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1a6;
-  --accent-red: #ff453a;
-  --accent-green: #30d158;
-  --accent-amber: #ffd60a;
-  --accent-blue: #0a84ff;
+  --bg-primary: #FAF8F5;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --border-color: #E7E5E4;
+  --text-primary: #1C1917;
+  --text-secondary: #57534E;
+  --accent-peach: #F97316;
+  --accent-amber: #D97706;
+  --accent-honey: #FDE68A;
+  --accent-green: #059669;
+  --accent-rose: #E11D48;
 }
 
 body {
@@ -25,7 +26,7 @@ body {
 
 /* Touch target minimum 48px */
 button, a.btn, input, select, textarea {
-  min-height: 48px;
+  min-height: 44px;
 }
 
 /* Edge-to-Edge card style */
@@ -37,7 +38,7 @@ button, a.btn, input, select, textarea {
 
 /* High contrast badge */
 .badge-offline {
-  background-color: var(--accent-red);
+  background-color: #E11D48;
   color: #ffffff;
   font-weight: 700;
   padding: 8px 16px;

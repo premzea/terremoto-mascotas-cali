@@ -56,29 +56,29 @@ export default function CloseCaseModal({ pet, onClose, onSuccess }: CloseCaseMod
   };
 
   return (
-    <div className="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-      <div className="bg-[#141417] border border-neutral-800 w-full max-w-md rounded-2xl p-6 text-white overflow-hidden shadow-2xl relative">
+    <div className="fixed inset-0 bg-stone-900/70 z-50 flex items-center justify-center p-4 backdrop-blur-xs animate-fade-in">
+      <div className="bg-white border border-stone-200 w-full max-w-md rounded-2xl p-6 text-stone-900 overflow-hidden shadow-2xl relative">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white transition"
+          className="absolute top-4 right-4 p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header */}
-        <div className="flex items-center gap-3 border-b border-neutral-800 pb-4 mb-4">
-          <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl border border-amber-500/30">
-            <ShieldCheck className="w-5 h-5" />
+        <div className="flex items-center gap-3 border-b border-stone-200 pb-4 mb-4">
+          <div className="p-2.5 bg-amber-100 text-amber-800 rounded-xl border border-amber-300">
+            <ShieldCheck className="w-5 h-5 text-amber-700" />
           </div>
           <div>
-            <h3 className="font-extrabold text-base text-white">Cerrar Caso de Mascota</h3>
-            <p className="text-xs text-neutral-400">Acceso exclusivo de administración</p>
+            <h3 className="font-extrabold text-base text-stone-900">Cerrar Caso de Mascota</h3>
+            <p className="text-xs text-stone-500">Acceso exclusivo de administración</p>
           </div>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-start gap-2">
+          <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-start gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
@@ -86,37 +86,37 @@ export default function CloseCaseModal({ pet, onClose, onSuccess }: CloseCaseMod
 
         {success ? (
           <div className="text-center py-6 space-y-3 animate-fade-in">
-            <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto border border-emerald-500/30">
+            <div className="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto border border-emerald-300">
               <CheckCircle2 className="w-6 h-6" />
             </div>
-            <h4 className="font-extrabold text-base text-white">¡Caso Cerrado Exitosamente!</h4>
-            <p className="text-xs text-neutral-400">
+            <h4 className="font-extrabold text-base text-stone-900">¡Caso Cerrado Exitosamente!</h4>
+            <p className="text-xs text-stone-600">
               La mascota ha sido marcada como reunida y retirada de la lista activa.
             </p>
           </div>
         ) : (
           <form onSubmit={handleVerifyPasscode} className="space-y-4">
-            <div className="bg-neutral-900/80 p-3.5 rounded-xl border border-neutral-800 text-xs text-neutral-300 space-y-1">
+            <div className="bg-stone-50 p-3.5 rounded-xl border border-stone-200 text-xs text-stone-700 space-y-1">
               <p>
-                Mascota: <strong className="text-white">{pet.name}</strong> (ID: <span className="font-mono text-amber-400">{pet.id}</span>)
+                Mascota: <strong className="text-stone-900">{pet.name}</strong> (ID: <span className="font-mono text-amber-800 bg-amber-50 px-1 py-0.5 rounded border border-amber-200">{pet.id}</span>)
               </p>
-              <p className="text-neutral-400">
+              <p className="text-stone-500">
                 Ingresa el código maestro de administración para marcar este caso como resuelto/reunido.
               </p>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-neutral-300 mb-2">
+              <label className="block text-xs font-bold text-stone-700 mb-2">
                 Código Maestro de Admin:
               </label>
               <div className="relative">
-                <KeyRound className="w-4 h-4 absolute left-3.5 top-3.5 text-neutral-500" />
+                <KeyRound className="w-4 h-4 absolute left-3.5 top-3.5 text-stone-400" />
                 <input
                   type="password"
                   value={passcode}
                   onChange={(e) => setPasscode(e.target.value)}
                   placeholder="Ingresa el código maestro..."
-                  className="w-full bg-neutral-900 border border-neutral-700 rounded-xl pl-10 pr-4 py-3 text-xs text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl pl-10 pr-4 py-3 text-xs text-stone-900 focus:outline-none focus:bg-white focus:border-amber-500"
                   autoFocus
                 />
               </div>
@@ -126,14 +126,14 @@ export default function CloseCaseModal({ pet, onClose, onSuccess }: CloseCaseMod
               <button
                 type="button"
                 onClick={onClose}
-                className="w-1/3 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-bold py-3 rounded-xl text-xs"
+                className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3 rounded-xl text-xs transition"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading || !passcode.trim()}
-                className="w-2/3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-950/40"
+                className="w-2/3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 text-white font-extrabold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-[0.98]"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

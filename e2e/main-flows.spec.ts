@@ -37,8 +37,8 @@ test.describe("Búsqueda Animal Cali - Main E2E Flows", () => {
       await communicateBtn.click();
 
       // Verify contact popup opens
-      await expect(page.locator("h3:has-text('¡Conectar Mascotas!')")).toBeVisible();
-      await expect(page.locator("button:has-text('Enviar a Triaje Central')")).toBeVisible();
+      await expect(page.locator("text=Conectar con")).toBeVisible();
+      await expect(page.locator("button:has-text('Enviar Solicitud')")).toBeVisible();
 
       // Close the modal
       await page.locator("button:has-text('Cancelar')").click();

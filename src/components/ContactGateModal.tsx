@@ -36,48 +36,50 @@ export default function ContactGateModal({ pet, onClose }: ContactGateModalProps
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-      <div className="bg-[#18181b] border border-neutral-800 w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 text-white max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-4 mb-4">
+    <div className="fixed inset-0 bg-stone-900/70 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-xs animate-fade-in">
+      <div className="bg-white border border-stone-200 w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 text-stone-900 max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="flex items-center justify-between border-b border-stone-200 pb-4 mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="bg-amber-500/20 p-2 rounded-lg text-amber-400">
-              <Lock className="w-5 h-5" />
+            <div className="bg-amber-100 text-amber-800 p-2 rounded-xl border border-amber-300">
+              <Lock className="w-5 h-5 text-amber-700" />
             </div>
             <div>
-              <h3 className="font-bold text-lg leading-tight">Escudo de Triaje Seguro</h3>
-              <p className="text-xs text-neutral-400">Protección contra extorsión telefónica</p>
+              <h3 className="font-extrabold text-lg text-stone-900 leading-tight">Escudo de Triaje Seguro</h3>
+              <p className="text-xs text-stone-500">Protección contra extorsión y llamadas fraudulentas</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-white"
+            className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="space-y-4">
-          <div className="bg-neutral-900/90 p-4 rounded-xl border border-neutral-800 text-sm space-y-2">
-            <p className="text-neutral-300">
+          <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 text-sm space-y-2">
+            <p className="text-stone-600 text-xs">
               Estás reportando el avistamiento o rescate de:
             </p>
-            <div className="font-bold text-base text-amber-400">
+            <div className="font-black text-base text-stone-900">
               {pet.name} — {pet.species === "DOG" ? "Perro" : "Gato"} ({pet.primary_color}) en {pet.neighborhood}
             </div>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Por seguridad de la familia afectada por el sismo, ningún número de teléfono privado se publica directamente. Para mediar el contacto, debes proporcionar una fotografía del animal que tienes.
+            <p className="text-xs text-stone-500 leading-relaxed">
+              Por seguridad de las familias afectadas, ningún teléfono privado se publica en internet. Para conectar ambas partes, sube una foto de confirmación.
             </p>
           </div>
 
           {!photoGiven ? (
             <div className="space-y-3">
-              <label className="block text-sm font-semibold text-neutral-200">
+              <label className="block text-xs font-bold text-stone-700">
                 1. Sube o toma una foto del animal que encontraste:
               </label>
-              <label className="border-2 border-dashed border-neutral-700 hover:border-amber-500 bg-neutral-900 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition">
-                <Camera className="w-8 h-8 text-amber-400 mb-2" />
-                <span className="text-sm font-bold text-white">Tomar foto o elegir de la galería</span>
-                <span className="text-xs text-neutral-500 mt-1">Obligatorio para desbloquear el Triaje</span>
+              <label className="border-2 border-dashed border-stone-300 hover:border-amber-500 bg-stone-50 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer transition">
+                <div className="p-3 bg-amber-100/70 text-amber-700 rounded-2xl mb-2">
+                  <Camera className="w-6 h-6" />
+                </div>
+                <span className="text-sm font-bold text-stone-900">Tomar foto o elegir de la galería</span>
+                <span className="text-xs text-stone-500 mt-1">Obligatorio para desbloquear el Triaje</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -88,26 +90,26 @@ export default function ContactGateModal({ pet, onClose }: ContactGateModalProps
             </div>
           ) : (
             <div className="space-y-4 animate-fade-in">
-              <div className="flex items-center gap-3 bg-emerald-950/40 border border-emerald-800/60 p-3 rounded-xl">
+              <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl">
                 {filePreview && (
                   <img
                     src={filePreview}
                     alt="Evidencia"
-                    className="w-16 h-16 object-cover rounded-lg border border-emerald-700"
+                    className="w-16 h-16 object-cover rounded-lg border border-emerald-300"
                   />
                 )}
                 <div className="flex-1 text-xs">
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-sm">
-                    <Check className="w-4 h-4" /> Foto de verificación cargada
+                  <div className="flex items-center gap-1.5 text-emerald-800 font-bold text-sm">
+                    <Check className="w-4 h-4 text-emerald-600" /> Foto de verificación cargada
                   </div>
-                  <p className="text-neutral-400 mt-0.5">
+                  <p className="text-stone-600 mt-0.5">
                     El equipo voluntario usará esta foto para confirmar la coincidencia con el dueño.
                   </p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-neutral-300 mb-1.5">
+                <label className="block text-xs font-bold text-stone-700 mb-1.5">
                   Lugar exacto o estado del animal (opcional):
                 </label>
                 <textarea
@@ -115,7 +117,7 @@ export default function ContactGateModal({ pet, onClose }: ContactGateModalProps
                   value={rescuerNotes}
                   onChange={(e) => setRescuerNotes(e.target.value)}
                   placeholder="Ej: Lo tengo resguardado en la panadería de la esquina..."
-                  className="w-full bg-neutral-900 border border-neutral-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -123,7 +125,7 @@ export default function ContactGateModal({ pet, onClose }: ContactGateModalProps
                 href={getWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30 text-base"
+                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 text-sm transition active:scale-[0.98]"
               >
                 <ShieldCheck className="w-5 h-5" />
                 Contactar Triaje Central en WhatsApp
