@@ -56,31 +56,45 @@ const petMetadataSchema: Schema = {
   required: ["species", "coat_colors", "coat_pattern"],
 };
 
+const COLOR_TRANSLATION: Record<string, string> = {
+  BLACK: "Negro",
+  WHITE: "Blanco",
+  BROWN: "Café / Marrón",
+  GOLDEN_YELLOW: "Dorado / Amarillo",
+  GRAY_SILVER: "Gris / Plateado",
+  CREAM: "Crema / Beige",
+  ORANGE_RED: "Naranja / Rojizo",
+};
+
 export async function POST(req: NextRequest) {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
+      console.warn("⚠️ Warning: GEMINI_API_KEY is not configured in environment variables.");
       return NextResponse.json(
-        { error: "GEMINI_API_KEY is not configured in .env.local" },
-        { status: 500 }
+        {
+          success: false,
+          warning: "GEMINI_API_KEY no está configurada en las variables de entorno de Vercel.",
+          traits: null,
+        },
+        { status: 200 }
       );
     }
 
-    const { imageBase64, mimeType = "image/jpeg" } = await req.json();
-
-    if (!imageBase64) {
+    const body = await req.json().catch(() => null);
+    if (!body || !body.imageBase64) {
       return NextResponse.json(
-        { error: "imageBase64 is required" },
+        { success: false, error: "imageBase64 is required" },
         { status: 400 }
       );
     }
 
+    const { imageBase64, mimeType = "image/jpeg" } = body;
     const ai = new GoogleGenAI({ apiKey });
-
     const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash",
       contents: [
         {
           role: "user",
@@ -106,13 +120,30 @@ Extract: species, size, fur_length, head_and_muzzle_shape, ear_type, body_build,
     });
 
     const parsedJson = JSON.parse(response.text || "{}");
-    return NextResponse.json({ success: true, metadata: parsedJson });
+    
+    // Map raw AI schema to friendly frontend traits
+    const spanishColors = (parsedJson.coat_colors || [])
+      .map((c: string) => COLOR_TRANSLATION[c] || c)
+      .join(", ");
+
+    const traits = {
+      species: parsedJson.species || "DOG",
+      primary_color: spanishColors || "Deducido por IA",
+      size: parsedJson.size === "SMALL" ? "PEQUEÑO" : parsedJson.size === "LARGE" ? "GRANDE" : "MEDIANO",
+      distinctive_marks: (parsedJson.distinctive_features || []).join(". "),
+      search_summary: `Pelaje: ${spanishColors || "No especificado"}. ${
+        (parsedJson.distinctive_features || []).join(". ")
+      }`.trim(),
+      raw: parsedJson,
+    };
+
+    return NextResponse.json({ success: true, metadata: parsedJson, traits });
   } catch (error: unknown) {
     console.error("Gemini trait extraction error:", error);
     const errorMessage = error instanceof Error ? error.message : "Error analyzing pet image";
     return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
+      { success: false, error: errorMessage, traits: null },
+      { status: 200 }
     );
   }
 }

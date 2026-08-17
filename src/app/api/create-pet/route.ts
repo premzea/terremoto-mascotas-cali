@@ -65,21 +65,11 @@ export async function POST(req: NextRequest) {
       .like("id", `${prefix}%`);
 
     if (queryError) {
-      console.error("Supabase query error in /api/create-pet:", {
+      console.warn("Supabase ID query warning in /api/create-pet (falling back to baseline seeds):", {
         message: queryError.message,
         details: queryError.details,
-        hint: queryError.hint,
         code: queryError.code,
       });
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Error al consultar IDs en la base de datos: ${queryError.message}`,
-          details: queryError.details,
-          code: queryError.code,
-        },
-        { status: 400 }
-      );
     }
 
     const allKnownIds = [
