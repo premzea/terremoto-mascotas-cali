@@ -290,10 +290,10 @@ export default function MapLocationPicker({
         </div>
 
         {/* Search Bar & GPS Button */}
-        <div className="p-3 bg-[#16161a] border-b border-neutral-800 space-y-2 relative">
+        <div className="p-3 bg-[#16161a] border-b border-neutral-800 space-y-2 relative z-[2000]">
           <form onSubmit={handleSearchSubmit} className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-3" />
+              <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Escribe el barrio (Ej: Nápoles, Alfaguara, Meléndez, Valle del Lili...)"
@@ -329,19 +329,19 @@ export default function MapLocationPicker({
             </button>
           </form>
 
-          {/* Autocomplete Search Dropdown */}
+          {/* Autocomplete Search Dropdown - Always on top of Leaflet map layers */}
           {searchResults.length > 0 && (
-            <div className="absolute left-3 right-3 top-14 bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl z-30 max-h-52 overflow-y-auto">
+            <div className="absolute left-3 right-3 top-14 bg-[#19191e] border border-neutral-700 rounded-xl shadow-2xl z-[3000] max-h-56 overflow-y-auto backdrop-blur-md">
               {searchResults.map((b, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => handleSelectSearchResult(b)}
-                  className="w-full text-left px-3.5 py-2.5 hover:bg-neutral-800 border-b border-neutral-800 last:border-0 flex items-center justify-between text-xs transition"
+                  className="w-full text-left px-3.5 py-2.5 hover:bg-neutral-800 border-b border-neutral-800/80 last:border-0 flex items-center justify-between text-xs transition"
                 >
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <span className="font-bold text-white">{b.name}</span>
+                    <span className="font-bold text-white text-xs">{b.name}</span>
                   </div>
                   <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
                     {b.zone || `Comuna ${b.comuna}`}
@@ -353,11 +353,11 @@ export default function MapLocationPicker({
         </div>
 
         {/* Map Container */}
-        <div className="flex-1 w-full relative">
+        <div className="flex-1 w-full relative z-[10]">
           <div ref={mapContainerRef} className="w-full h-full min-h-[300px]" />
           
           {/* Floating Current Barrio Pill */}
-          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-black/85 backdrop-blur-md border border-neutral-700 rounded-xl p-2.5 z-[1000] flex items-center gap-2 shadow-xl">
+          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-black/90 backdrop-blur-md border border-neutral-700 rounded-xl p-2.5 z-[1500] flex items-center gap-2 shadow-2xl">
             <MapPin className="w-4 h-4 text-amber-400 flex-shrink-0" />
             <div className="text-xs">
               <span className="text-neutral-400 block text-[10px] uppercase font-bold">Barrio Seleccionado:</span>
