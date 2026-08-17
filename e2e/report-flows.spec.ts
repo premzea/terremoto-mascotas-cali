@@ -26,8 +26,8 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     // Wait for preview
     await expect(modal.locator("img[alt='Preview']")).toBeVisible({ timeout: 10000 });
 
-    // 4. Click "Continuar a Detalles"
-    const nextBtn1 = modal.locator("button:has-text('Continuar a Detalles')");
+    // 4. Click "Continuar con Datos de la Mascota"
+    const nextBtn1 = modal.locator("button:has-text('Continuar')");
     await expect(nextBtn1).toBeEnabled();
     await nextBtn1.click();
 
@@ -40,14 +40,20 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     // Fill Name
     await modal.locator("input[placeholder*='Ej: Dakota']").fill("TestDogLost");
 
-    // Select Size (GRANDE is the 2nd select in the step 2 form: 0 is gender, 1 is size, 2 is barrio)
-    await modal.locator("select").nth(1).selectOption("GRANDE");
+    // Select Male and Castration status
+    await modal.locator("select").first().selectOption("MACHO");
+    await modal.locator("button:has-text('Sí (Castrado)')").click();
 
-    // Fill Color
-    await modal.locator("input[placeholder*='Ej: Negro']").fill("Dorado y Blanco");
+    // Fill Breed
+    await modal.locator("input[placeholder*='Ej: Criollo']").fill("Labrador Mestizo");
 
-    // Select Barrio
-    await modal.locator("select").nth(2).selectOption({ index: 1 });
+    // Fill Barrio via search input
+    const barrioInput = modal.locator("input[placeholder*='Escribe el barrio']");
+    await barrioInput.fill("Nápoles");
+    const suggestionBtn = modal.locator("button:has-text('Nápoles')").first();
+    if (await suggestionBtn.isVisible()) {
+      await suggestionBtn.click();
+    }
 
     // Fill Distinctive Features
     await modal.locator("textarea").fill("Collar azul reflectivo, orejas caídas");
@@ -95,8 +101,8 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     // Wait for preview
     await expect(modal.locator("img[alt='Preview']")).toBeVisible({ timeout: 10000 });
 
-    // 4. Click "Continuar a Detalles"
-    await modal.locator("button:has-text('Continuar a Detalles')").click();
+    // 4. Click "Continuar con Datos de la Mascota"
+    await modal.locator("button:has-text('Continuar')").click();
 
     // 5. Fill Step 2 (Pet Details)
     await expect(modal.locator("text=Paso 2 de 3")).toBeVisible();
@@ -107,11 +113,16 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     // Select Size
     await modal.locator("select").nth(1).selectOption("PEQUEÑO");
 
-    // Fill Color
-    await modal.locator("input[placeholder*='Ej: Negro']").fill("Atigrado Gris");
+    // Fill Breed
+    await modal.locator("input[placeholder*='Ej: Criollo']").fill("Siamés");
 
-    // Select Barrio
-    await modal.locator("select").nth(2).selectOption({ index: 2 });
+    // Fill Barrio via search input
+    const barrioInput = modal.locator("input[placeholder*='Escribe el barrio']");
+    await barrioInput.fill("San Antonio");
+    const suggestionBtn = modal.locator("button:has-text('San Antonio')").first();
+    if (await suggestionBtn.isVisible()) {
+      await suggestionBtn.click();
+    }
 
     // 6. Click "Contacto Seguro"
     await modal.locator("button:has-text('Contacto Seguro')").click();

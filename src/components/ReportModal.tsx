@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { PetReport } from "@/lib/types";
 import { saveOfflineReport } from "@/lib/offline-queue";
 import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, MapPin } from "lucide-react";
@@ -19,6 +19,14 @@ interface ReportModalProps {
 const sortedBarrioList = Object.values(barrioCoords).sort((a: any, b: any) =>
   a.name.localeCompare(b.name)
 );
+
+function normalizeText(str: string): string {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
 
 function getNextPetId(reportType: "LOST" | "FOUND"): string {
   const prefix = reportType === "LOST" ? "B" : "R";
@@ -47,16 +55,36 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const [species, setSpecies] = useState<"DOG" | "CAT" | "OTHER">("DOG");
   const [name, setName] = useState<string>("");
   const [gender, setGender] = useState<"MACHO" | "HEMBRA" | "UNKNOWN">("UNKNOWN");
+  const [isNeutered, setIsNeutered] = useState<"YES" | "NO" | "UNKNOWN">("UNKNOWN");
+  const [breed, setBreed] = useState<string>("");
   const [size, setSize] = useState<"PEQUEÑO" | "MEDIANO" | "GRANDE">("MEDIANO");
   const [primaryColor, setPrimaryColor] = useState<string>("");
+  
+  // Barrio Search & Map State
   const [neighborhood, setNeighborhood] = useState<string>("");
+  const [barrioSearch, setBarrioSearch] = useState<string>("");
+  const [showBarrioSuggestions, setShowBarrioSuggestions] = useState<boolean>(false);
   const [selectedLat, setSelectedLat] = useState<number | undefined>(undefined);
   const [selectedLng, setSelectedLng] = useState<number | undefined>(undefined);
   const [showMapPicker, setShowMapPicker] = useState<boolean>(false);
+  
   const [distinctiveFeatures, setDistinctiveFeatures] = useState<string>("");
   const [contactName, setContactName] = useState<string>("");
   const [contactPhone, setContactPhone] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
+
+  // Filter Barrio suggestions
+  const matchingBarrios = useMemo(() => {
+    if (!barrioSearch.trim()) return [];
+    const q = normalizeText(barrioSearch);
+    return sortedBarrioList
+      .filter((b: any) => {
+        const normName = normalizeText(b.name);
+        const normZone = b.zone ? normalizeText(b.zone) : "";
+        return normName.includes(q) || normZone.includes(q);
+      })
+      .slice(0, 8);
+  }, [barrioSearch]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -98,12 +126,15 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               if (t.primary_color) {
                 setPrimaryColor(t.primary_color);
               }
+              if (t.breed_likely) {
+                setBreed(t.breed_likely);
+              }
               if (t.search_summary) {
                 setDistinctiveFeatures(t.search_summary);
-              } else if (t.breed_likely) {
-                setDistinctiveFeatures(`${t.breed_likely}. ${t.distinctive_marks || ""}`);
+              } else if (t.distinctive_marks) {
+                setDistinctiveFeatures(t.distinctive_marks);
               }
-              setAiDetected(t.search_summary || `${t.breed_likely} (${t.primary_color})`);
+              setAiDetected(t.search_summary || `${t.breed_likely || ""} (${t.primary_color || ""})`);
             }
           } catch (aiErr) {
             console.warn("AI analysis skipped or offline", aiErr);
@@ -127,20 +158,29 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
     try {
       const generatedId = getNextPetId(reportType);
 
+      // Build structured features including breed and castration status
+      let assembledFeatures = distinctiveFeatures.trim();
+      if (breed.trim()) {
+        assembledFeatures = `Raza: ${breed.trim()}. ${assembledFeatures}`;
+      }
+      if (gender === "MACHO" && isNeutered !== "UNKNOWN") {
+        assembledFeatures = `${isNeutered === "YES" ? "Macho Castrado" : "Macho Sin Castrar"}. ${assembledFeatures}`;
+      }
+
       const newPet: PetReport = {
         id: generatedId,
         report_type: reportType,
         species,
         name: name.trim() || (reportType === "LOST" ? "Sin nombre" : "Rescatado"),
         gender,
-        primary_color: primaryColor.trim() || "Desconocido",
+        primary_color: primaryColor.trim() || "Deducido por IA",
         secondary_color: "",
         pattern: "",
         size,
-        neighborhood: neighborhood.trim() || "Cali Centro (General)",
-        lat: selectedLat || (barrioCoords as any)[neighborhood.toLowerCase()]?.lat || 3.4516,
-        lng: selectedLng || (barrioCoords as any)[neighborhood.toLowerCase()]?.lng || -76.532,
-        distinctive_features: distinctiveFeatures.trim(),
+        neighborhood: neighborhood.trim() || barrioSearch.trim() || "Cali Centro (General)",
+        lat: selectedLat || (barrioCoords as any)[(neighborhood || barrioSearch).toLowerCase()]?.lat || 3.4516,
+        lng: selectedLng || (barrioCoords as any)[(neighborhood || barrioSearch).toLowerCase()]?.lng || -76.532,
+        distinctive_features: assembledFeatures.trim(),
         photo_url: photoPreview || "/placeholder-pet.png",
         contact_name: contactName.trim() || "Reportante Anónimo",
         contact_phone: contactPhone.trim(),
@@ -208,7 +248,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         {step === 1 && (
           <div className="space-y-4 animate-fade-in">
             <p className="text-xs text-neutral-400 leading-relaxed">
-              La fotografía es la clave para que Gemini IA identifique los rasgos y compare la mascota automáticamente.
+              La fotografía es la clave para que la Inteligencia Artificial deduzca automáticamente los colores del pelaje, la raza y compare la mascota.
             </p>
 
             <label className="border-2 border-dashed border-neutral-700 hover:border-amber-500 bg-neutral-900/60 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer min-h-[220px]">
@@ -229,12 +269,12 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   {analyzingAi && (
                     <div className="flex items-center gap-1.5 text-xs text-amber-400 font-bold bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20 animate-pulse">
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Gemini IA extrayendo rasgos físicos...</span>
+                      <span>IA deduciendo colores, especie y raza...</span>
                     </div>
                   )}
                   {aiDetected && !analyzingAi && (
                     <div className="text-[11px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-lg text-center mt-1">
-                      ✨ Detectado: {aiDetected}
+                      ✨ Detectado por IA: {aiDetected}
                     </div>
                   )}
                   <span className="text-[11px] text-neutral-400 underline mt-2">
@@ -248,12 +288,15 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   </div>
                   <div>
                     <span className="text-sm font-bold text-neutral-200 block">
-                      Tomar foto o subir desde la galería
+                      Subir o Tomar Foto del Animal
                     </span>
-                    <span className="text-[11px] text-neutral-500">
-                      Compresión automática en tu teléfono
+                    <span className="text-xs text-neutral-400 block mt-1">
+                      Toca aquí para seleccionar de tu galería o cámara
                     </span>
                   </div>
+                  <span className="text-[10px] bg-neutral-800 text-neutral-400 px-2.5 py-1 rounded-full border border-neutral-700">
+                    JPG, PNG, WEBP (Comprimido automáticamente)
+                  </span>
                 </div>
               )}
               <input
@@ -264,28 +307,27 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               />
             </label>
 
-            <div className="flex justify-end pt-4">
-              <button
-                disabled={!photoPreview || compressing}
-                onClick={() => setStep(2)}
-                className="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-extrabold py-3.5 rounded-xl flex items-center justify-center gap-2 transition"
-              >
-                <span>Continuar a Detalles</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              type="button"
+              disabled={!photoPreview || compressing}
+              onClick={() => setStep(2)}
+              className="w-full bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed font-extrabold text-black py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition"
+            >
+              <span>Continuar con Datos de la Mascota</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         )}
 
-        {/* Paso 2: Detalles de la mascota */}
+        {/* Paso 2: Datos de la mascota */}
         {step === 2 && (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-3.5 animate-fade-in">
             {/* Especie */}
             <div>
-              <label className="text-xs font-bold text-neutral-400 mb-1 block">
+              <label className="text-xs font-bold text-neutral-400 mb-1.5 block">
                 Especie *
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setSpecies("DOG")}
@@ -307,6 +349,17 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                   }`}
                 >
                   🐱 Gato
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSpecies("OTHER")}
+                  className={`py-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition ${
+                    species === "OTHER"
+                      ? "border-amber-500 bg-amber-500/15 text-amber-300"
+                      : "border-neutral-800 bg-neutral-900 text-neutral-400"
+                  }`}
+                >
+                  🐾 Otro
                 </button>
               </div>
             </div>
@@ -355,22 +408,89 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               </div>
             </div>
 
-            {/* Color Principal */}
+            {/* Pregunta si está castrado en caso de ser MACHO */}
+            {gender === "MACHO" && (
+              <div className="bg-amber-500/10 p-3 rounded-xl border border-amber-500/20 space-y-1.5 animate-fade-in">
+                <label className="text-xs font-bold text-amber-300 block">
+                  ¿El macho está castrado / esterilizado? *
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsNeutered("NO")}
+                    className={`py-2 rounded-lg text-xs font-bold border transition ${
+                      isNeutered === "NO"
+                        ? "bg-red-600 text-white border-red-500 shadow"
+                        : "bg-neutral-900/80 border-neutral-700 text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    No (Sin castrar)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsNeutered("YES")}
+                    className={`py-2 rounded-lg text-xs font-bold border transition ${
+                      isNeutered === "YES"
+                        ? "bg-emerald-600 text-white border-emerald-500 shadow"
+                        : "bg-neutral-900/80 border-neutral-700 text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    Sí (Castrado)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsNeutered("UNKNOWN")}
+                    className={`py-2 rounded-lg text-xs font-bold border transition ${
+                      isNeutered === "UNKNOWN"
+                        ? "bg-amber-500 text-black border-amber-400 font-extrabold shadow"
+                        : "bg-neutral-900/80 border-neutral-700 text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    No se sabe
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Raza de la Mascota */}
             <div>
               <label className="text-xs font-bold text-neutral-400 mb-1 block">
-                Color Dominante / Pelaje *
+                Raza de la Mascota *
               </label>
               <input
                 type="text"
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
-                placeholder="Ej: Negro, Blanco con manchas cafés, Amarillo dorado..."
+                value={breed}
+                onChange={(e) => setBreed(e.target.value)}
+                placeholder="Ej: Criollo / Mestizo, Pitbull, Poodle, Labrador, Siamés..."
                 className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
               />
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {["Criollo / Mestizo", "Pitbull", "Poodle / Caniche", "Labrador", "Pinscher", "Siamés"].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setBreed(r)}
+                    className="text-[10px] bg-neutral-800 hover:bg-neutral-700 text-neutral-300 px-2 py-0.5 rounded-md border border-neutral-700 transition"
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Barrio / Ubicación en Cali y Jamundí */}
-            <div>
+            {/* Color de Pelaje Deducido por la Máquina */}
+            <div className="p-2.5 bg-neutral-900/80 border border-neutral-800 rounded-xl flex items-center justify-between text-xs">
+              <span className="text-neutral-400 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                Color del pelaje (IA):
+              </span>
+              <strong className="text-amber-300 font-bold">
+                {primaryColor || "Deducido automáticamente de la foto"}
+              </strong>
+            </div>
+
+            {/* Barrio / Ubicación en Cali y Jamundí con Búsqueda Escrita */}
+            <div className="relative">
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-bold text-neutral-400">
                   Ubicación / Barrio en Cali o Jamundí *
@@ -385,31 +505,68 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 </button>
               </div>
 
-              <select
-                value={neighborhood}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setNeighborhood(val);
-                  const info = (barrioCoords as any)[val.toLowerCase()];
-                  if (info) {
-                    setSelectedLat(info.lat);
-                    setSelectedLng(info.lng);
-                  }
-                }}
-                className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"
-              >
-                <option value="">Selecciona un Barrio o Sector...</option>
-                {sortedBarrioList.map((b: any) => (
-                  <option key={b.name} value={b.name}>
-                    {b.name} ({b.zone || `Comuna ${b.comuna}`})
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <MapPin className="w-3.5 h-3.5 text-amber-400 absolute left-3 top-3 pointer-events-none" />
+                <input
+                  type="text"
+                  value={neighborhood || barrioSearch}
+                  onChange={(e) => {
+                    setNeighborhood("");
+                    setBarrioSearch(e.target.value);
+                    setShowBarrioSuggestions(true);
+                  }}
+                  onFocus={() => setShowBarrioSuggestions(true)}
+                  placeholder="Escribe el barrio (Ej: Nápoles, Valle del Lili, Alfaguara...)"
+                  className="w-full bg-neutral-900 border border-neutral-800 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder:text-neutral-500 focus:border-amber-500 focus:outline-none"
+                />
+                {(neighborhood || barrioSearch) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNeighborhood("");
+                      setBarrioSearch("");
+                      setSelectedLat(undefined);
+                      setSelectedLng(undefined);
+                    }}
+                    className="absolute right-3 top-3 text-neutral-400 hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Sugerencias de Autocompletado de Barrios */}
+              {showBarrioSuggestions && matchingBarrios.length > 0 && (
+                <div className="absolute left-0 right-0 top-16 bg-[#19191e] border border-neutral-700 rounded-xl shadow-2xl z-40 max-h-48 overflow-y-auto">
+                  {matchingBarrios.map((b: any) => (
+                    <button
+                      key={b.name}
+                      type="button"
+                      onClick={() => {
+                        setNeighborhood(b.name);
+                        setBarrioSearch(b.name);
+                        setSelectedLat(b.lat);
+                        setSelectedLng(b.lng);
+                        setShowBarrioSuggestions(false);
+                      }}
+                      className="w-full text-left px-3 py-2.5 hover:bg-neutral-800 border-b border-neutral-800/80 last:border-0 flex items-center justify-between text-xs transition"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                        <span className="font-bold text-white">{b.name}</span>
+                      </div>
+                      <span className="text-[10px] text-amber-400/90 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                        {b.zone || `Comuna ${b.comuna}`}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {neighborhood && (
-                <div className="text-[11px] text-neutral-400 mt-1 flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-amber-400" />
-                  <span>Ubicación: <strong className="text-white">{neighborhood}</strong></span>
+                <div className="text-[11px] text-neutral-400 mt-1.5 flex items-center gap-1.5">
+                  <MapPin className="w-3 h-3 text-emerald-400" />
+                  <span>Barrio seleccionado: <strong className="text-white">{neighborhood}</strong></span>
                   {selectedLat && (
                     <span className="text-neutral-500">({selectedLat.toFixed(3)}, {selectedLng?.toFixed(3)})</span>
                   )}
@@ -515,11 +672,12 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         {/* Map Location Picker Modal */}
         {showMapPicker && (
           <MapLocationPicker
-            initialBarrio={neighborhood}
+            initialBarrio={neighborhood || barrioSearch}
             initialLat={selectedLat}
             initialLng={selectedLng}
             onSelectLocation={(loc) => {
               setNeighborhood(loc.neighborhood);
+              setBarrioSearch(loc.neighborhood);
               setSelectedLat(loc.lat);
               setSelectedLng(loc.lng);
             }}
