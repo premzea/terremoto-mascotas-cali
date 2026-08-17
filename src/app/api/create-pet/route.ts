@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, supabaseUrl } from "@/lib/supabase";
 import seedPets from "@/data/seed_pets.json";
+import { sendNewReportEmail } from "@/lib/email-service";
 
 function calculateNextId(reportType: "LOST" | "FOUND", existingIds: string[]): string {
   const prefix = reportType === "LOST" ? "B" : "R";
@@ -162,6 +163,14 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 }
       );
+    }
+
+    // Dispatch email notification directly from server
+    try {
+      await sendNewReportEmail(insertedPet);
+      console.log(`[create-pet] Notification email successfully sent for pet ${insertedPet.id}`);
+    } catch (emailErr) {
+      console.warn(`[create-pet] Email delivery skipped/failed for ${insertedPet.id}:`, emailErr);
     }
 
     return NextResponse.json({ success: true, pet: insertedPet }, { status: 201 });

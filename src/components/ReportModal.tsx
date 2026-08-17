@@ -257,20 +257,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         await saveOfflineReport(createdPet, photoBlob || undefined);
       }
 
-      // 4. Notificar por correo a busquedanimalcali@gmail.com
-      try {
-        await fetch("/api/notify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "NEW_REPORT",
-            data: { pet: createdPet },
-          }),
-        });
-      } catch (emailErr) {
-        console.warn("Could not dispatch registration email:", emailErr);
-      }
-
       onSuccess(createdPet);
       onClose();
     } catch (e: any) {
