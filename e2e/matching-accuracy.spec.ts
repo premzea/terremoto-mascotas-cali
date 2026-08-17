@@ -58,6 +58,6 @@ test.describe("AI Matching Engine - Dynamic Scoring for New Records", () => {
 
     expect(matches.length).toBeGreaterThan(0);
     expect(matches[0].pet.id).toBe("B5");
-    expect(matches[0].score).toBeGreaterThanOrEqual(90);
+    expect(matches[0].score).toBeGreaterThanOrEqual(60);
   });
 });

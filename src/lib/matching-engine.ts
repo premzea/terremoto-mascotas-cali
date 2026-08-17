@@ -186,7 +186,7 @@ export function findBestMatches(
   targetPet: PetReport,
   allPets: PetReport[],
   limit = 5,
-  algorithmMode: MatchingAlgorithmMode = "V1_CLASSIC",
+  algorithmMode: MatchingAlgorithmMode = "V2_MULTIMODAL",
   minScoreThreshold = 50
 ): MatchResult[] {
   const v2Cache = (visualFeaturesV2 as unknown) as Record<string, PetMetadataV2>;

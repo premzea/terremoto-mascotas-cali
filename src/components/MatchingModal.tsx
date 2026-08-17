@@ -17,12 +17,11 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
   const [zoomedPhoto, setZoomedPhoto] = useState<{ url: string; name: string; id: string } | null>(null);
   const [userNote, setUserNote] = useState<string>("");
   const [senderContact, setSenderContact] = useState<string>("");
-  const [algorithmMode, setAlgorithmMode] = useState<MatchingAlgorithmMode>("V2_MULTIMODAL");
   const [sending, setSending] = useState<boolean>(false);
   const [sendSuccess, setSendSuccess] = useState<boolean>(false);
   const [sendError, setSendError] = useState<string | null>(null);
 
-  const matches: MatchResult[] = findBestMatches(targetPet, allPets, 5, algorithmMode);
+  const matches: MatchResult[] = findBestMatches(targetPet, allPets, 5, "V2_MULTIMODAL", 50);
   const isLost = targetPet.report_type === "LOST";
 
   const handleSendCommunicate = async (e: React.FormEvent) => {
@@ -66,7 +65,7 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
       <div className="fixed inset-0 bg-stone-900/70 z-50 flex items-center justify-center p-3 sm:p-6 backdrop-blur-xs animate-fade-in">
         <div className="bg-white border border-stone-200 w-full max-w-3xl rounded-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
           {/* Header */}
-          <div className="p-4 sm:p-5 border-b border-stone-200 bg-amber-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 sm:p-5 border-b border-stone-200 bg-amber-50/60 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="bg-amber-100 text-amber-800 p-2.5 rounded-xl border border-amber-300 shadow-2xs">
                 <Sparkles className="w-6 h-6 text-amber-600" />
@@ -74,8 +73,8 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
               <div>
                 <h2 className="font-black text-lg sm:text-xl text-stone-900 flex items-center gap-2">
                   Motor de Coincidencias IA
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full text-white uppercase tracking-wider ${algorithmMode === "V2_MULTIMODAL" ? "bg-emerald-600" : "bg-amber-600"}`}>
-                    {algorithmMode === "V2_MULTIMODAL" ? "Multimodal Re-ID" : "V1 Clásico"}
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white uppercase tracking-wider bg-emerald-700">
+                    Re-ID Multimodal
                   </span>
                 </h2>
                 <p className="text-xs text-stone-600 mt-0.5">
@@ -84,40 +83,13 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
               </div>
             </div>
 
-            {/* Selector de Modo de Algoritmo */}
-            <div className="flex items-center justify-between sm:justify-end gap-2">
-              <div className="flex items-center bg-stone-100/90 p-1 rounded-xl border border-stone-200 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setAlgorithmMode("V2_MULTIMODAL")}
-                  className={`px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 cursor-pointer ${
-                    algorithmMode === "V2_MULTIMODAL"
-                      ? "bg-emerald-700 text-white shadow-xs"
-                      : "text-stone-600 hover:text-stone-900"
-                  }`}
-                >
-                  <span>⚡ V2 Re-ID</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAlgorithmMode("V1_CLASSIC")}
-                  className={`px-2.5 py-1 rounded-lg font-bold transition cursor-pointer ${
-                    algorithmMode === "V1_CLASSIC"
-                      ? "bg-amber-600 text-white shadow-xs"
-                      : "text-stone-600 hover:text-stone-900"
-                  }`}
-                >
-                  <span>🔄 V1 Clásico</span>
-                </button>
-              </div>
-
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition"
+              aria-label="Cerrar modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Tarjeta de Referencia de la Mascota Objetivo */}

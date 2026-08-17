@@ -53,12 +53,14 @@ function runSelfIdentificationBenchmark(
       status: "ACTIVE",
     };
 
+    const simId = simulatedRescue.id || `SIM_${target.id}`;
+
     // We make sure the simulated rescue inherits the visual cache of the photo
     if (target.id && dinoCache[target.id]) {
-      dinoCache[simulatedRescue.id] = dinoCache[target.id];
+      dinoCache[simId] = dinoCache[target.id];
     }
     if (target.id && v2Cache[target.id]) {
-      v2Cache[simulatedRescue.id] = v2Cache[target.id];
+      v2Cache[simId] = v2Cache[target.id];
     }
 
     // We query against the database of lost pets
