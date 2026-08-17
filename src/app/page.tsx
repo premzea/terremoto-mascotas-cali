@@ -8,10 +8,32 @@ import SplitHero from "@/components/SplitHero";
 import PetCard from "@/components/PetCard";
 import ReportModal from "@/components/ReportModal";
 import MatchingModal from "@/components/MatchingModal";
-import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass, Sparkles, SlidersHorizontal, X } from "lucide-react";
+import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass, Sparkles, SlidersHorizontal, X, Navigation } from "lucide-react";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import rawSeedPets from "@/data/seed_pets.json";
 import visualFeaturesV2 from "@/data/visual_features_v2_cache.json";
+
+function normalizeText(str: string): string {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 export default function Home() {
   const [pets, setPets] = useState<PetReport[]>([]);
@@ -23,6 +45,12 @@ export default function Home() {
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
   const [selectedBarrio, setSelectedBarrio] = useState<string>("ALL");
   const [searchTerm, setSearchTerm] = useState<string>("");
+
+  // Zone text search & GPS Proximity
+  const [userGpsLocation, setUserGpsLocation] = useState<{ lat: number; lng: number; barrioName: string } | null>(null);
+  const [gettingGps, setGettingGps] = useState<boolean>(false);
+  const [zoneInputQuery, setZoneInputQuery] = useState<string>("");
+  const [showZoneDropdown, setShowZoneDropdown] = useState<boolean>(false);
 
   // Advanced Biometric Filters
   const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(false);
@@ -57,11 +85,63 @@ export default function Home() {
     loadData();
   }, [speciesFilter, typeFilter, selectedBarrio, searchTerm]);
 
-  // Secondary In-Memory Filtering for Advanced Biometrics
+  // Live suggestions for Zone/Barrio search
+  const zoneSuggestions = useMemo(() => {
+    if (!zoneInputQuery.trim()) return [];
+    const q = normalizeText(zoneInputQuery);
+    return (Object.values(barrioCoords) as any[])
+      .filter((b) => {
+        const normName = normalizeText(b.name);
+        const normZone = b.zone ? normalizeText(b.zone) : "";
+        return normName.includes(q) || normZone.includes(q);
+      })
+      .slice(0, 8);
+  }, [zoneInputQuery]);
+
+  // GPS Locate User
+  const handleLocateNearMe = () => {
+    if (!navigator.geolocation) {
+      alert("Tu dispositivo no soporta geolocalización");
+      return;
+    }
+
+    setGettingGps(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGettingGps(false);
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        // Find nearest barrio
+        let minDistance = Infinity;
+        let closest = "Cali Centro";
+        for (const b of Object.values(barrioCoords) as any[]) {
+          const d = (b.lat - lat) ** 2 + (b.lng - lng) ** 2;
+          if (d < minDistance) {
+            minDistance = d;
+            closest = b.name;
+          }
+        }
+
+        setUserGpsLocation({ lat, lng, barrioName: closest });
+        setSelectedBarrio(closest);
+        setZoneInputQuery(closest);
+        setShowZoneDropdown(false);
+      },
+      (err) => {
+        setGettingGps(false);
+        alert("No se pudo obtener la señal GPS. Por favor escribe el nombre de tu barrio.");
+        console.warn("GPS error:", err);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
+  // Secondary In-Memory Filtering for Advanced Biometrics + GPS Distance Sorting
   const filteredPets = useMemo(() => {
     const v2Map = visualFeaturesV2 as Record<string, any>;
     
-    return pets.filter((p) => {
+    let list = pets.filter((p) => {
       const v2 = v2Map[p.id || ""] || {};
       
       // Color Filter
@@ -95,7 +175,22 @@ export default function Home() {
 
       return true;
     });
-  }, [pets, selectedColor, selectedPattern, selectedEyeColor, selectedSize]);
+
+    if (userGpsLocation) {
+      list = [...list].sort((a, b) => {
+        const aLat = a.lat || (barrioCoords as any)[a.neighborhood?.toLowerCase()]?.lat || 3.4516;
+        const aLng = a.lng || (barrioCoords as any)[a.neighborhood?.toLowerCase()]?.lng || -76.532;
+        const bLat = b.lat || (barrioCoords as any)[b.neighborhood?.toLowerCase()]?.lat || 3.4516;
+        const bLng = b.lng || (barrioCoords as any)[b.neighborhood?.toLowerCase()]?.lng || -76.532;
+
+        const distA = calculateDistanceKm(userGpsLocation.lat, userGpsLocation.lng, aLat, aLng);
+        const distB = calculateDistanceKm(userGpsLocation.lat, userGpsLocation.lng, bLat, bLng);
+        return distA - distB;
+      });
+    }
+
+    return list;
+  }, [pets, selectedColor, selectedPattern, selectedEyeColor, selectedSize, userGpsLocation]);
 
   const handleOpenReport = (type: "LOST" | "FOUND") => {
     setReportModalType(type);
@@ -119,6 +214,9 @@ export default function Home() {
     setSpeciesFilter("ALL");
     setTypeFilter("ALL");
     setSelectedBarrio("ALL");
+    setUserGpsLocation(null);
+    setZoneInputQuery("");
+    setShowZoneDropdown(false);
     setSearchTerm("");
     setSelectedColor("ALL");
     setSelectedPattern("ALL");
@@ -259,24 +357,108 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Filtro Barrio */}
-            <div className="flex-1 min-w-[150px]">
-              <select
-                value={selectedBarrio}
-                onChange={(e) => setSelectedBarrio(e.target.value)}
-                className="w-full bg-[#1e1e24] border border-neutral-800 text-neutral-300 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-amber-500"
-              >
-                <option value="ALL">📍 Todos los sectores (Cali y Jamundí)</option>
-                {(Object.values(barrioCoords) as any[])
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((b) => (
-                    <option key={b.name} value={b.name}>
-                      {b.name} ({b.zone || `Comuna ${b.comuna}`})
-                    </option>
+            {/* Filtro Zona / Barrio con Búsqueda Escrita y GPS Cerca de Mí */}
+            <div className="flex-1 min-w-[220px] relative">
+              <div className="flex gap-1.5">
+                <div className="relative flex-1">
+                  <MapPin className="w-3.5 h-3.5 text-amber-400 absolute left-2.5 top-2.5 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={selectedBarrio !== "ALL" ? selectedBarrio : zoneInputQuery}
+                    onChange={(e) => {
+                      setSelectedBarrio("ALL");
+                      setUserGpsLocation(null);
+                      setZoneInputQuery(e.target.value);
+                      setShowZoneDropdown(true);
+                    }}
+                    onFocus={() => setShowZoneDropdown(true)}
+                    placeholder="Escribe un barrio (Ej: Nápoles, Lili...)"
+                    className="w-full bg-[#1e1e24] border border-neutral-800 text-neutral-200 rounded-lg pl-8 pr-7 py-1.5 text-xs focus:outline-none focus:border-amber-500 placeholder:text-neutral-500"
+                  />
+                  {(selectedBarrio !== "ALL" || zoneInputQuery) && (
+                    <button
+                      onClick={() => {
+                        setSelectedBarrio("ALL");
+                        setUserGpsLocation(null);
+                        setZoneInputQuery("");
+                        setShowZoneDropdown(false);
+                      }}
+                      className="absolute right-2 top-2 text-neutral-400 hover:text-white"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  onClick={handleLocateNearMe}
+                  disabled={gettingGps}
+                  className={`px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 transition whitespace-nowrap ${
+                    userGpsLocation
+                      ? "bg-amber-500 text-black border-amber-400 font-extrabold shadow-md shadow-amber-500/20"
+                      : "bg-[#1e1e24] text-amber-400 border-neutral-800 hover:bg-neutral-800"
+                  }`}
+                  title="Filtrar por ubicación actual"
+                >
+                  {gettingGps ? (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Navigation className="w-3.5 h-3.5" />
+                  )}
+                  <span className="hidden sm:inline">Cerca de mí</span>
+                  <span className="sm:hidden">GPS</span>
+                </button>
+              </div>
+
+              {/* Autocomplete Dropdown */}
+              {showZoneDropdown && zoneSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-10 bg-[#19191e] border border-neutral-700 rounded-xl shadow-2xl z-40 max-h-48 overflow-y-auto">
+                  {zoneSuggestions.map((b: any) => (
+                    <button
+                      key={b.name}
+                      onClick={() => {
+                        setSelectedBarrio(b.name);
+                        setZoneInputQuery(b.name);
+                        setShowZoneDropdown(false);
+                        setUserGpsLocation(null);
+                      }}
+                      className="w-full text-left px-3 py-2 hover:bg-neutral-800 border-b border-neutral-800/80 last:border-0 flex items-center justify-between text-xs transition"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="w-3 h-3 text-amber-400 flex-shrink-0" />
+                        <span className="font-bold text-white">{b.name}</span>
+                      </div>
+                      <span className="text-[10px] text-amber-400/90 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                        {b.zone || `Comuna ${b.comuna}`}
+                      </span>
+                    </button>
                   ))}
-              </select>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Banner de Proximidad GPS Activa */}
+          {userGpsLocation && (
+            <div className="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl flex items-center justify-between text-xs text-amber-300 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <Navigation className="w-4 h-4 text-amber-400 flex-shrink-0 animate-pulse" />
+                <span>
+                  Mascotas ordenadas por cercanía a tu GPS (zona: <strong>{userGpsLocation.barrioName}</strong>)
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  setUserGpsLocation(null);
+                  setSelectedBarrio("ALL");
+                  setZoneInputQuery("");
+                }}
+                className="text-neutral-400 hover:text-white underline text-[11px] font-bold ml-2"
+              >
+                ✕ Desactivar GPS
+              </button>
+            </div>
+          )}
 
           {/* Panel de Filtros Avanzados por Rasgos Biométricos (Enums) */}
           {showAdvancedFilters && (
