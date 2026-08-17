@@ -37,8 +37,10 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "LOST",
       species: "DOG",
       name: "Dakota",
+      gender: "HEMBRA",
       primary_color: "Negro",
       secondary_color: "Café",
+      pattern: "SÓLIDO",
       size: "GRANDE",
       distinctive_features: "Pastor holandés, orejas puntiagudas erectas",
       neighborhood: "El Ingenio",
@@ -46,6 +48,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       lng: -76.535,
       photo_url: "https://example.com/dakota_lost.jpg",
       contact_name: "Dueña Maria",
+      status: "ACTIVE",
     };
 
     const foundDog: PetReport = {
@@ -53,8 +56,10 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "FOUND",
       species: "DOG",
       name: "Rescatado",
+      gender: "HEMBRA",
       primary_color: "Negro",
       secondary_color: "Café",
+      pattern: "SÓLIDO",
       size: "GRANDE",
       distinctive_features: "Pastor holandes negro atigrado",
       neighborhood: "El Ingenio",
@@ -62,6 +67,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       lng: -76.532,
       photo_url: "https://example.com/dakota_found.jpg",
       contact_name: "Rescatista Juan",
+      status: "ACTIVE",
     };
 
     const lostFeatures = petReportToReIDFeatures(
@@ -90,11 +96,16 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "LOST",
       species: "CAT",
       name: "Michi",
+      gender: "UNKNOWN",
       primary_color: "Negro",
+      secondary_color: "",
+      pattern: "",
       size: "PEQUEÑO",
+      distinctive_features: "",
       neighborhood: "San Antonio",
       photo_url: "https://example.com/cat.jpg",
       contact_name: "Dueño",
+      status: "ACTIVE",
     };
 
     const foundDog: PetReport = {
@@ -102,11 +113,16 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "FOUND",
       species: "DOG",
       name: "Perro Negro",
+      gender: "UNKNOWN",
       primary_color: "Negro",
+      secondary_color: "",
+      pattern: "",
       size: "PEQUEÑO",
+      distinctive_features: "",
       neighborhood: "San Antonio",
       photo_url: "https://example.com/dog.jpg",
       contact_name: "Rescatista",
+      status: "ACTIVE",
     };
 
     const lostFeatures = petReportToReIDFeatures(lostCat, null, null);
@@ -122,7 +138,10 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "LOST",
       species: "DOG",
       name: "Max",
+      gender: "MACHO",
       primary_color: "Amarillo",
+      secondary_color: "",
+      pattern: "SÓLIDO",
       size: "MEDIANO",
       distinctive_features: "Golden Retriever con collar rojo",
       neighborhood: "Pance",
@@ -130,6 +149,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       lng: -76.538,
       photo_url: "https://example.com/max.jpg",
       contact_name: "Dueño",
+      status: "ACTIVE",
     };
 
     const foundDogBackView: PetReport = {
@@ -137,7 +157,10 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "FOUND",
       species: "DOG",
       name: "Perro Encontrado",
+      gender: "MACHO",
       primary_color: "Amarillo",
+      secondary_color: "",
+      pattern: "SÓLIDO",
       size: "MEDIANO",
       distinctive_features: "Golden Retriever pelaje dorado",
       neighborhood: "Pance",
@@ -145,6 +168,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       lng: -76.536,
       photo_url: "https://example.com/max_back.jpg",
       contact_name: "Rescatista",
+      status: "ACTIVE",
     };
 
     // No petface vector (face unaligned), but strong whole-body CLIP vector
@@ -177,8 +201,10 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "FOUND",
       species: "DOG",
       name: "Husky Ojos Azules",
+      gender: "MACHO",
       primary_color: "Gris",
       secondary_color: "Blanco",
+      pattern: "BICOLOR",
       size: "GRANDE",
       distinctive_features: "Husky siberiano ojos azules visto en carrera 85",
       neighborhood: "El Ingenio",
@@ -186,6 +212,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       lng: -76.535,
       photo_url: "https://example.com/h1.jpg",
       contact_name: "Brigada 1",
+      status: "ACTIVE",
       created_at: new Date().toISOString(),
     };
 
@@ -194,8 +221,10 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "FOUND",
       species: "DOG",
       name: "Husky Resguardado",
+      gender: "MACHO",
       primary_color: "Gris",
       secondary_color: "Blanco",
+      pattern: "BICOLOR",
       size: "GRANDE",
       distinctive_features: "Husky siberiano resguardado en parque",
       neighborhood: "El Ingenio",
@@ -203,6 +232,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       lng: -76.534,
       photo_url: "https://example.com/h2.jpg",
       contact_name: "Brigada 2",
+      status: "ACTIVE",
       created_at: new Date().toISOString(),
     };
 
@@ -211,8 +241,10 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "FOUND",
       species: "DOG",
       name: "Perro Husky",
+      gender: "MACHO",
       primary_color: "Gris",
       secondary_color: "Blanco",
+      pattern: "BICOLOR",
       size: "GRANDE",
       distinctive_features: "Husky siberiano con placa borrosa",
       neighborhood: "El Ingenio",
@@ -220,6 +252,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       lng: -76.533,
       photo_url: "https://example.com/h3.jpg",
       contact_name: "Vecino 3",
+      status: "ACTIVE",
       created_at: new Date().toISOString(),
     };
 
@@ -228,7 +261,10 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       report_type: "FOUND",
       species: "DOG",
       name: "Pincher Mini",
+      gender: "MACHO",
       primary_color: "Negro",
+      secondary_color: "",
+      pattern: "SÓLIDO",
       size: "PEQUEÑO",
       distinctive_features: "Pincher miniatura",
       neighborhood: "San Fernando",
@@ -236,6 +272,7 @@ test.describe("PetFace Multimodal Re-Identification & Clustering Engine", () => 
       lng: -76.545,
       photo_url: "https://example.com/pincher.jpg",
       contact_name: "Rescatista 4",
+      status: "ACTIVE",
       created_at: new Date().toISOString(),
     };
 
