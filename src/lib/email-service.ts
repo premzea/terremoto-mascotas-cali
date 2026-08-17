@@ -1,19 +1,18 @@
 import nodemailer from "nodemailer";
 
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_PASS = process.env.EMAIL_PASS;
+const DEFAULT_EMAIL_USER = "busquedanimalcali@gmail.com";
+const DEFAULT_EMAIL_PASS = "spfx viwh ibna mcwd";
+
+const EMAIL_USER = process.env.EMAIL_USER || DEFAULT_EMAIL_USER;
+const EMAIL_PASS = process.env.EMAIL_PASS || DEFAULT_EMAIL_PASS;
 const TARGET_EMAIL = "busquedanimalcali@gmail.com";
 
 export function getTransporter() {
-  if (!EMAIL_USER || !EMAIL_PASS) {
-    console.warn("⚠️ Warning: EMAIL_USER or EMAIL_PASS not configured in .env.local");
-  }
-
   return nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: EMAIL_USER || TARGET_EMAIL,
-      pass: EMAIL_PASS || "",
+      user: EMAIL_USER,
+      pass: EMAIL_PASS,
     },
   });
 }
