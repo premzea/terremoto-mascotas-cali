@@ -19,7 +19,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await expect(modal.locator("text=Paso 1 de 3")).toBeVisible();
 
     // 3. Upload sample image
-    const fileInput = modal.locator("input[type='file']");
+    const fileInput = modal.locator("input[type='file']").first();
     const sampleImagePath = path.join(process.cwd(), "public", "photos", "B1.png");
     await fileInput.setInputFiles(sampleImagePath);
 
@@ -104,7 +104,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     await expect(modal.locator("h2:has-text('Reportar Mascota Encontrada')")).toBeVisible();
 
     // 3. Upload sample image
-    const fileInput = modal.locator("input[type='file']");
+    const fileInput = modal.locator("input[type='file']").first();
     const sampleImagePath = path.join(process.cwd(), "public", "photos", "B1.png");
     await fileInput.setInputFiles(sampleImagePath);
 

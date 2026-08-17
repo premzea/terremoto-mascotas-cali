@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { PetReport } from "@/lib/types";
 import { saveOfflineReport } from "@/lib/offline-queue";
-import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, MapPin, AlertCircle } from "lucide-react";
+import { Camera, Upload, ArrowRight, ArrowLeft, Check, X, Loader2, Sparkles, MapPin, AlertCircle, Image as ImageIcon, RefreshCw } from "lucide-react";
 import imageCompression from "browser-image-compression";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import seedPets from "@/data/seed_pets.json";
@@ -52,6 +52,10 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const [analyzingAi, setAnalyzingAi] = useState<boolean>(false);
   const [aiDetected, setAiDetected] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Hidden File & Camera Input Refs
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   // Form Fields
   const [species, setSpecies] = useState<"DOG" | "CAT" | "OTHER">("DOG");
@@ -306,70 +310,125 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         {step === 1 && (
           <div className="space-y-4 animate-fade-in">
             <p className="text-xs text-stone-600 leading-relaxed">
-              La fotografía es la clave para que la Inteligencia Artificial deduzca automáticamente los colores del pelaje, la raza y compare la mascota.
+              La fotografía permite a la Inteligencia Artificial identificar el pelaje, los rasgos y encontrar coincidencias de inmediato.
             </p>
 
-            <label className="border-2 border-dashed border-stone-300 hover:border-amber-500 bg-stone-50 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer min-h-[220px] transition">
-              {compressing ? (
-                <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="w-8 h-8 animate-spin text-amber-600" />
-                  <span className="text-xs font-semibold text-stone-700">
-                    Comprimiendo imagen con Web Worker...
-                  </span>
-                </div>
-              ) : photoPreview ? (
-                <div className="flex flex-col items-center">
+            {/* Inputs ocultos para Cámara directa y Galería */}
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+            <input
+              ref={galleryInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+
+            {compressing ? (
+              <div className="border-2 border-dashed border-amber-400 bg-amber-50/50 rounded-2xl p-8 flex flex-col items-center justify-center min-h-[200px]">
+                <Loader2 className="w-8 h-8 animate-spin text-amber-600 mb-2" />
+                <span className="text-xs font-bold text-stone-800">
+                  Procesando y optimizando imagen...
+                </span>
+                <span className="text-[11px] text-stone-500 mt-0.5">
+                  Comprimiendo para envío ultra rápido
+                </span>
+              </div>
+            ) : photoPreview ? (
+              <div className="border border-stone-200 bg-stone-50 rounded-2xl p-4 flex flex-col items-center">
+                <div className="relative w-full max-h-56 flex items-center justify-center overflow-hidden rounded-xl bg-black/5 p-2">
                   <img
                     src={photoPreview}
                     alt="Preview"
-                    className="max-h-48 object-contain rounded-xl mb-2 shadow-xs"
+                    className="max-h-52 object-contain rounded-lg shadow-xs"
                   />
-                  {analyzingAi && (
-                    <div className="flex items-center gap-1.5 text-xs text-amber-800 font-bold bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 animate-pulse">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                      <span>IA deduciendo colores, especie y raza...</span>
-                    </div>
-                  )}
-                  {aiDetected && !analyzingAi && (
-                    <div className="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg text-center mt-1 font-semibold">
-                      ✨ Detectado por IA: {aiDetected}
-                    </div>
-                  )}
-                  <span className="text-[11px] text-stone-500 underline mt-2">
-                    Toca para cambiar la foto
-                  </span>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="p-4 bg-amber-100/70 text-amber-700 rounded-2xl">
-                    <Camera className="w-8 h-8" />
+
+                {analyzingAi && (
+                  <div className="flex items-center gap-1.5 text-xs text-amber-800 font-bold bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 animate-pulse mt-3">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>IA deduciendo colores, especie y raza...</span>
                   </div>
-                  <div>
-                    <span className="text-sm font-bold text-stone-900 block">
-                      Subir o Tomar Foto del Animal
-                    </span>
-                    <span className="text-xs text-stone-500 block mt-1">
-                      Toca aquí para seleccionar de tu galería o cámara
-                    </span>
+                )}
+                {aiDetected && !analyzingAi && (
+                  <div className="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg text-center mt-2.5 font-semibold w-full">
+                    ✨ {aiDetected}
                   </div>
-                  <span className="text-[10px] bg-white text-stone-600 px-2.5 py-1 rounded-full border border-stone-200 shadow-2xs">
-                    JPG, PNG, WEBP (Comprimido automáticamente)
-                  </span>
+                )}
+
+                {/* Opciones para cambiar o volver a tomar foto */}
+                <div className="grid grid-cols-2 gap-2 w-full mt-3">
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="py-2.5 px-3 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs active:scale-[0.98]"
+                  >
+                    <Camera className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Tomar otra foto</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => galleryInputRef.current?.click()}
+                    className="py-2.5 px-3 bg-white hover:bg-stone-100 border border-stone-300 rounded-xl text-stone-800 text-[11px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs active:scale-[0.98]"
+                  >
+                    <ImageIcon className="w-3.5 h-3.5 text-stone-600" />
+                    <span>Elegir de galería</span>
+                  </button>
                 </div>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </label>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {/* Botón Principal: Tomar Foto con la Cámara */}
+                <button
+                  type="button"
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold p-4 rounded-2xl flex items-center justify-center gap-3.5 shadow-md shadow-amber-500/20 active:scale-[0.98] transition group text-left cursor-pointer"
+                >
+                  <div className="p-2.5 bg-white/20 rounded-xl group-hover:scale-110 transition flex-shrink-0">
+                    <Camera className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <span className="block text-sm font-black leading-tight">
+                      📸 Tomar Foto con la Cámara
+                    </span>
+                    <span className="block text-[11px] text-amber-100 font-medium mt-0.5">
+                      Abre directamente la cámara de tu celular
+                    </span>
+                  </div>
+                </button>
+
+                {/* Botón Secundario: Subir desde Galería o Archivos */}
+                <button
+                  type="button"
+                  onClick={() => galleryInputRef.current?.click()}
+                  className="w-full bg-stone-50 hover:bg-stone-100 border border-stone-300 hover:border-stone-400 text-stone-800 font-bold p-3.5 rounded-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition text-left cursor-pointer"
+                >
+                  <div className="p-2 bg-stone-200/70 rounded-xl flex-shrink-0">
+                    <ImageIcon className="w-5 h-5 text-stone-700" />
+                  </div>
+                  <div className="flex-1">
+                    <span className="block text-xs font-bold text-stone-900">
+                      🖼️ Subir desde Galería o Archivos
+                    </span>
+                    <span className="block text-[10px] text-stone-500 font-normal">
+                      Selecciona una foto guardada en tu teléfono o computador
+                    </span>
+                  </div>
+                </button>
+              </div>
+            )}
 
             <button
               type="button"
               disabled={!photoPreview || compressing}
               onClick={() => setStep(2)}
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed font-extrabold text-white py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 transition active:scale-[0.98]"
+              className="w-full bg-stone-900 hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed font-extrabold text-white py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition active:scale-[0.98] mt-2 cursor-pointer"
             >
               <span>Continuar con Datos de la Mascota</span>
               <ArrowRight className="w-4 h-4" />
