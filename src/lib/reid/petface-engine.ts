@@ -60,6 +60,7 @@ export function computeAttributeSimilarity(
   sizeClash?: boolean;
   eyePatchClash?: boolean;
   huskyClash?: boolean;
+  terrierClash?: boolean;
 } {
   const matchedReasons: string[] = [];
   let scorePoints = 0;
@@ -289,13 +290,22 @@ export function computeAttributeSimilarity(
     (hasHuskyTraitA && !hasHuskyTraitB) ||
     (hasHuskyTraitB && !hasHuskyTraitA);
 
-  if (hasHuskyTraitA && hasHuskyTraitB) {
+  const isYorkieOrTerrierA = /yorkshire|yorki|terrier|shaggy facial|bearded/i.test(`${attrA.breed || ""} ${textA}`);
+  const isYorkieOrTerrierB = /yorkshire|yorki|terrier|shaggy facial|bearded/i.test(`${attrB.breed || ""} ${textB}`);
+  const terrierClash =
+    (isYorkieOrTerrierA && !isYorkieOrTerrierB) ||
+    (isYorkieOrTerrierB && !isYorkieOrTerrierA);
+
+  if (isYorkieOrTerrierA && isYorkieOrTerrierB) {
+    scorePoints += 10;
+    matchedReasons.push("🧔 Morfología y pelaje tipo Yorkshire / Terrier");
+  } else if (hasHuskyTraitA && hasHuskyTraitB) {
     scorePoints += 10;
     matchedReasons.push("🐺 Rasgos y máscara nórdica / Husky");
   } else if (hasEyePatchA && hasEyePatchB) {
     scorePoints += 10;
     matchedReasons.push("🏴‍☠️ Parche distintivo sobre un ojo");
-  } else if (eyePatchClash || huskyClash) {
+  } else if (eyePatchClash || huskyClash || terrierClash) {
     scorePoints += 0;
   } else if (attrA.distinctive_markings.length > 0 && attrB.distinctive_markings.length > 0) {
     const cleanTokens = (str: string) =>
@@ -328,6 +338,7 @@ export function computeAttributeSimilarity(
     sizeClash: !!sizeClash,
     eyePatchClash: !!eyePatchClash,
     huskyClash: !!huskyClash,
+    terrierClash: !!terrierClash,
   };
 }
 
@@ -398,6 +409,7 @@ export function scorePetReIDPair(
     sizeClash,
     eyePatchClash,
     huskyClash,
+    terrierClash,
   } = computeAttributeSimilarity(
     target.canonicalAttributes,
     candidate.canonicalAttributes
@@ -440,7 +452,8 @@ export function scorePetReIDPair(
 
   // If core morphological attributes clash (e.g. Gray vs Black pigment, Long vs Short fur,
   // Dominant Inversion, Black vs Light/Cream/Yellow, Calico/Carey vs Solid Black,
-  // Dwarf vs Sturdy build, Pirate Eye Patch vs Solid Face, Husky Mask vs Non-Husky)
+  // Dwarf vs Sturdy build, Pirate Eye Patch vs Solid Face, Husky Mask vs Non-Husky,
+  // Yorkshire/Terrier vs Smooth-Coated dog)
   // without strong facial biometrics, cap composite score so it does not produce false positives above 50%.
   const morphologicalClash =
     attributeSim < 0.40 ||
@@ -452,7 +465,8 @@ export function scorePetReIDPair(
     headClash ||
     sizeClash ||
     eyePatchClash ||
-    huskyClash;
+    huskyClash ||
+    terrierClash;
 
   if (morphologicalClash && (!petfaceSim || petfaceSim < 0.70)) {
     compositeScore = Math.min(compositeScore, 0.48);
