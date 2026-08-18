@@ -53,6 +53,8 @@ export function computeAttributeSimilarity(
   matchedReasons: string[];
   furLengthClash?: boolean;
   dominantInversion?: boolean;
+  dominantClash?: boolean;
+  calicoClash?: boolean;
   buildClash?: boolean;
   headClash?: boolean;
   sizeClash?: boolean;
@@ -87,6 +89,9 @@ export function computeAttributeSimilarity(
   const hasWarmB = colorsB.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
   const isCalicoOrTortieA = attrA.coat_pattern === "PATCHED_CALICO" || (colorsA.length >= 3 && hasWarmA);
   const isCalicoOrTortieB = attrB.coat_pattern === "PATCHED_CALICO" || (colorsB.length >= 3 && hasWarmB);
+  const calicoClash =
+    (isCalicoOrTortieA && !hasWarmB && colorsB.length <= 2 && primaryColorA !== primaryColorB) ||
+    (isCalicoOrTortieB && !hasWarmA && colorsA.length <= 2 && primaryColorA !== primaryColorB);
 
   // Check pigment compatibility
   const sharedPigments = nonWhiteA.filter(c => nonWhiteB.includes(c));
@@ -114,10 +119,10 @@ export function computeAttributeSimilarity(
   const pigmentMismatch = nonWhiteA.length > 0 && nonWhiteB.length > 0 && sharedPigments.length === 0;
 
   if (colorsA.length > 0 && colorsB.length > 0) {
-    if ((isCalicoOrTortieA && !hasWarmB && colorsB.length <= 2) || (isCalicoOrTortieB && !hasWarmA && colorsA.length <= 2)) {
-      scorePoints += 8; // Calico vs strict Bicolor
+    if (calicoClash) {
+      scorePoints += 6; // Calico/Tortoiseshell vs strict Solid/Bicolor
     } else if (dominantClash) {
-      scorePoints += 4; // Major dominant color clash (e.g. Black vs Yellow/Golden Dog)
+      scorePoints += 4; // Major dominant color clash (e.g. Black vs Light/Cream/Yellow)
     } else if (dominantInversion) {
       scorePoints += 6; // Opposite dominant balance (Black body with white paws vs White body with black spots)
     } else if (exactPigmentSetMatch) {
@@ -316,6 +321,8 @@ export function computeAttributeSimilarity(
     matchedReasons,
     furLengthClash: !!furLengthClash,
     dominantInversion: !!dominantInversion,
+    dominantClash: !!dominantClash,
+    calicoClash: !!calicoClash,
     buildClash: !!buildClash,
     headClash: !!headClash,
     sizeClash: !!sizeClash,
@@ -384,6 +391,8 @@ export function scorePetReIDPair(
     matchedReasons,
     furLengthClash,
     dominantInversion,
+    dominantClash,
+    calicoClash,
     buildClash,
     headClash,
     sizeClash,
@@ -430,12 +439,15 @@ export function scorePetReIDPair(
     temporalPlausibility * effectiveTempWeight;
 
   // If core morphological attributes clash (e.g. Gray vs Black pigment, Long vs Short fur,
-  // Dominant Inversion, Dwarf vs Sturdy build, Pirate Eye Patch vs Solid Face, Husky Mask vs Non-Husky)
+  // Dominant Inversion, Black vs Light/Cream/Yellow, Calico/Carey vs Solid Black,
+  // Dwarf vs Sturdy build, Pirate Eye Patch vs Solid Face, Husky Mask vs Non-Husky)
   // without strong facial biometrics, cap composite score so it does not produce false positives above 50%.
   const morphologicalClash =
     attributeSim < 0.40 ||
     furLengthClash ||
     dominantInversion ||
+    dominantClash ||
+    calicoClash ||
     buildClash ||
     headClash ||
     sizeClash ||
