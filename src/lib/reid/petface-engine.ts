@@ -44,7 +44,7 @@ const TEMPLATE_STOPWORDS = new Set([
 export function computeAttributeSimilarity(
   attrA: CanonicalPetAttributes,
   attrB: CanonicalPetAttributes
-): { similarity: number; matchedReasons: string[] } {
+): { similarity: number; matchedReasons: string[]; furLengthClash?: boolean } {
   const matchedReasons: string[] = [];
   let scorePoints = 0;
   let maxPoints = 0;
