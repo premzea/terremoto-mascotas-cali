@@ -30,6 +30,14 @@ export function calculateVectorCosine(vecA?: number[], vecB?: number[]): number 
   return Math.max(0, Math.min(1, similarity));
 }
 
+const TEMPLATE_STOPWORDS = new Set([
+  "color", "color:", "patron", "patrón", "patron:", "patrón:",
+  "pelaje", "pelaje:", "ojos", "ojos:", "tamano", "tamaño", "tamano:", "tamaño:",
+  "senas", "señas", "senas:", "señas:", "accesorios", "accesorios:",
+  "senas/accesorios:", "señas/accesorios:", "barrio", "barrio:", "ninguno", "ninguna",
+  "desconocido", "desconocida", "parece", "como", "esta", "está", "foto", "foto:", "undefined", "null", "na"
+]);
+
 /**
  * Computes attribute Jaccard / categorical similarity between canonical Gemini traits.
  */
@@ -41,8 +49,8 @@ export function computeAttributeSimilarity(
   let scorePoints = 0;
   let maxPoints = 0;
 
-  // 1. Dominant-Aware Coat Color Matching (Max 40 pts)
-  maxPoints += 40;
+  // 1. Dominant-Aware & Color-Set Aware Coat Color Matching (Max 35 pts)
+  maxPoints += 35;
   const colorsA = attrA.coat_colors.map((c) => c.toLowerCase());
   const colorsB = attrB.coat_colors.map((c) => c.toLowerCase());
   const domA = colorsA[0] || "unknown";
@@ -55,19 +63,30 @@ export function computeAttributeSimilarity(
   const isWhiteB = /blanco|white/.test(domB);
   const isBlackB = /negro|black/.test(domB);
 
+  const hasWarmA = colorsA.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
+  const hasWarmB = colorsB.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
+  const isCalicoOrTortieA = attrA.coat_pattern === "PATCHED_CALICO" || (colorsA.length >= 3 && hasWarmA);
+  const isCalicoOrTortieB = attrB.coat_pattern === "PATCHED_CALICO" || (colorsB.length >= 3 && hasWarmB);
+
   if (colorsA.length > 0 && colorsB.length > 0) {
-    if (domA === domB && domA !== "unknown") {
-      let pts = 30;
+    // Discriminate Calico/Tricolor vs strict Bicolor
+    if ((isCalicoOrTortieA && !hasWarmB && colorsB.length <= 2) || (isCalicoOrTortieB && !hasWarmA && colorsA.length <= 2)) {
+      scorePoints += 10; // Substantial penalty for Calico vs Tuxedo mismatch
+    } else if (domA === domB && domA !== "unknown") {
       if (secA && secB && secA === secB) {
-        pts = 40;
-        matchedReasons.push(`🎨 Color base y acento idénticos (${domA} + ${secA})`);
+        if (colorsA.length === colorsB.length) {
+          scorePoints += 35;
+          matchedReasons.push(`🎨 Color base y acento idénticos (${domA} + ${secA})`);
+        } else {
+          scorePoints += 20;
+          matchedReasons.push(`🎨 Color base compartido con variación de tono (${domA})`);
+        }
       } else {
+        scorePoints += 22;
         matchedReasons.push(`🎨 Mismo color base dominante: ${domA}`);
       }
-      scorePoints += pts;
     } else if ((isWhiteA && isBlackB) || (isBlackA && isWhiteB)) {
-      // Inverted Polarity Conflict: Mostly White vs Mostly Black
-      scorePoints += 5; // Heavy reduction
+      scorePoints += 5; // Inverted Polarity Conflict: Mostly White vs Mostly Black
     } else {
       const common = colorsA.filter((c) => colorsB.includes(c));
       if (common.length > 0) {
@@ -76,16 +95,36 @@ export function computeAttributeSimilarity(
       }
     }
   } else {
-    scorePoints += 15; // Neutral baseline
+    scorePoints += 15;
   }
 
-  // 2. Breed / Morphological category (Max 25 pts)
-  maxPoints += 25;
+  // 2. Coat Pattern Matching (Max 15 pts)
+  maxPoints += 15;
+  const patA = attrA.coat_pattern;
+  const patB = attrB.coat_pattern;
+  if (patA && patB && patA !== "UNKNOWN" && patB !== "UNKNOWN") {
+    if (patA === patB) {
+      scorePoints += 15;
+      matchedReasons.push(`✨ Patrón de pelaje idéntico (${patA.toLowerCase()})`);
+    } else if (
+      (patA === "PATCHED_CALICO" && (patB === "BICOLOR_TUXEDO" || patB === "SOLID")) ||
+      (patB === "PATCHED_CALICO" && (patA === "BICOLOR_TUXEDO" || patA === "SOLID"))
+    ) {
+      scorePoints += 0; // Distinct pattern mismatch (Calico vs Tuxedo/Solid)
+    } else {
+      scorePoints += 6;
+    }
+  } else {
+    scorePoints += 8;
+  }
+
+  // 3. Breed / Morphological category (Max 20 pts)
+  maxPoints += 20;
   if (attrA.breed && attrB.breed) {
     const bA = attrA.breed.toLowerCase();
     const bB = attrB.breed.toLowerCase();
     if (bA === bB || bA.includes(bB) || bB.includes(bA)) {
-      scorePoints += 25;
+      scorePoints += 20;
       matchedReasons.push(`🏷️ Raza / morfología: ${attrA.breed}`);
     } else {
       scorePoints += 5;
@@ -94,19 +133,19 @@ export function computeAttributeSimilarity(
     scorePoints += 10;
   }
 
-  // 3. Body Size (Max 15 pts)
-  maxPoints += 15;
+  // 4. Body Size (Max 10 pts)
+  maxPoints += 10;
   if (attrA.size === attrB.size) {
-    scorePoints += 15;
+    scorePoints += 10;
     matchedReasons.push(`📏 Mismo tamaño (${attrA.size.toLowerCase()})`);
   } else if (
     (attrA.size === "MEDIANO" && (attrB.size === "PEQUEÑO" || attrB.size === "GRANDE")) ||
     (attrB.size === "MEDIANO" && (attrA.size === "PEQUEÑO" || attrA.size === "GRANDE"))
   ) {
-    scorePoints += 8; // Adjacent size
+    scorePoints += 5; // Adjacent size
   }
 
-  // 4. Ears & Tail Shape (Max 10 pts)
+  // 5. Ears & Tail Shape (Max 10 pts)
   maxPoints += 10;
   if (attrA.ear_type && attrB.ear_type && attrA.ear_type !== "UNKNOWN" && attrA.ear_type === attrB.ear_type) {
     scorePoints += 5;
@@ -116,14 +155,20 @@ export function computeAttributeSimilarity(
     scorePoints += 5;
   }
 
-  // 5. Distinctive Markings Overlap (Max 10 pts)
+  // 6. Distinctive Markings Overlap without Form Template Boilerplate (Max 10 pts)
   maxPoints += 10;
   if (attrA.distinctive_markings.length > 0 && attrB.distinctive_markings.length > 0) {
-    const marksA = attrA.distinctive_markings.join(" ").toLowerCase();
-    const marksB = attrB.distinctive_markings.join(" ").toLowerCase();
-    const sharedWords = marksA
-      .split(/\s+/)
-      .filter((w) => w.length > 3 && marksB.includes(w));
+    const cleanTokens = (str: string) =>
+      str
+        .toLowerCase()
+        .replace(/[•,.;:()/\\]/g, " ")
+        .split(/\s+/)
+        .filter((w) => w.length > 3 && !TEMPLATE_STOPWORDS.has(w));
+
+    const wordsA = cleanTokens(attrA.distinctive_markings.join(" "));
+    const wordsB = cleanTokens(attrB.distinctive_markings.join(" "));
+    const sharedWords = Array.from(new Set(wordsA.filter((w) => wordsB.includes(w))));
+
     if (sharedWords.length > 0) {
       scorePoints += 10;
       matchedReasons.push(`✨ Seña particular: ${sharedWords.slice(0, 2).join(", ")}`);
