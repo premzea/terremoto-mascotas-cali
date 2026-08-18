@@ -17,13 +17,13 @@ export function resolveRecipientEmail(petOrData?: any): string {
   }
   const isTest =
     process.env.NODE_ENV === "test" ||
-    petOrData?.isTest ||
+    petOrData?.isTest === true ||
     petOrData?.id?.startsWith("TEST") ||
     petOrData?.targetPet?.id?.startsWith("TEST") ||
     petOrData?.candidatePet?.id?.startsWith("TEST") ||
-    petOrData?.name?.toLowerCase().includes("test") ||
-    petOrData?.contact_name?.toLowerCase().includes("test") ||
-    petOrData?.contact_phone?.includes("000");
+    (typeof petOrData?.name === "string" && petOrData.name.toLowerCase().includes("test")) ||
+    (typeof petOrData?.contact_name === "string" && petOrData.contact_name.toLowerCase().includes("test")) ||
+    (typeof petOrData?.contact_phone === "string" && petOrData.contact_phone.includes("000"));
 
   return isTest ? TEST_NOTIFICATION_EMAIL : PROD_NOTIFICATION_EMAIL;
 }
@@ -150,7 +150,7 @@ export async function sendMatchContactEmail(data: {
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; background: #f9f9fb; border: 1px solid #e1e1e6; border-radius: 12px; overflow: hidden;">
         <div style="background: #121214; color: #fff; padding: 20px; text-align: center;">
-          <h1 style="margin: 0; font-size: 20px; color: #10b981;">¡Solicitud de Comunicación de Coincidencia!</h1>
+          <h1 style="margin: 0; font-size: 20px; color: #10b981;">¡Solicitud de Comunicación de Coincidencia!${isTest ? ' <span style="font-size:12px; background:#4b5563; padding:2px 8px; border-radius:4px;">AMBIENTE DE PRUEBAS</span>' : ''}</h1>
           <p style="margin: 5px 0 0 0; font-size: 13px; color: #a1a1aa;">Un usuario solicita conectar estas dos mascotas</p>
         </div>
 
@@ -161,13 +161,6 @@ export async function sendMatchContactEmail(data: {
               ${reasons.join(" • ")}
             </div>
           </div>
-
-          ${userMessage ? `
-          <div style="background: #fff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
-            <strong>Mensaje o nota del usuario:</strong>
-            <p style="margin: 5px 0 0 0; font-style: italic; color: #3f3f46;">${userMessage}</p>
-          </div>
-          ` : ''}
 
           <div style="display: flex; gap: 15px; margin-bottom: 20px;">
             <!-- Target Pet -->

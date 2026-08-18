@@ -60,9 +60,40 @@ export async function POST(req: NextRequest) {
       console.warn("Could not write directly to seed_pets.json:", fsErr);
     }
 
-    // 3. Send email notification to busquedanimalcali@gmail.com
+    // 3. Send email notification (routed to test inbox if test pet)
     try {
-      await sendCaseClosedEmail(petId, petName);
+      let isTestPet =
+        isTest === true ||
+        petId?.startsWith("TEST") ||
+        (typeof petName === "string" && petName.toLowerCase().includes("test"));
+
+      if (!isTestPet && supabase) {
+        try {
+          const { data: petRow } = await supabase
+            .from("pets")
+            .select("name, contact_name, contact_phone")
+            .eq("id", petId)
+            .maybeSingle();
+
+          if (petRow) {
+            const rowName = (petRow.name || "").toLowerCase();
+            const rowContact = (petRow.contact_name || "").toLowerCase();
+            const rowPhone = petRow.contact_phone || "";
+            if (
+              rowName.includes("test") ||
+              rowContact.includes("test") ||
+              rowPhone.includes("000") ||
+              rowPhone.includes("999")
+            ) {
+              isTestPet = true;
+            }
+          }
+        } catch (e) {
+          console.warn("Could not query pet record for test check:", e);
+        }
+      }
+
+      await sendCaseClosedEmail(petId, petName, isTestPet);
     } catch (emailErr) {
       console.warn("Could not dispatch case closed email:", emailErr);
     }

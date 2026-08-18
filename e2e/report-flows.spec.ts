@@ -99,7 +99,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     const cardId = await newCard.locator("span.font-mono").innerText().catch(() => "");
     if (cardId && /^[BR]\d+$/.test(cardId.trim())) {
       await page.request.post("/api/close-case", {
-        data: { petId: cardId.trim(), passcode: "120905260506" },
+        data: { petId: cardId.trim(), passcode: "120905260506", isTest: true },
       });
     }
   });
@@ -185,7 +185,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     const cardId = await newCard.locator("span.font-mono").innerText().catch(() => "");
     if (cardId && /^[BR]\d+$/.test(cardId.trim())) {
       await page.request.post("/api/close-case", {
-        data: { petId: cardId.trim(), passcode: "120905260506" },
+        data: { petId: cardId.trim(), passcode: "120905260506", isTest: true },
       });
     }
   });

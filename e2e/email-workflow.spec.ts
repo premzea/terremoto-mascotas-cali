@@ -118,6 +118,7 @@ test.describe("Búsqueda Animal Cali - Email Notification Workflow", () => {
       data: {
         petId: createdPetId,
         passcode: "120905260506",
+        isTest: true,
       },
     });
 
