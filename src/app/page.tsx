@@ -43,6 +43,7 @@ export default function Home() {
   // Basic Filters
   const [speciesFilter, setSpeciesFilter] = useState<string>("ALL");
   const [typeFilter, setTypeFilter] = useState<string>("ALL");
+  const [genderFilter, setGenderFilter] = useState<string>("ALL");
   const [selectedBarrio, setSelectedBarrio] = useState<string>("ALL");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -73,6 +74,7 @@ export default function Home() {
       const data = await getPets({
         species: speciesFilter,
         report_type: typeFilter,
+        gender: genderFilter,
         neighborhood: selectedBarrio,
         search: searchTerm,
       });
@@ -80,6 +82,7 @@ export default function Home() {
       if (
         speciesFilter === "ALL" &&
         typeFilter === "ALL" &&
+        genderFilter === "ALL" &&
         selectedBarrio === "ALL" &&
         !searchTerm
       ) {
@@ -94,7 +97,7 @@ export default function Home() {
 
   useEffect(() => {
     loadData();
-  }, [speciesFilter, typeFilter, selectedBarrio, searchTerm]);
+  }, [speciesFilter, typeFilter, genderFilter, selectedBarrio, searchTerm]);
 
   // Live suggestions for Zone/Barrio search
   const zoneSuggestions = useMemo(() => {
@@ -242,6 +245,21 @@ export default function Home() {
         }
       }
 
+      // 8. Sex / Gender Filter
+      if (genderFilter !== "ALL") {
+        const pGender = (p.gender || "").toUpperCase();
+        if (genderFilter === "HEMBRA") {
+          const isFemale = pGender === "HEMBRA" || features.includes("hembra") || features.includes("hembra esterilizada");
+          if (!isFemale) return false;
+        } else if (genderFilter === "MACHO") {
+          const isMale = pGender === "MACHO" || features.includes("macho") || features.includes("macho castrado");
+          if (!isMale) return false;
+        } else if (genderFilter === "UNKNOWN") {
+          const isUnknown = (!pGender || pGender === "UNKNOWN") && !features.includes("hembra") && !features.includes("macho");
+          if (!isUnknown) return false;
+        }
+      }
+
       return true;
     });
 
@@ -261,6 +279,7 @@ export default function Home() {
     return list;
   }, [
     pets,
+    genderFilter,
     selectedColors,
     selectedNeutered,
     selectedBreed,
@@ -292,6 +311,7 @@ export default function Home() {
   const clearAllFilters = () => {
     setSpeciesFilter("ALL");
     setTypeFilter("ALL");
+    setGenderFilter("ALL");
     setSelectedBarrio("ALL");
     setUserGpsLocation(null);
     setZoneInputQuery("");
@@ -307,6 +327,7 @@ export default function Home() {
   };
 
   const hasActiveAdvancedFilters =
+    genderFilter !== "ALL" ||
     selectedColors.length > 0 ||
     selectedNeutered !== "ALL" ||
     selectedBreed !== "ALL" ||
@@ -438,6 +459,43 @@ export default function Home() {
                 }`}
               >
                 Encontrados
+              </button>
+            </div>
+
+            {/* Filtro Sexo */}
+            <div className="flex bg-stone-100 rounded-xl p-1 border border-stone-200" id="filter-gender-group">
+              <button
+                onClick={() => setGenderFilter("ALL")}
+                className={`px-2.5 py-1 rounded-lg font-bold transition ${
+                  genderFilter === "ALL" ? "bg-white text-stone-900 shadow-xs" : "text-stone-600 hover:text-stone-900"
+                }`}
+              >
+                Todos
+              </button>
+              <button
+                onClick={() => setGenderFilter("HEMBRA")}
+                className={`px-2.5 py-1 rounded-lg font-bold transition ${
+                  genderFilter === "HEMBRA" ? "bg-rose-500 text-white shadow-xs" : "text-stone-600 hover:text-stone-900"
+                }`}
+              >
+                ♀ Hembra
+              </button>
+              <button
+                onClick={() => setGenderFilter("MACHO")}
+                className={`px-2.5 py-1 rounded-lg font-bold transition ${
+                  genderFilter === "MACHO" ? "bg-sky-600 text-white shadow-xs" : "text-stone-600 hover:text-stone-900"
+                }`}
+              >
+                ♂ Macho
+              </button>
+              <button
+                onClick={() => setGenderFilter("UNKNOWN")}
+                className={`px-2.5 py-1 rounded-lg font-bold transition ${
+                  genderFilter === "UNKNOWN" ? "bg-stone-700 text-white shadow-xs" : "text-stone-600 hover:text-stone-900"
+                }`}
+                title="Sexo desconocido o por definir"
+              >
+                ❓ Desconocido
               </button>
             </div>
 
@@ -614,8 +672,25 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 2. Grid de Filtros de Castración, Raza, Largo de Pelo y Tamaño */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1 border-t border-stone-200">
+              {/* 2. Grid de Filtros de Sexo, Castración, Raza, Largo de Pelo y Tamaño */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1 border-t border-stone-200">
+                {/* Sexo / Género */}
+                <div>
+                  <label className="block text-[11px] font-bold text-stone-600 mb-1">
+                    ⚧️ Sexo / Género
+                  </label>
+                  <select
+                    value={genderFilter}
+                    onChange={(e) => setGenderFilter(e.target.value)}
+                    className="w-full bg-white border border-stone-200 rounded-xl p-2 text-xs text-stone-800 focus:border-amber-500 focus:outline-none shadow-2xs font-medium"
+                  >
+                    <option value="ALL">Cualquiera (Todos)</option>
+                    <option value="HEMBRA">♀ Hembra</option>
+                    <option value="MACHO">♂ Macho</option>
+                    <option value="UNKNOWN">❓ Desconocido</option>
+                  </select>
+                </div>
+
                 {/* Castrado / Esterilizado */}
                 <div>
                   <label className="block text-[11px] font-bold text-stone-600 mb-1">

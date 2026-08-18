@@ -18,6 +18,7 @@ export async function getPets(filters?: {
   species?: string;
   report_type?: string;
   neighborhood?: string;
+  gender?: string;
   search?: string;
 }): Promise<PetReport[]> {
   cleanupLegacyStorage();
@@ -29,6 +30,7 @@ export async function getPets(filters?: {
     if (filters?.species) params.set("species", filters.species);
     if (filters?.report_type) params.set("report_type", filters.report_type);
     if (filters?.neighborhood) params.set("neighborhood", filters.neighborhood);
+    if (filters?.gender) params.set("gender", filters.gender);
     if (filters?.search) params.set("search", filters.search);
 
     const res = await fetch(`/api/pets?${params.toString()}`, { cache: "no-store" });
@@ -55,6 +57,13 @@ export async function getPets(filters?: {
       }
       if (filters?.report_type && filters.report_type !== "ALL") {
         query = query.eq("report_type", filters.report_type);
+      }
+      if (filters?.gender && filters.gender !== "ALL") {
+        if (filters.gender === "UNKNOWN") {
+          query = query.or("gender.is.null,gender.eq.UNKNOWN");
+        } else {
+          query = query.eq("gender", filters.gender);
+        }
       }
       if (filters?.neighborhood && filters.neighborhood !== "ALL") {
         query = query.ilike("neighborhood", `%${filters.neighborhood}%`);

@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
     const species = searchParams.get("species");
     const report_type = searchParams.get("report_type");
     const neighborhood = searchParams.get("neighborhood");
+    const gender = searchParams.get("gender");
     const search = searchParams.get("search");
 
     let baseList: PetReport[] = [];
@@ -30,6 +31,13 @@ export async function GET(req: NextRequest) {
         }
         if (report_type && report_type !== "ALL") {
           query = query.eq("report_type", report_type);
+        }
+        if (gender && gender !== "ALL") {
+          if (gender === "UNKNOWN") {
+            query = query.or("gender.is.null,gender.eq.UNKNOWN");
+          } else {
+            query = query.eq("gender", gender);
+          }
         }
         if (neighborhood && neighborhood !== "ALL") {
           query = query.ilike("neighborhood", `%${neighborhood}%`);
@@ -55,6 +63,13 @@ export async function GET(req: NextRequest) {
       }
       if (report_type && report_type !== "ALL") {
         baseList = baseList.filter((p) => p.report_type === report_type);
+      }
+      if (gender && gender !== "ALL") {
+        if (gender === "UNKNOWN") {
+          baseList = baseList.filter((p) => !p.gender || p.gender === "UNKNOWN");
+        } else {
+          baseList = baseList.filter((p) => p.gender === gender);
+        }
       }
       if (neighborhood && neighborhood !== "ALL") {
         baseList = baseList.filter((p) =>

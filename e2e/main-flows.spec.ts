@@ -77,4 +77,27 @@ test.describe("Búsqueda Animal Cali - Main E2E Flows", () => {
     // Verify filtered count updates
     await expect(page.locator("text=Mostrando")).toBeVisible();
   });
+
+  test("5. Filtering works correctly by sex / gender (Hembras, Machos, Desconocido)", async ({ page }) => {
+    // Filter by Females (Hembra)
+    const hembraBtn = page.locator("#filter-gender-group button:has-text('♀ Hembra')");
+    await expect(hembraBtn).toBeVisible();
+    await hembraBtn.click();
+    await expect(page.locator(".edge-card").first()).toBeVisible();
+
+    // Filter by Males (Macho)
+    const machoBtn = page.locator("#filter-gender-group button:has-text('♂ Macho')");
+    await machoBtn.click();
+    await expect(page.locator(".edge-card").first()).toBeVisible();
+
+    // Filter by Unknown (Desconocido)
+    const unknownBtn = page.locator("#filter-gender-group button:has-text('❓ Desconocido')");
+    await unknownBtn.click();
+    await expect(page.locator(".edge-card").first()).toBeVisible();
+
+    // Reset to All
+    const allGenderBtn = page.locator("#filter-gender-group button:has-text('Todos')");
+    await allGenderBtn.click();
+    await expect(page.locator(".edge-card").first()).toBeVisible();
+  });
 });
