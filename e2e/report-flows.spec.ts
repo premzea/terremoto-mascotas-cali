@@ -76,7 +76,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
 
     // 7. Fill Step 3 (Safe Contact)
     await expect(modal.locator("text=Paso 3 de 3")).toBeVisible();
-    await modal.locator("input[placeholder*='Ej: Familia Gómez']").fill("Carlos Dueño");
+    await modal.locator("input[placeholder*='Ej: Familia Gómez']").fill("Test Dueño Carlos");
     await modal.locator("input[type='tel']").fill("3159998877");
 
     // 8. Submit Report
@@ -164,7 +164,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
 
     // 7. Fill Step 3
     await expect(modal.locator("text=Paso 3 de 3")).toBeVisible();
-    await modal.locator("input[placeholder*='Ej: Familia Gómez']").fill("Rescatista Sandra");
+    await modal.locator("input[placeholder*='Ej: Familia Gómez']").fill("Test Rescatista Sandra");
     await modal.locator("input[type='tel']").fill("3101112233");
 
     // 8. Submit Report
