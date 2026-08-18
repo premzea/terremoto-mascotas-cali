@@ -44,7 +44,7 @@ const TEMPLATE_STOPWORDS = new Set([
 export function computeAttributeSimilarity(
   attrA: CanonicalPetAttributes,
   attrB: CanonicalPetAttributes
-): { similarity: number; matchedReasons: string[]; furLengthClash?: boolean } {
+): { similarity: number; matchedReasons: string[]; furLengthClash?: boolean; dominantInversion?: boolean } {
   const matchedReasons: string[] = [];
   let scorePoints = 0;
   let maxPoints = 0;
@@ -62,6 +62,13 @@ export function computeAttributeSimilarity(
   const domPigmentA = nonWhiteA[0] || (hasWhiteA ? "white" : "unknown");
   const domPigmentB = nonWhiteB[0] || (hasWhiteB ? "white" : "unknown");
 
+  const primaryColorA = colorsA[0] || (hasWhiteA ? "white" : "unknown");
+  const primaryColorB = colorsB[0] || (hasWhiteB ? "white" : "unknown");
+
+  const dominantInversion =
+    (primaryColorA === "black" && primaryColorB === "white") ||
+    (primaryColorA === "white" && primaryColorB === "black");
+
   const hasWarmA = colorsA.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
   const hasWarmB = colorsB.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
   const isCalicoOrTortieA = attrA.coat_pattern === "PATCHED_CALICO" || (colorsA.length >= 3 && hasWarmA);
@@ -70,6 +77,8 @@ export function computeAttributeSimilarity(
   // Check pigment compatibility
   const sharedPigments = nonWhiteA.filter(c => nonWhiteB.includes(c));
   const exactPigmentSetMatch =
+    !dominantInversion &&
+    primaryColorA === primaryColorB &&
     nonWhiteA.length === nonWhiteB.length &&
     nonWhiteA.every(c => nonWhiteB.includes(c)) &&
     hasWhiteA === hasWhiteB;
@@ -95,12 +104,14 @@ export function computeAttributeSimilarity(
       scorePoints += 8; // Calico vs strict Bicolor
     } else if (dominantClash) {
       scorePoints += 4; // Major dominant color clash (e.g. Black vs Yellow/Golden Dog)
+    } else if (dominantInversion) {
+      scorePoints += 6; // Opposite dominant balance (Black body with white paws vs White body with black spots)
     } else if (exactPigmentSetMatch) {
       scorePoints += 35;
       matchedReasons.push(`🎨 Color base y acento idénticos (${nonWhiteA.join(", ")} ${hasWhiteA ? "+ blanco" : ""})`);
-    } else if (domPigmentA === domPigmentB && domPigmentA !== "unknown") {
+    } else if (primaryColorA === primaryColorB && primaryColorA !== "unknown") {
       scorePoints += 25;
-      matchedReasons.push(`🎨 Mismo color base dominante: ${domPigmentA}`);
+      matchedReasons.push(`🎨 Mismo color base dominante: ${primaryColorA}`);
     } else if (sharedPigments.length > 0) {
       scorePoints += 12;
       matchedReasons.push(`🎨 Coincidencia parcial de tono secundario: ${sharedPigments.join(", ")}`);
@@ -117,7 +128,7 @@ export function computeAttributeSimilarity(
   const patB = attrB.coat_pattern;
   if (patA && patB && patA !== "UNKNOWN" && patB !== "UNKNOWN") {
     if (patA === patB) {
-      if (dominantClash || pigmentMismatch) {
+      if (dominantClash || dominantInversion || pigmentMismatch) {
         scorePoints += 4;
       } else {
         scorePoints += 15;
@@ -125,7 +136,9 @@ export function computeAttributeSimilarity(
       }
     } else if (
       (patA === "PATCHED_CALICO" && (patB === "BICOLOR_TUXEDO" || patB === "SOLID")) ||
-      (patB === "PATCHED_CALICO" && (patA === "BICOLOR_TUXEDO" || patA === "SOLID"))
+      (patB === "PATCHED_CALICO" && (patA === "BICOLOR_TUXEDO" || patA === "SOLID")) ||
+      (patA === "BICOLOR_TUXEDO" && patB === "SPOTTED") ||
+      (patB === "BICOLOR_TUXEDO" && patA === "SPOTTED")
     ) {
       scorePoints += 0;
     } else {
@@ -218,7 +231,12 @@ export function computeAttributeSimilarity(
   }
 
   const similarity = maxPoints > 0 ? scorePoints / maxPoints : 0.5;
-  return { similarity: Math.max(0, Math.min(1, similarity)), matchedReasons, furLengthClash: !!furLengthClash };
+  return {
+    similarity: Math.max(0, Math.min(1, similarity)),
+    matchedReasons,
+    furLengthClash: !!furLengthClash,
+    dominantInversion: !!dominantInversion,
+  };
 }
 
 /**
@@ -276,7 +294,7 @@ export function scorePetReIDPair(
   }
 
   // 4. Structured Visual Attributes
-  const { similarity: attributeSim, matchedReasons, furLengthClash } = computeAttributeSimilarity(
+  const { similarity: attributeSim, matchedReasons, furLengthClash, dominantInversion } = computeAttributeSimilarity(
     target.canonicalAttributes,
     candidate.canonicalAttributes
   );
@@ -316,9 +334,9 @@ export function scorePetReIDPair(
     geoPlausibility * effectiveGeoWeight +
     temporalPlausibility * effectiveTempWeight;
 
-  // If core morphological attributes clash (e.g. Gray vs Black pigment, or Long vs Short fur)
+  // If core morphological attributes clash (e.g. Gray vs Black pigment, Long vs Short fur, or Dominant Inversion)
   // without strong facial biometrics, cap composite score so it does not produce false positives above 50%.
-  if ((attributeSim < 0.40 || furLengthClash) && (!petfaceSim || petfaceSim < 0.70)) {
+  if ((attributeSim < 0.40 || furLengthClash || dominantInversion) && (!petfaceSim || petfaceSim < 0.70)) {
     compositeScore = Math.min(compositeScore, 0.48);
   }
 
