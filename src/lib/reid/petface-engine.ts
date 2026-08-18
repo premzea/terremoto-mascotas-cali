@@ -55,6 +55,7 @@ export function computeAttributeSimilarity(
   dominantInversion?: boolean;
   dominantClash?: boolean;
   calicoClash?: boolean;
+  solidWhiteClash?: boolean;
   buildClash?: boolean;
   headClash?: boolean;
   sizeClash?: boolean;
@@ -103,9 +104,11 @@ export function computeAttributeSimilarity(
     nonWhiteA.every(c => nonWhiteB.includes(c)) &&
     hasWhiteA === hasWhiteB;
 
-  // Major dominant color clash: Black vs Golden/Yellow/Cream, or White vs Black
+  // Major dominant color clash: Black vs Golden/Yellow/Cream, White vs Black/Brown/Yellow
   const isBlackDomA = /black|negro/.test(domPigmentA);
   const isBlackDomB = /black|negro/.test(domPigmentB);
+  const isBrownDomA = /brown|cafe|chocolate|marron/.test(domPigmentA);
+  const isBrownDomB = /brown|cafe|chocolate|marron/.test(domPigmentB);
   const isYellowDomA = /yellow|golden|cream|rubio|amarillo/.test(domPigmentA);
   const isYellowDomB = /yellow|golden|cream|rubio|amarillo/.test(domPigmentB);
   const isWhiteDomA = /white|blanco/.test(domPigmentA);
@@ -114,16 +117,23 @@ export function computeAttributeSimilarity(
   const dominantClash =
     (isBlackDomA && (isYellowDomB || isWhiteDomB)) ||
     (isBlackDomB && (isYellowDomA || isWhiteDomA)) ||
-    (isWhiteDomA && isYellowDomB) ||
-    (isWhiteDomB && isYellowDomA);
+    (isWhiteDomA && (isYellowDomB || isBlackDomB || isBrownDomB)) ||
+    (isWhiteDomB && (isYellowDomA || isBlackDomA || isBrownDomA));
+
+  const isSolidWhiteA = isWhiteDomA && nonWhiteA.length === 0 && (attrA.coat_pattern === "SOLID" || colorsA.length === 1);
+  const isSolidWhiteB = isWhiteDomB && nonWhiteB.length === 0 && (attrB.coat_pattern === "SOLID" || colorsB.length === 1);
+
+  const solidWhiteClash =
+    (isSolidWhiteA && (nonWhiteB.length > 0 || attrB.coat_pattern === "MERLE_BRINDLE" || attrB.coat_pattern === "BICOLOR_TUXEDO" || attrB.coat_pattern === "SPOTTED" || attrB.coat_pattern === "STRIPED_TABBY")) ||
+    (isSolidWhiteB && (nonWhiteA.length > 0 || attrA.coat_pattern === "MERLE_BRINDLE" || attrA.coat_pattern === "BICOLOR_TUXEDO" || attrA.coat_pattern === "SPOTTED" || attrA.coat_pattern === "STRIPED_TABBY"));
 
   const pigmentMismatch = nonWhiteA.length > 0 && nonWhiteB.length > 0 && sharedPigments.length === 0;
 
   if (colorsA.length > 0 && colorsB.length > 0) {
     if (calicoClash) {
       scorePoints += 6; // Calico/Tortoiseshell vs strict Solid/Bicolor
-    } else if (dominantClash) {
-      scorePoints += 4; // Major dominant color clash (e.g. Black vs Light/Cream/Yellow)
+    } else if (dominantClash || solidWhiteClash) {
+      scorePoints += 4; // Major dominant color clash (e.g. Black vs Light/Cream/Yellow or White vs Brown/Patched)
     } else if (dominantInversion) {
       scorePoints += 6; // Opposite dominant balance (Black body with white paws vs White body with black spots)
     } else if (exactPigmentSetMatch) {
@@ -333,6 +343,7 @@ export function computeAttributeSimilarity(
     dominantInversion: !!dominantInversion,
     dominantClash: !!dominantClash,
     calicoClash: !!calicoClash,
+    solidWhiteClash: !!solidWhiteClash,
     buildClash: !!buildClash,
     headClash: !!headClash,
     sizeClash: !!sizeClash,
@@ -404,6 +415,7 @@ export function scorePetReIDPair(
     dominantInversion,
     dominantClash,
     calicoClash,
+    solidWhiteClash,
     buildClash,
     headClash,
     sizeClash,
@@ -451,7 +463,7 @@ export function scorePetReIDPair(
     temporalPlausibility * effectiveTempWeight;
 
   // If core morphological attributes clash (e.g. Gray vs Black pigment, Long vs Short fur,
-  // Dominant Inversion, Black vs Light/Cream/Yellow, Calico/Carey vs Solid Black,
+  // Dominant Inversion, Black vs Light/Cream/Yellow, Calico/Carey vs Solid Black, Solid White vs Patched/Brown,
   // Dwarf vs Sturdy build, Pirate Eye Patch vs Solid Face, Husky Mask vs Non-Husky,
   // Yorkshire/Terrier vs Smooth-Coated dog)
   // without strong facial biometrics, cap composite score so it does not produce false positives above 50%.
@@ -461,6 +473,7 @@ export function scorePetReIDPair(
     dominantInversion ||
     dominantClash ||
     calicoClash ||
+    solidWhiteClash ||
     buildClash ||
     headClash ||
     sizeClash ||
