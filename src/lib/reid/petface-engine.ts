@@ -52,6 +52,7 @@ export function computeAttributeSimilarity(
   buildClash?: boolean;
   headClash?: boolean;
   sizeClash?: boolean;
+  eyePatchClash?: boolean;
 } {
   const matchedReasons: string[] = [];
   let scorePoints = 0;
@@ -258,9 +259,26 @@ export function computeAttributeSimilarity(
     scorePoints += 5;
   }
 
-  // 8. Distinctive Markings Overlap without Form Template Boilerplate (Max 10 pts)
+  // 8. Distinctive Markings Overlap & Incompatibilities (Max 10 pts)
   maxPoints += 10;
-  if (attrA.distinctive_markings.length > 0 && attrB.distinctive_markings.length > 0) {
+  const textA = (attrA.distinctive_markings || []).join(" ").toLowerCase();
+  const textB = (attrB.distinctive_markings || []).join(" ").toLowerCase();
+
+  const hasEyePatchA = /patch over (one|left|right|eye)|eye patch|parche en el ojo|parche de pirata|ojo pirata/i.test(textA);
+  const hasEyePatchB = /patch over (one|left|right|eye)|eye patch|parche en el ojo|parche de pirata|ojo pirata/i.test(textB);
+
+  const isBlackHeadA = primaryColorA === "black" && !hasEyePatchA;
+  const isBlackHeadB = primaryColorB === "black" && !hasEyePatchB;
+  const eyePatchClash =
+    (hasEyePatchA && isBlackHeadB) ||
+    (hasEyePatchB && isBlackHeadA);
+
+  if (hasEyePatchA && hasEyePatchB) {
+    scorePoints += 10;
+    matchedReasons.push("🏴‍☠️ Parche distintivo sobre un ojo");
+  } else if (eyePatchClash) {
+    scorePoints += 0;
+  } else if (attrA.distinctive_markings.length > 0 && attrB.distinctive_markings.length > 0) {
     const cleanTokens = (str: string) =>
       str
         .toLowerCase()
@@ -287,6 +305,7 @@ export function computeAttributeSimilarity(
     buildClash: !!buildClash,
     headClash: !!headClash,
     sizeClash: !!sizeClash,
+    eyePatchClash: !!eyePatchClash,
   };
 }
 
@@ -353,6 +372,7 @@ export function scorePetReIDPair(
     buildClash,
     headClash,
     sizeClash,
+    eyePatchClash,
   } = computeAttributeSimilarity(
     target.canonicalAttributes,
     candidate.canonicalAttributes
@@ -394,7 +414,7 @@ export function scorePetReIDPair(
     temporalPlausibility * effectiveTempWeight;
 
   // If core morphological attributes clash (e.g. Gray vs Black pigment, Long vs Short fur,
-  // Dominant Inversion, Dwarf vs Sturdy build, or Large vs Small size)
+  // Dominant Inversion, Dwarf vs Sturdy build, Pirate Eye Patch vs Solid Face)
   // without strong facial biometrics, cap composite score so it does not produce false positives above 50%.
   const morphologicalClash =
     attributeSim < 0.40 ||
@@ -402,7 +422,8 @@ export function scorePetReIDPair(
     dominantInversion ||
     buildClash ||
     headClash ||
-    sizeClash;
+    sizeClash ||
+    eyePatchClash;
 
   if (morphologicalClash && (!petfaceSim || petfaceSim < 0.70)) {
     compositeScore = Math.min(compositeScore, 0.48);
@@ -451,6 +472,7 @@ export function petReportToReIDFeatures(
     ear_type?: string;
     body_build?: string;
     head_and_muzzle_shape?: string;
+    distinctive_features?: string[];
   } | null
 ): PetReIDFeatures {
   let colors: string[] = [];
@@ -504,7 +526,10 @@ export function petReportToReIDFeatures(
       body_build: (v2Meta?.body_build as any) || undefined,
       head_shape: (v2Meta?.head_and_muzzle_shape as any) || undefined,
       ear_type: (v2Meta?.ear_type as any) || undefined,
-      distinctive_markings: pet.distinctive_features ? [pet.distinctive_features] : [],
+      distinctive_markings: [
+        ...(pet.distinctive_features ? [pet.distinctive_features] : []),
+        ...(v2Meta?.distinctive_features || []),
+      ],
     },
     lat: pet.lat,
     lng: pet.lng,
