@@ -29,6 +29,7 @@ export interface CanonicalPetAttributes {
   size: "PEQUEÑO" | "MEDIANO" | "GRANDE";
   coat_colors: string[];
   coat_pattern?: string;
+  fur_length?: "SHORT" | "MEDIUM" | "LONG" | "HAIRLESS" | "UNKNOWN";
   breed?: string;
   ear_type?: "ERECT" | "FLOPPY" | "SEMI_ERECT" | "UNKNOWN";
   tail_type?: "LONG" | "SHORT_DOCKED" | "CURLY" | "UNKNOWN";

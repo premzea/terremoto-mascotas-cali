@@ -135,22 +135,47 @@ export function computeAttributeSimilarity(
     scorePoints += 8;
   }
 
-  // 3. Breed / Morphological category (Max 20 pts)
-  maxPoints += 20;
+  // 3. Fur Length Matching (Max 10 pts)
+  maxPoints += 10;
+  const furA = attrA.fur_length;
+  const furB = attrB.fur_length;
+  const furLengthClash =
+    (furA === "LONG" && furB === "SHORT") ||
+    (furB === "LONG" && furA === "SHORT") ||
+    (furA === "HAIRLESS" && furB && furB !== "HAIRLESS") ||
+    (furB === "HAIRLESS" && furA && furA !== "HAIRLESS");
+
+  if (furA && furB && furA !== "UNKNOWN" && furB !== "UNKNOWN") {
+    if (furA === furB) {
+      scorePoints += 10;
+      if (furA === "LONG") {
+        matchedReasons.push("🦁 Pelaje largo y abundante");
+      }
+    } else if (furLengthClash) {
+      scorePoints += 0; // Major coat length incompatibility (Long vs Short)
+    } else {
+      scorePoints += 5; // Adjacent (e.g. Medium vs Long or Short)
+    }
+  } else {
+    scorePoints += 7;
+  }
+
+  // 4. Breed / Morphological category (Max 15 pts)
+  maxPoints += 15;
   if (attrA.breed && attrB.breed) {
     const bA = attrA.breed.toLowerCase();
     const bB = attrB.breed.toLowerCase();
     if (bA === bB || bA.includes(bB) || bB.includes(bA)) {
-      scorePoints += 20;
+      scorePoints += 15;
       matchedReasons.push(`🏷️ Raza / morfología: ${attrA.breed}`);
     } else {
-      scorePoints += 5;
+      scorePoints += 4;
     }
   } else {
-    scorePoints += 10;
+    scorePoints += 8;
   }
 
-  // 4. Body Size (Max 10 pts)
+  // 5. Body Size (Max 10 pts)
   maxPoints += 10;
   if (attrA.size === attrB.size) {
     scorePoints += 10;
@@ -162,7 +187,7 @@ export function computeAttributeSimilarity(
     scorePoints += 5; // Adjacent size
   }
 
-  // 5. Ears & Tail Shape (Max 10 pts)
+  // 6. Ears & Tail Shape (Max 10 pts)
   maxPoints += 10;
   if (attrA.ear_type && attrB.ear_type && attrA.ear_type !== "UNKNOWN" && attrA.ear_type === attrB.ear_type) {
     scorePoints += 5;
@@ -172,7 +197,7 @@ export function computeAttributeSimilarity(
     scorePoints += 5;
   }
 
-  // 6. Distinctive Markings Overlap without Form Template Boilerplate (Max 10 pts)
+  // 7. Distinctive Markings Overlap without Form Template Boilerplate (Max 10 pts)
   maxPoints += 10;
   if (attrA.distinctive_markings.length > 0 && attrB.distinctive_markings.length > 0) {
     const cleanTokens = (str: string) =>
@@ -193,7 +218,7 @@ export function computeAttributeSimilarity(
   }
 
   const similarity = maxPoints > 0 ? scorePoints / maxPoints : 0.5;
-  return { similarity: Math.max(0, Math.min(1, similarity)), matchedReasons };
+  return { similarity: Math.max(0, Math.min(1, similarity)), matchedReasons, furLengthClash: !!furLengthClash };
 }
 
 /**
@@ -251,7 +276,7 @@ export function scorePetReIDPair(
   }
 
   // 4. Structured Visual Attributes
-  const { similarity: attributeSim, matchedReasons } = computeAttributeSimilarity(
+  const { similarity: attributeSim, matchedReasons, furLengthClash } = computeAttributeSimilarity(
     target.canonicalAttributes,
     candidate.canonicalAttributes
   );
@@ -291,9 +316,9 @@ export function scorePetReIDPair(
     geoPlausibility * effectiveGeoWeight +
     temporalPlausibility * effectiveTempWeight;
 
-  // If core morphological attributes clash (e.g. Gray vs Black pigment) without strong facial biometrics,
-  // cap composite score so it does not produce false positives above the 50% threshold.
-  if (attributeSim < 0.40 && (!petfaceSim || petfaceSim < 0.70)) {
+  // If core morphological attributes clash (e.g. Gray vs Black pigment, or Long vs Short fur)
+  // without strong facial biometrics, cap composite score so it does not produce false positives above 50%.
+  if ((attributeSim < 0.40 || furLengthClash) && (!petfaceSim || petfaceSim < 0.70)) {
     compositeScore = Math.min(compositeScore, 0.48);
   }
 
@@ -332,7 +357,7 @@ export function petReportToReIDFeatures(
   pet: PetReport,
   petface?: PetFaceEmbedding | null,
   visualClip?: VisualClipEmbedding | null,
-  v2Meta?: { coat_colors?: string[]; coat_pattern?: string; size?: string; ear_type?: string } | null
+  v2Meta?: { coat_colors?: string[]; coat_pattern?: string; fur_length?: string; size?: string; ear_type?: string } | null
 ): PetReIDFeatures {
   let colors: string[] = [];
   if (v2Meta && v2Meta.coat_colors && v2Meta.coat_colors.length > 0) {
@@ -350,6 +375,13 @@ export function petReportToReIDFeatures(
     if (/\b(crema|beige|canela|arena)\b/.test(text)) colors.push("CREAM");
   }
 
+  let furLength: "SHORT" | "MEDIUM" | "LONG" | "HAIRLESS" | "UNKNOWN" | undefined = (v2Meta?.fur_length as any) || undefined;
+  if (!furLength && pet.distinctive_features) {
+    if (/largo|esponjoso|abundante|fluffy/i.test(pet.distinctive_features)) furLength = "LONG";
+    else if (/corto|raso/i.test(pet.distinctive_features)) furLength = "SHORT";
+    else if (/medio|semilargo/i.test(pet.distinctive_features)) furLength = "MEDIUM";
+  }
+
   return {
     petId: pet.id || "TEMP",
     reportType: pet.report_type,
@@ -362,6 +394,7 @@ export function petReportToReIDFeatures(
       size: (pet.size as "PEQUEÑO" | "MEDIANO" | "GRANDE") || "MEDIANO",
       coat_colors: colors,
       coat_pattern: v2Meta?.coat_pattern || pet.pattern || undefined,
+      fur_length: furLength,
       ear_type: (v2Meta?.ear_type as any) || undefined,
       distinctive_markings: pet.distinctive_features ? [pet.distinctive_features] : [],
     },
