@@ -49,49 +49,47 @@ export function computeAttributeSimilarity(
   let scorePoints = 0;
   let maxPoints = 0;
 
-  // 1. Dominant-Aware & Color-Set Aware Coat Color Matching (Max 35 pts)
+  // 1. Dominant-Aware & Pigment-Aware Coat Color Matching (Max 35 pts)
   maxPoints += 35;
   const colorsA = attrA.coat_colors.map((c) => c.toLowerCase());
   const colorsB = attrB.coat_colors.map((c) => c.toLowerCase());
-  const domA = colorsA[0] || "unknown";
-  const secA = colorsA[1] || null;
-  const domB = colorsB[0] || "unknown";
-  const secB = colorsB[1] || null;
 
-  const isWhiteA = /blanco|white/.test(domA);
-  const isBlackA = /negro|black/.test(domA);
-  const isWhiteB = /blanco|white/.test(domB);
-  const isBlackB = /negro|black/.test(domB);
+  const nonWhiteA = colorsA.filter((c) => !/blanco|white/.test(c));
+  const nonWhiteB = colorsB.filter((c) => !/blanco|white/.test(c));
+  const hasWhiteA = colorsA.some((c) => /blanco|white/.test(c));
+  const hasWhiteB = colorsB.some((c) => /blanco|white/.test(c));
 
   const hasWarmA = colorsA.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
   const hasWarmB = colorsB.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
   const isCalicoOrTortieA = attrA.coat_pattern === "PATCHED_CALICO" || (colorsA.length >= 3 && hasWarmA);
   const isCalicoOrTortieB = attrB.coat_pattern === "PATCHED_CALICO" || (colorsB.length >= 3 && hasWarmB);
 
+  // Check pigment compatibility (e.g., Gray vs Black, Orange vs Black)
+  const sharedPigments = nonWhiteA.filter(c => nonWhiteB.includes(c));
+  const pigmentMismatch = nonWhiteA.length > 0 && nonWhiteB.length > 0 && sharedPigments.length === 0;
+
   if (colorsA.length > 0 && colorsB.length > 0) {
-    // Discriminate Calico/Tricolor vs strict Bicolor
     if ((isCalicoOrTortieA && !hasWarmB && colorsB.length <= 2) || (isCalicoOrTortieB && !hasWarmA && colorsA.length <= 2)) {
-      scorePoints += 10; // Substantial penalty for Calico vs Tuxedo mismatch
-    } else if (domA === domB && domA !== "unknown") {
-      if (secA && secB && secA === secB) {
-        if (colorsA.length === colorsB.length) {
-          scorePoints += 35;
-          matchedReasons.push(`🎨 Color base y acento idénticos (${domA} + ${secA})`);
-        } else {
-          scorePoints += 20;
-          matchedReasons.push(`🎨 Color base compartido con variación de tono (${domA})`);
-        }
+      scorePoints += 8; // Calico vs strict Bicolor
+    } else if (pigmentMismatch) {
+      // Both are colored/bicolor, but main pigments completely clash (e.g. Gray vs Black)
+      scorePoints += 5;
+    } else if (sharedPigments.length > 0) {
+      // Primary pigment matches!
+      if (hasWhiteA === hasWhiteB && nonWhiteA.length === nonWhiteB.length) {
+        scorePoints += 35;
+        matchedReasons.push(`🎨 Color base y acento idénticos (${nonWhiteA.join(", ")} + ${hasWhiteA ? "blanco" : ""})`);
       } else {
-        scorePoints += 22;
-        matchedReasons.push(`🎨 Mismo color base dominante: ${domA}`);
+        scorePoints += 25;
+        matchedReasons.push(`🎨 Pigmento principal idéntico: ${sharedPigments.join(", ")}`);
       }
-    } else if ((isWhiteA && isBlackB) || (isBlackA && isWhiteB)) {
-      scorePoints += 5; // Inverted Polarity Conflict: Mostly White vs Mostly Black
     } else {
       const common = colorsA.filter((c) => colorsB.includes(c));
       if (common.length > 0) {
-        scorePoints += 15;
+        scorePoints += 12;
         matchedReasons.push(`🎨 Coincidencia parcial de color: ${common.join(", ")}`);
+      } else {
+        scorePoints += 5;
       }
     }
   } else {
@@ -104,8 +102,12 @@ export function computeAttributeSimilarity(
   const patB = attrB.coat_pattern;
   if (patA && patB && patA !== "UNKNOWN" && patB !== "UNKNOWN") {
     if (patA === patB) {
-      scorePoints += 15;
-      matchedReasons.push(`✨ Patrón de pelaje idéntico (${patA.toLowerCase()})`);
+      if (pigmentMismatch) {
+        scorePoints += 4; // Same pattern geometry, but distinct contrasting pigment
+      } else {
+        scorePoints += 15;
+        matchedReasons.push(`✨ Patrón de pelaje idéntico (${patA.toLowerCase()})`);
+      }
     } else if (
       (patA === "PATCHED_CALICO" && (patB === "BICOLOR_TUXEDO" || patB === "SOLID")) ||
       (patB === "PATCHED_CALICO" && (patA === "BICOLOR_TUXEDO" || patA === "SOLID"))
@@ -273,6 +275,12 @@ export function scorePetReIDPair(
     attributeSim * effectiveAttrWeight +
     geoPlausibility * effectiveGeoWeight +
     temporalPlausibility * effectiveTempWeight;
+
+  // If core morphological attributes clash (e.g. Gray vs Black pigment) without strong facial biometrics,
+  // cap composite score so it does not produce false positives above the 50% threshold.
+  if (attributeSim < 0.40 && (!petfaceSim || petfaceSim < 0.70)) {
+    compositeScore = Math.min(compositeScore, 0.48);
+  }
 
   // Scale to 0-100 percentage
   const totalScore = Math.round(Math.min(99, Math.max(10, compositeScore * 100)));
