@@ -59,38 +59,53 @@ export function computeAttributeSimilarity(
   const hasWhiteA = colorsA.some((c) => /blanco|white/.test(c));
   const hasWhiteB = colorsB.some((c) => /blanco|white/.test(c));
 
+  const domPigmentA = nonWhiteA[0] || (hasWhiteA ? "white" : "unknown");
+  const domPigmentB = nonWhiteB[0] || (hasWhiteB ? "white" : "unknown");
+
   const hasWarmA = colorsA.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
   const hasWarmB = colorsB.some(c => /orange|red|ginger|yellow|calico|carey|brown/.test(c));
   const isCalicoOrTortieA = attrA.coat_pattern === "PATCHED_CALICO" || (colorsA.length >= 3 && hasWarmA);
   const isCalicoOrTortieB = attrB.coat_pattern === "PATCHED_CALICO" || (colorsB.length >= 3 && hasWarmB);
 
-  // Check pigment compatibility (e.g., Gray vs Black, Orange vs Black)
+  // Check pigment compatibility
   const sharedPigments = nonWhiteA.filter(c => nonWhiteB.includes(c));
+  const exactPigmentSetMatch =
+    nonWhiteA.length === nonWhiteB.length &&
+    nonWhiteA.every(c => nonWhiteB.includes(c)) &&
+    hasWhiteA === hasWhiteB;
+
+  // Major dominant color clash: Black vs Golden/Yellow/Cream, or White vs Black
+  const isBlackDomA = /black|negro/.test(domPigmentA);
+  const isBlackDomB = /black|negro/.test(domPigmentB);
+  const isYellowDomA = /yellow|golden|cream|rubio|amarillo/.test(domPigmentA);
+  const isYellowDomB = /yellow|golden|cream|rubio|amarillo/.test(domPigmentB);
+  const isWhiteDomA = /white|blanco/.test(domPigmentA);
+  const isWhiteDomB = /white|blanco/.test(domPigmentB);
+
+  const dominantClash =
+    (isBlackDomA && (isYellowDomB || isWhiteDomB)) ||
+    (isBlackDomB && (isYellowDomA || isWhiteDomA)) ||
+    (isWhiteDomA && isYellowDomB) ||
+    (isWhiteDomB && isYellowDomA);
+
   const pigmentMismatch = nonWhiteA.length > 0 && nonWhiteB.length > 0 && sharedPigments.length === 0;
 
   if (colorsA.length > 0 && colorsB.length > 0) {
     if ((isCalicoOrTortieA && !hasWarmB && colorsB.length <= 2) || (isCalicoOrTortieB && !hasWarmA && colorsA.length <= 2)) {
       scorePoints += 8; // Calico vs strict Bicolor
-    } else if (pigmentMismatch) {
-      // Both are colored/bicolor, but main pigments completely clash (e.g. Gray vs Black)
-      scorePoints += 5;
+    } else if (dominantClash) {
+      scorePoints += 4; // Major dominant color clash (e.g. Black vs Yellow/Golden Dog)
+    } else if (exactPigmentSetMatch) {
+      scorePoints += 35;
+      matchedReasons.push(`🎨 Color base y acento idénticos (${nonWhiteA.join(", ")} ${hasWhiteA ? "+ blanco" : ""})`);
+    } else if (domPigmentA === domPigmentB && domPigmentA !== "unknown") {
+      scorePoints += 25;
+      matchedReasons.push(`🎨 Mismo color base dominante: ${domPigmentA}`);
     } else if (sharedPigments.length > 0) {
-      // Primary pigment matches!
-      if (hasWhiteA === hasWhiteB && nonWhiteA.length === nonWhiteB.length) {
-        scorePoints += 35;
-        matchedReasons.push(`🎨 Color base y acento idénticos (${nonWhiteA.join(", ")} + ${hasWhiteA ? "blanco" : ""})`);
-      } else {
-        scorePoints += 25;
-        matchedReasons.push(`🎨 Pigmento principal idéntico: ${sharedPigments.join(", ")}`);
-      }
+      scorePoints += 12;
+      matchedReasons.push(`🎨 Coincidencia parcial de tono secundario: ${sharedPigments.join(", ")}`);
     } else {
-      const common = colorsA.filter((c) => colorsB.includes(c));
-      if (common.length > 0) {
-        scorePoints += 12;
-        matchedReasons.push(`🎨 Coincidencia parcial de color: ${common.join(", ")}`);
-      } else {
-        scorePoints += 5;
-      }
+      scorePoints += 5;
     }
   } else {
     scorePoints += 15;
@@ -102,8 +117,8 @@ export function computeAttributeSimilarity(
   const patB = attrB.coat_pattern;
   if (patA && patB && patA !== "UNKNOWN" && patB !== "UNKNOWN") {
     if (patA === patB) {
-      if (pigmentMismatch) {
-        scorePoints += 4; // Same pattern geometry, but distinct contrasting pigment
+      if (dominantClash || pigmentMismatch) {
+        scorePoints += 4;
       } else {
         scorePoints += 15;
         matchedReasons.push(`✨ Patrón de pelaje idéntico (${patA.toLowerCase()})`);
@@ -112,7 +127,7 @@ export function computeAttributeSimilarity(
       (patA === "PATCHED_CALICO" && (patB === "BICOLOR_TUXEDO" || patB === "SOLID")) ||
       (patB === "PATCHED_CALICO" && (patA === "BICOLOR_TUXEDO" || patA === "SOLID"))
     ) {
-      scorePoints += 0; // Distinct pattern mismatch (Calico vs Tuxedo/Solid)
+      scorePoints += 0;
     } else {
       scorePoints += 6;
     }

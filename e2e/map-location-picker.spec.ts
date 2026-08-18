@@ -21,7 +21,8 @@ test.describe("Búsqueda Animal Cali - Map Location Picker & GPS Pinpoint Workfl
     await fileInput.setInputFiles(sampleImagePath);
 
     const confirmCropBtn = page.getByRole("button", { name: "Confirmar Recorte" });
-    if (await confirmCropBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await confirmCropBtn.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    if (await confirmCropBtn.isVisible()) {
       await confirmCropBtn.click();
     }
 
