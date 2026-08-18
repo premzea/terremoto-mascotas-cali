@@ -277,7 +277,7 @@ export default function MapLocationPicker({
                 Seleccionar Ubicación en Cali y Jamundí
               </h3>
               <p className="text-xs text-stone-600">
-                Escribe el barrio, toca el mapa o activa tu GPS
+                Toca la calle o parque exacto en el mapa para máxima precisión de búsqueda IA
               </p>
             </div>
           </div>

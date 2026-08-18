@@ -671,13 +671,13 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
             </div>
 
             {/* Barrio / Ubicación en Cali y Jamundí con Búsqueda Escrita */}
-            <div className="relative">
-              <div className="flex items-start justify-between mb-1.5 gap-2">
+            <div className="relative space-y-2">
+              <div className="flex items-start justify-between gap-2">
                 <div>
                   <label className="text-xs font-black text-stone-900 block">
                     {reportType === "LOST"
-                      ? "¿Dónde fue vista por última vez? (Barrio o punto) *"
-                      : "¿En qué barrio o punto fue ENCONTRADO/RESCATADO? *"}
+                      ? "¿Dónde fue vista por última vez? (Punto o Barrio) *"
+                      : "¿En qué punto o barrio fue ENCONTRADO/RESCATADO? *"}
                   </label>
                   <span className="text-[10.5px] text-stone-500 block mt-0.5 leading-snug">
                     {reportType === "LOST"
@@ -688,11 +688,24 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 <button
                   type="button"
                   onClick={() => setShowMapPicker(true)}
-                  className="text-[11px] text-amber-900 hover:text-amber-950 font-extrabold flex items-center gap-1 bg-amber-100 hover:bg-amber-200 px-2.5 py-1.5 rounded-lg border border-amber-300 transition shadow-2xs flex-shrink-0 mt-0.5"
+                  className="text-xs text-emerald-950 hover:text-white font-extrabold flex items-center gap-1.5 bg-emerald-100 hover:bg-emerald-700 px-3 py-2 rounded-xl border border-emerald-300 transition shadow-xs flex-shrink-0 cursor-pointer"
                 >
-                  <MapPin className="w-3.5 h-3.5 text-amber-600" />
-                  <span>📍 Mapa / GPS</span>
+                  <MapPin className="w-4 h-4 text-emerald-700 group-hover:text-white" />
+                  <span>📍 Fijar en Mapa / GPS</span>
                 </button>
+              </div>
+
+              {/* Banner de recomendación para rescates */}
+              <div className="p-3 bg-amber-50/90 border border-amber-300/80 rounded-xl flex items-start gap-2.5 text-xs text-amber-950 shadow-2xs">
+                <MapPin className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+                <div className="leading-snug">
+                  <strong className="font-extrabold text-amber-950 block text-[11.5px]">
+                    💡 Recomendado para rescates más rápidos:
+                  </strong>
+                  <p className="text-[11px] text-amber-900 mt-0.5 leading-relaxed">
+                    En barrios extensos (ej. <em>Valle del Lili, Meléndez, Ciudad Jardín o Floralia</em>), marcar el <strong>punto exacto en el mapa</strong> permite a la IA calcular la distancia precisa (metros/km) en vez de usar solo el centroide general del barrio.
+                  </p>
+                </div>
               </div>
 
               {neighborhood ? (
