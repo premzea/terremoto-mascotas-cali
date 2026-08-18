@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import nodemailer from "nodemailer";
 
 test.describe("Búsqueda Animal Cali - Email Notification Workflow", () => {
-  test("1. Verify Gmail SMTP credentials and connection handshake", async () => {
+  test("1. Verify Gmail SMTP credentials and routing to test inbox (busquedaanimalcali.pruebas@gmail.com)", async () => {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
@@ -17,6 +17,15 @@ test.describe("Búsqueda Animal Cali - Email Notification Workflow", () => {
     // Verify SMTP connection handshake with Google
     const isReady = await transporter.verify();
     expect(isReady).toBe(true);
+
+    // Verify sending a test notification to the dedicated testing address
+    const testInfo = await transporter.sendMail({
+      from: '"Búsqueda Animal Cali [TEST]" <busquedanimalcali@gmail.com>',
+      to: "busquedaanimalcali.pruebas@gmail.com",
+      subject: "🧪 [E2E TEST] Handshake y Verificación de Casilla de Pruebas",
+      text: "Verificación automatizada de flujo de correos a la casilla de pruebas.",
+    });
+    expect(testInfo.messageId).toBeDefined();
   });
 
   test("2. /api/notify endpoint handles NEW_REPORT with Base64 photo CID conversion", async ({ request }) => {

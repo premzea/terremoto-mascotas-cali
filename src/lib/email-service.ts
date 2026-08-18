@@ -8,7 +8,25 @@ const rawPass = (process.env.EMAIL_PASS || "").replace(/\s+/g, "");
 
 export const EMAIL_USER = rawUser && rawUser.includes("@") ? rawUser : DEFAULT_EMAIL_USER;
 export const EMAIL_PASS = rawPass && rawPass.length === 16 ? rawPass : DEFAULT_EMAIL_PASS;
-const TARGET_EMAIL = "busquedanimalcali@gmail.com";
+export const PROD_NOTIFICATION_EMAIL = "busquedanimalcali@gmail.com";
+export const TEST_NOTIFICATION_EMAIL = "busquedaanimalcali.pruebas@gmail.com";
+
+export function resolveRecipientEmail(petOrData?: any): string {
+  if (process.env.NOTIFICATION_EMAIL_TO) {
+    return process.env.NOTIFICATION_EMAIL_TO;
+  }
+  const isTest =
+    process.env.NODE_ENV === "test" ||
+    petOrData?.isTest ||
+    petOrData?.id?.startsWith("TEST") ||
+    petOrData?.targetPet?.id?.startsWith("TEST") ||
+    petOrData?.candidatePet?.id?.startsWith("TEST") ||
+    petOrData?.name?.toLowerCase().includes("test") ||
+    petOrData?.contact_name?.toLowerCase().includes("test") ||
+    petOrData?.contact_phone?.includes("000");
+
+  return isTest ? TEST_NOTIFICATION_EMAIL : PROD_NOTIFICATION_EMAIL;
+}
 
 export function getTransporter() {
   return nodemailer.createTransport({
@@ -30,6 +48,7 @@ export function getTransporter() {
 
 export async function sendNewReportEmail(pet: any) {
   const transporter = getTransporter();
+  const recipientEmail = resolveRecipientEmail(pet);
 
   const isLost = pet.report_type === "LOST";
   const typeLabel = isLost ? "🚨 MASCOTA BUSCADA / PERDIDA" : "🐶 MASCOTA ENCONTRADA / RESCATADA";
@@ -65,15 +84,16 @@ export async function sendNewReportEmail(pet: any) {
     }
   }
 
+  const isTest = recipientEmail === TEST_NOTIFICATION_EMAIL;
   const mailOptions = {
-    from: `"Búsqueda Animal Cali" <${EMAIL_USER}>`,
-    to: TARGET_EMAIL,
-    subject: `[NUEVO REPORTE ${pet.id}] ${typeLabel}: ${pet.name} (${pet.species})`,
+    from: `"Búsqueda Animal Cali${isTest ? ' [TEST]' : ''}" <${EMAIL_USER}>`,
+    to: recipientEmail,
+    subject: `${isTest ? '🧪 [TEST] ' : ''}[NUEVO REPORTE ${pet.id}] ${typeLabel}: ${pet.name} (${pet.species})`,
     attachments,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f9f9fb; border: 1px solid #e1e1e6; border-radius: 12px; overflow: hidden;">
         <div style="background: #121214; color: #fff; padding: 20px; text-align: center;">
-          <h1 style="margin: 0; font-size: 20px; color: #f59e0b;">Búsqueda Animal Cali</h1>
+          <h1 style="margin: 0; font-size: 20px; color: #f59e0b;">Búsqueda Animal Cali${isTest ? ' <span style="font-size:12px; background:#4b5563; padding:2px 8px; border-radius:4px;">AMBIENTE DE PRUEBAS</span>' : ''}</h1>
           <p style="margin: 5px 0 0 0; font-size: 13px; color: #a1a1aa;">Nuevo reporte registrado en el sistema</p>
         </div>
         
@@ -119,12 +139,14 @@ export async function sendMatchContactEmail(data: {
   userMessage?: string;
 }) {
   const transporter = getTransporter();
+  const recipientEmail = resolveRecipientEmail(data);
   const { targetPet, candidatePet, score, reasons, userMessage } = data;
+  const isTest = recipientEmail === TEST_NOTIFICATION_EMAIL;
 
   const mailOptions = {
-    from: `"Búsqueda Animal Cali" <${EMAIL_USER || TARGET_EMAIL}>`,
-    to: TARGET_EMAIL,
-    subject: `🤝 [COINCIDENCIA IA ${score}%] Comunícate: ${targetPet.id} (${targetPet.name}) con ${candidatePet.id} (${candidatePet.name})`,
+    from: `"Búsqueda Animal Cali${isTest ? ' [TEST]' : ''}" <${EMAIL_USER}>`,
+    to: recipientEmail,
+    subject: `${isTest ? '🧪 [TEST] ' : ''}🤝 [COINCIDENCIA IA ${score}%] Comunícate: ${targetPet.id} (${targetPet.name}) con ${candidatePet.id} (${candidatePet.name})`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; background: #f9f9fb; border: 1px solid #e1e1e6; border-radius: 12px; overflow: hidden;">
         <div style="background: #121214; color: #fff; padding: 20px; text-align: center;">
@@ -192,11 +214,13 @@ export async function sendMatchContactEmail(data: {
 
 export async function sendCaseClosedEmail(petId: string, petName?: string) {
   const transporter = getTransporter();
+  const recipientEmail = resolveRecipientEmail({ id: petId, name: petName });
+  const isTest = recipientEmail === TEST_NOTIFICATION_EMAIL;
 
   const mailOptions = {
-    from: `"Búsqueda Animal Cali" <${EMAIL_USER || TARGET_EMAIL}>`,
-    to: TARGET_EMAIL,
-    subject: `✅ [CASO CERRADO] Caso ID ${petId} (${petName || 'Mascota'}) marcado como REUNIDO`,
+    from: `"Búsqueda Animal Cali${isTest ? ' [TEST]' : ''}" <${EMAIL_USER}>`,
+    to: recipientEmail,
+    subject: `${isTest ? '🧪 [TEST] ' : ''}✅ [CASO CERRADO] Caso ID ${petId} (${petName || 'Mascota'}) marcado como REUNIDO`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; background: #f9f9fb; border: 1px solid #e1e1e6; border-radius: 12px; overflow: hidden;">
         <div style="background: #121214; color: #fff; padding: 20px; text-align: center;">
