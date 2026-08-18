@@ -35,7 +35,11 @@ const TEMPLATE_STOPWORDS = new Set([
   "pelaje", "pelaje:", "ojos", "ojos:", "tamano", "tamaño", "tamano:", "tamaño:",
   "senas", "señas", "senas:", "señas:", "accesorios", "accesorios:",
   "senas/accesorios:", "señas/accesorios:", "barrio", "barrio:", "ninguno", "ninguna",
-  "desconocido", "desconocida", "parece", "como", "esta", "está", "foto", "foto:", "undefined", "null", "na"
+  "desconocido", "desconocida", "parece", "como", "esta", "está", "foto", "foto:", "undefined", "null", "na",
+  "markings", "marking", "marks", "mark", "face", "body", "coat", "fur", "paws", "legs",
+  "ears", "eyes", "tail", "head", "snout", "muzzle", "neck", "chest", "back", "belly", "side",
+  "white", "black", "brown", "gray", "grey", "yellow", "orange", "with", "from", "that", "have",
+  "like", "wearing", "look", "looks", "blanco", "negra", "negro", "cafe", "gris", "amarillo", "manchas", "mancha"
 ]);
 
 /**
@@ -53,6 +57,7 @@ export function computeAttributeSimilarity(
   headClash?: boolean;
   sizeClash?: boolean;
   eyePatchClash?: boolean;
+  huskyClash?: boolean;
 } {
   const matchedReasons: string[] = [];
   let scorePoints = 0;
@@ -273,10 +278,19 @@ export function computeAttributeSimilarity(
     (hasEyePatchA && isBlackHeadB) ||
     (hasEyePatchB && isBlackHeadA);
 
-  if (hasEyePatchA && hasEyePatchB) {
+  const hasHuskyTraitA = /husky|malamute|spitz|akita|nordic/i.test(`${attrA.breed || ""} ${textA}`);
+  const hasHuskyTraitB = /husky|malamute|spitz|akita|nordic/i.test(`${attrB.breed || ""} ${textB}`);
+  const huskyClash =
+    (hasHuskyTraitA && !hasHuskyTraitB) ||
+    (hasHuskyTraitB && !hasHuskyTraitA);
+
+  if (hasHuskyTraitA && hasHuskyTraitB) {
+    scorePoints += 10;
+    matchedReasons.push("🐺 Rasgos y máscara nórdica / Husky");
+  } else if (hasEyePatchA && hasEyePatchB) {
     scorePoints += 10;
     matchedReasons.push("🏴‍☠️ Parche distintivo sobre un ojo");
-  } else if (eyePatchClash) {
+  } else if (eyePatchClash || huskyClash) {
     scorePoints += 0;
   } else if (attrA.distinctive_markings.length > 0 && attrB.distinctive_markings.length > 0) {
     const cleanTokens = (str: string) =>
@@ -306,6 +320,7 @@ export function computeAttributeSimilarity(
     headClash: !!headClash,
     sizeClash: !!sizeClash,
     eyePatchClash: !!eyePatchClash,
+    huskyClash: !!huskyClash,
   };
 }
 
@@ -373,6 +388,7 @@ export function scorePetReIDPair(
     headClash,
     sizeClash,
     eyePatchClash,
+    huskyClash,
   } = computeAttributeSimilarity(
     target.canonicalAttributes,
     candidate.canonicalAttributes
@@ -414,7 +430,7 @@ export function scorePetReIDPair(
     temporalPlausibility * effectiveTempWeight;
 
   // If core morphological attributes clash (e.g. Gray vs Black pigment, Long vs Short fur,
-  // Dominant Inversion, Dwarf vs Sturdy build, Pirate Eye Patch vs Solid Face)
+  // Dominant Inversion, Dwarf vs Sturdy build, Pirate Eye Patch vs Solid Face, Husky Mask vs Non-Husky)
   // without strong facial biometrics, cap composite score so it does not produce false positives above 50%.
   const morphologicalClash =
     attributeSim < 0.40 ||
@@ -423,7 +439,8 @@ export function scorePetReIDPair(
     buildClash ||
     headClash ||
     sizeClash ||
-    eyePatchClash;
+    eyePatchClash ||
+    huskyClash;
 
   if (morphologicalClash && (!petfaceSim || petfaceSim < 0.70)) {
     compositeScore = Math.min(compositeScore, 0.48);
