@@ -100,4 +100,19 @@ test.describe("Búsqueda Animal Cali - Main E2E Flows", () => {
     await allGenderBtn.click();
     await expect(page.locator(".edge-card").first()).toBeVisible();
   });
+
+  test("6. Semantic multi-keyword and synonym search (e.g. 'cola partida' finding 'cola rota')", async ({ page }) => {
+    const searchInput = page.locator("input[placeholder*='Buscar por nombre']");
+    
+    // Search with synonym: "cola partida" should match Pikachu (B2) whose description has "Cola parece rota"
+    await searchInput.fill("cola partida");
+
+    // Verify Pikachu (B2) appears as top result
+    const pikachuCard = page.locator(".edge-card:has-text('Pikachu')").first();
+    await expect(pikachuCard).toBeVisible({ timeout: 10000 });
+
+    // Clear search
+    await searchInput.fill("");
+    await expect(page.locator(".edge-card").first()).toBeVisible({ timeout: 10000 });
+  });
 });

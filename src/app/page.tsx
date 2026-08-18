@@ -12,6 +12,7 @@ import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass, S
 import barrioCoords from "@/data/coords_by_barrio.json";
 import rawSeedPets from "@/data/seed_pets.json";
 import visualFeaturesV2 from "@/data/visual_features_v2_cache.json";
+import { searchPetsWithSynonyms } from "@/lib/search/synonym-search";
 
 function normalizeText(str: string): string {
   return str
@@ -263,7 +264,11 @@ export default function Home() {
       return true;
     });
 
-    if (userGpsLocation) {
+    // 9. Semantic Multi-Keyword + Synonym Search & Relevance Ranking
+    if (searchTerm && searchTerm.trim()) {
+      const searchResults = searchPetsWithSynonyms(searchTerm.trim(), list);
+      list = searchResults.map((r) => r.pet);
+    } else if (userGpsLocation) {
       list = [...list].sort((a, b) => {
         const aLat = a.lat || (barrioCoords as any)[a.neighborhood?.toLowerCase()]?.lat || 3.4516;
         const aLng = a.lng || (barrioCoords as any)[a.neighborhood?.toLowerCase()]?.lng || -76.532;
@@ -279,6 +284,7 @@ export default function Home() {
     return list;
   }, [
     pets,
+    searchTerm,
     genderFilter,
     selectedColors,
     selectedNeutered,

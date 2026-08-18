@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import seedPets from "@/data/seed_pets.json";
 import { PetReport } from "@/lib/types";
+import { searchPetsWithSynonyms } from "@/lib/search/synonym-search";
 
 export const dynamic = "force-dynamic";
 
@@ -78,16 +79,10 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // 3. Optional text search filter
-    if (search) {
-      const q = search.toLowerCase();
-      baseList = baseList.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.primary_color.toLowerCase().includes(q) ||
-          p.neighborhood.toLowerCase().includes(q) ||
-          (p.distinctive_features && p.distinctive_features.toLowerCase().includes(q))
-      );
+    // 3. Optional multi-keyword + synonym relevance search filter
+    if (search && search.trim()) {
+      const searchResults = searchPetsWithSynonyms(search.trim(), baseList);
+      baseList = searchResults.map((r) => r.pet);
     }
 
     return NextResponse.json({ success: true, pets: baseList });
