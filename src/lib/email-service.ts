@@ -11,11 +11,12 @@ export const EMAIL_PASS = rawPass && rawPass.length === 16 ? rawPass : DEFAULT_E
 export const PROD_NOTIFICATION_EMAIL = "busquedanimalcali@gmail.com";
 export const TEST_NOTIFICATION_EMAIL = "busquedaanimalcali.pruebas@gmail.com";
 
-export function resolveRecipientEmail(petOrData?: any): string {
+export function resolveRecipientEmail(petOrData?: any, forceIsTest?: boolean): string {
   if (process.env.NOTIFICATION_EMAIL_TO) {
     return process.env.NOTIFICATION_EMAIL_TO;
   }
   const isTest =
+    forceIsTest === true ||
     process.env.NODE_ENV === "test" ||
     petOrData?.isTest === true ||
     petOrData?.id?.startsWith("TEST") ||
@@ -205,9 +206,9 @@ export async function sendMatchContactEmail(data: {
   return transporter.sendMail(mailOptions);
 }
 
-export async function sendCaseClosedEmail(petId: string, petName?: string) {
+export async function sendCaseClosedEmail(petId: string, petName?: string, isTestParam?: boolean) {
   const transporter = getTransporter();
-  const recipientEmail = resolveRecipientEmail({ id: petId, name: petName });
+  const recipientEmail = resolveRecipientEmail({ id: petId, name: petName, isTest: isTestParam }, isTestParam);
   const isTest = recipientEmail === TEST_NOTIFICATION_EMAIL;
 
   const mailOptions = {

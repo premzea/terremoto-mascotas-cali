@@ -9,7 +9,7 @@ const ADMIN_MASTER_CODE = (process.env.ADMIN_MASTER_CODE || "CALI2026").trim();
 
 export async function POST(req: NextRequest) {
   try {
-    const { petId, passcode, petName } = await req.json();
+    const { petId, passcode, petName, isTest } = await req.json();
 
     if (!petId || !passcode) {
       return NextResponse.json(
