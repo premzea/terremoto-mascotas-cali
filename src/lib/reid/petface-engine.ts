@@ -44,7 +44,15 @@ const TEMPLATE_STOPWORDS = new Set([
 export function computeAttributeSimilarity(
   attrA: CanonicalPetAttributes,
   attrB: CanonicalPetAttributes
-): { similarity: number; matchedReasons: string[]; furLengthClash?: boolean; dominantInversion?: boolean } {
+): {
+  similarity: number;
+  matchedReasons: string[];
+  furLengthClash?: boolean;
+  dominantInversion?: boolean;
+  buildClash?: boolean;
+  headClash?: boolean;
+  sizeClash?: boolean;
+} {
   const matchedReasons: string[] = [];
   let scorePoints = 0;
   let maxPoints = 0;
@@ -173,9 +181,26 @@ export function computeAttributeSimilarity(
     scorePoints += 7;
   }
 
-  // 4. Breed / Morphological category (Max 15 pts)
+  // 4. Body Build / Skeletal Morphology (Max 15 pts)
   maxPoints += 15;
-  if (attrA.breed && attrB.breed) {
+  const buildA = attrA.body_build;
+  const buildB = attrB.body_build;
+  const buildClash =
+    (buildA === "COMPACT_DWARF" && (buildB === "STURDY_PROPORTIONATE" || buildB === "SLENDER_LONG_LEGGED")) ||
+    (buildB === "COMPACT_DWARF" && (buildA === "STURDY_PROPORTIONATE" || buildA === "SLENDER_LONG_LEGGED"));
+
+  if (buildA && buildB && buildA !== "UNKNOWN" && buildB !== "UNKNOWN") {
+    if (buildA === buildB) {
+      scorePoints += 15;
+      if (buildA === "COMPACT_DWARF") {
+        matchedReasons.push("🦴 Morfología salchicha/enano");
+      }
+    } else if (buildClash) {
+      scorePoints += 0; // Incompatible build (Dwarf/Teckel vs Sturdy/Large)
+    } else {
+      scorePoints += 5;
+    }
+  } else if (attrA.breed && attrB.breed) {
     const bA = attrA.breed.toLowerCase();
     const bB = attrB.breed.toLowerCase();
     if (bA === bB || bA.includes(bB) || bB.includes(bA)) {
@@ -188,19 +213,42 @@ export function computeAttributeSimilarity(
     scorePoints += 8;
   }
 
-  // 5. Body Size (Max 10 pts)
+  // 5. Head & Muzzle Shape (Max 10 pts)
   maxPoints += 10;
+  const headA = attrA.head_shape;
+  const headB = attrB.head_shape;
+  const headClash =
+    (headA === "POINTED_WEDGE" && headB === "BROAD_FLAT") ||
+    (headB === "POINTED_WEDGE" && headA === "BROAD_FLAT");
+
+  if (headA && headB && headA !== "UNKNOWN" && headB !== "UNKNOWN") {
+    if (headA === headB) {
+      scorePoints += 10;
+    } else if (headClash) {
+      scorePoints += 0;
+    } else {
+      scorePoints += 4;
+    }
+  } else {
+    scorePoints += 6;
+  }
+
+  // 6. Body Size (Max 10 pts)
+  maxPoints += 10;
+  const sizeClash =
+    (attrA.size === "PEQUEÑO" && attrB.size === "GRANDE") ||
+    (attrA.size === "GRANDE" && attrB.size === "PEQUEÑO");
+
   if (attrA.size === attrB.size) {
     scorePoints += 10;
     matchedReasons.push(`📏 Mismo tamaño (${attrA.size.toLowerCase()})`);
-  } else if (
-    (attrA.size === "MEDIANO" && (attrB.size === "PEQUEÑO" || attrB.size === "GRANDE")) ||
-    (attrB.size === "MEDIANO" && (attrA.size === "PEQUEÑO" || attrA.size === "GRANDE"))
-  ) {
+  } else if (sizeClash) {
+    scorePoints += 0;
+  } else {
     scorePoints += 5; // Adjacent size
   }
 
-  // 6. Ears & Tail Shape (Max 10 pts)
+  // 7. Ears & Tail Shape (Max 10 pts)
   maxPoints += 10;
   if (attrA.ear_type && attrB.ear_type && attrA.ear_type !== "UNKNOWN" && attrA.ear_type === attrB.ear_type) {
     scorePoints += 5;
@@ -210,7 +258,7 @@ export function computeAttributeSimilarity(
     scorePoints += 5;
   }
 
-  // 7. Distinctive Markings Overlap without Form Template Boilerplate (Max 10 pts)
+  // 8. Distinctive Markings Overlap without Form Template Boilerplate (Max 10 pts)
   maxPoints += 10;
   if (attrA.distinctive_markings.length > 0 && attrB.distinctive_markings.length > 0) {
     const cleanTokens = (str: string) =>
@@ -236,6 +284,9 @@ export function computeAttributeSimilarity(
     matchedReasons,
     furLengthClash: !!furLengthClash,
     dominantInversion: !!dominantInversion,
+    buildClash: !!buildClash,
+    headClash: !!headClash,
+    sizeClash: !!sizeClash,
   };
 }
 
@@ -294,7 +345,15 @@ export function scorePetReIDPair(
   }
 
   // 4. Structured Visual Attributes
-  const { similarity: attributeSim, matchedReasons, furLengthClash, dominantInversion } = computeAttributeSimilarity(
+  const {
+    similarity: attributeSim,
+    matchedReasons,
+    furLengthClash,
+    dominantInversion,
+    buildClash,
+    headClash,
+    sizeClash,
+  } = computeAttributeSimilarity(
     target.canonicalAttributes,
     candidate.canonicalAttributes
   );
@@ -334,9 +393,18 @@ export function scorePetReIDPair(
     geoPlausibility * effectiveGeoWeight +
     temporalPlausibility * effectiveTempWeight;
 
-  // If core morphological attributes clash (e.g. Gray vs Black pigment, Long vs Short fur, or Dominant Inversion)
+  // If core morphological attributes clash (e.g. Gray vs Black pigment, Long vs Short fur,
+  // Dominant Inversion, Dwarf vs Sturdy build, or Large vs Small size)
   // without strong facial biometrics, cap composite score so it does not produce false positives above 50%.
-  if ((attributeSim < 0.40 || furLengthClash || dominantInversion) && (!petfaceSim || petfaceSim < 0.70)) {
+  const morphologicalClash =
+    attributeSim < 0.40 ||
+    furLengthClash ||
+    dominantInversion ||
+    buildClash ||
+    headClash ||
+    sizeClash;
+
+  if (morphologicalClash && (!petfaceSim || petfaceSim < 0.70)) {
     compositeScore = Math.min(compositeScore, 0.48);
   }
 
@@ -375,7 +443,15 @@ export function petReportToReIDFeatures(
   pet: PetReport,
   petface?: PetFaceEmbedding | null,
   visualClip?: VisualClipEmbedding | null,
-  v2Meta?: { coat_colors?: string[]; coat_pattern?: string; fur_length?: string; size?: string; ear_type?: string } | null
+  v2Meta?: {
+    coat_colors?: string[];
+    coat_pattern?: string;
+    fur_length?: string;
+    size?: string;
+    ear_type?: string;
+    body_build?: string;
+    head_and_muzzle_shape?: string;
+  } | null
 ): PetReIDFeatures {
   let colors: string[] = [];
   if (v2Meta && v2Meta.coat_colors && v2Meta.coat_colors.length > 0) {
@@ -400,6 +476,18 @@ export function petReportToReIDFeatures(
     else if (/medio|semilargo/i.test(pet.distinctive_features)) furLength = "MEDIUM";
   }
 
+  let normalizedSize: "PEQUEÑO" | "MEDIANO" | "GRANDE" = "MEDIANO";
+  if (v2Meta?.size) {
+    if (v2Meta.size === "SMALL") normalizedSize = "PEQUEÑO";
+    else if (v2Meta.size === "LARGE" || v2Meta.size === "GIANT") normalizedSize = "GRANDE";
+    else normalizedSize = "MEDIANO";
+  } else if (pet.size) {
+    const s = pet.size.toUpperCase();
+    if (s.includes("PEQUEÑO") || s.includes("PEQUENO") || s.includes("SMALL")) normalizedSize = "PEQUEÑO";
+    else if (s.includes("GRANDE") || s.includes("LARGE")) normalizedSize = "GRANDE";
+    else normalizedSize = "MEDIANO";
+  }
+
   return {
     petId: pet.id || "TEMP",
     reportType: pet.report_type,
@@ -409,10 +497,12 @@ export function petReportToReIDFeatures(
     visualClip: visualClip || null,
     canonicalAttributes: {
       species: pet.species,
-      size: (pet.size as "PEQUEÑO" | "MEDIANO" | "GRANDE") || "MEDIANO",
+      size: normalizedSize,
       coat_colors: colors,
       coat_pattern: v2Meta?.coat_pattern || pet.pattern || undefined,
       fur_length: furLength,
+      body_build: (v2Meta?.body_build as any) || undefined,
+      head_shape: (v2Meta?.head_and_muzzle_shape as any) || undefined,
       ear_type: (v2Meta?.ear_type as any) || undefined,
       distinctive_markings: pet.distinctive_features ? [pet.distinctive_features] : [],
     },

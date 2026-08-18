@@ -30,6 +30,8 @@ export interface CanonicalPetAttributes {
   coat_colors: string[];
   coat_pattern?: string;
   fur_length?: "SHORT" | "MEDIUM" | "LONG" | "HAIRLESS" | "UNKNOWN";
+  body_build?: "COMPACT_DWARF" | "SLENDER_LONG_LEGGED" | "STURDY_PROPORTIONATE" | "UNKNOWN";
+  head_shape?: "POINTED_WEDGE" | "BROAD_FLAT" | "LONG_NARROW" | "UNKNOWN";
   breed?: string;
   ear_type?: "ERECT" | "FLOPPY" | "SEMI_ERECT" | "UNKNOWN";
   tail_type?: "LONG" | "SHORT_DOCKED" | "CURLY" | "UNKNOWN";
