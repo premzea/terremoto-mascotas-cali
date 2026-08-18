@@ -178,9 +178,10 @@ function extractPatternFromPet(pet: PetReport, v2Meta?: PetMetadataV2): CoatPatt
 }
 
 /**
- * Enhanced Matching Engine supporting selectable modes:
- * - V2_MULTIMODAL: Full multimodal Re-ID with dynamic dual-stream weighting and continuous spatial decay.
- * - V1_CLASSIC: Classical multi-factor linear baseline with dominant color polarity.
+ * Tri-Factor Multimodal Matching Engine:
+ * Combines high-dimensional foundation vision embeddings (DINOv2, 768-d),
+ * structured morphological attributes (Gemini V2: color families, ears, muzzle, patterns),
+ * and continuous exponential geospatial decay (Haversine e^(-d/8km)).
  */
 export function findBestMatches(
   targetPet: PetReport,

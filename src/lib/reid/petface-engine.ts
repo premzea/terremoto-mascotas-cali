@@ -155,9 +155,9 @@ export function calculateTemporalPlausibility(hoursElapsed?: number, distanceKm?
 }
 
 /**
- * Core 5-Factor Multimodal Matching Engine:
- * Dynamically scores a candidate against a target using PetFace biometrics,
- * whole-body DINOv2 / OpenCLIP embeddings, structured Gemini attributes, and geography.
+ * Tri-Factor Multimodal Matching Engine:
+ * Dynamically scores a candidate against a target using high-dimensional vision tensors (DINOv2),
+ * canonical structured Gemini morphological attributes, and continuous exponential geospatial decay.
  */
 export function scorePetReIDPair(
   target: PetReIDFeatures,
