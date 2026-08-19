@@ -45,11 +45,10 @@ test.describe("Búsqueda Animal Cali - Map Location Picker & GPS Pinpoint Workfl
 
     // 6. Verify Map Location Picker modal is open
     const mapModal = page.locator("div.fixed.z-\\[70\\]");
-    await expect(mapModal.locator("h3:has-text('Seleccionar Ubicación en Cali y Jamundí')")).toBeVisible();
-    await expect(mapModal.locator("text=Toca la calle o parque exacto en el mapa")).toBeVisible();
+    await expect(mapModal.locator("h3:has-text('Ubicación de la Mascota')")).toBeVisible();
 
-    // 7. Search for a large neighborhood in Cali (e.g. Ciudad Jardín)
-    const mapSearchInput = mapModal.locator("input[placeholder*='Escribe el barrio']");
+    // 7. Search for a large place / neighborhood in Cali (e.g. Ciudad Jardín)
+    const mapSearchInput = mapModal.locator("input[placeholder*='Google Maps']");
     await mapSearchInput.fill("Ciudad Jardín");
 
     const searchSuggestion = mapModal.locator("button:has-text('Ciudad Jardín')").first();
@@ -59,8 +58,8 @@ test.describe("Búsqueda Animal Cali - Map Location Picker & GPS Pinpoint Workfl
     // 8. Verify the floating pill updates with the selected barrio
     await expect(mapModal.locator("strong:has-text('Ciudad Jardín')")).toBeVisible();
 
-    // 9. Click 'Confirmar Ubicación'
-    const confirmBtn = mapModal.locator("button:has-text('Confirmar Ubicación')");
+    // 9. Click 'Confirmar Este Punto'
+    const confirmBtn = mapModal.locator("button:has-text('Confirmar Este Punto')");
     await confirmBtn.click();
 
     // 10. Verify coordinates and barrio are bound back into Step 2 of ReportModal
@@ -98,14 +97,14 @@ test.describe("Búsqueda Animal Cali - Map Location Picker & GPS Pinpoint Workfl
     const mapModal = page.locator("div.fixed.z-\\[70\\]");
 
     // Search and select 'El Ingenio'
-    const mapSearchInput = mapModal.locator("input[placeholder*='Escribe el barrio']");
+    const mapSearchInput = mapModal.locator("input[placeholder*='Google Maps']");
     await mapSearchInput.fill("El Ingenio");
     const ingenioSuggestion = mapModal.locator("button:has-text('El Ingenio')").first();
     await expect(ingenioSuggestion).toBeVisible({ timeout: 5000 });
     await ingenioSuggestion.click();
 
     // Click confirm
-    await mapModal.locator("button:has-text('Confirmar Ubicación')").click();
+    await mapModal.locator("button:has-text('Confirmar Este Punto')").click();
 
     // 5. Advance to Step 3
     await modal.locator("button:has-text('Contacto Seguro')").click();
