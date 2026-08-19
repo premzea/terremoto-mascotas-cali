@@ -1,22 +1,28 @@
 "use client";
 
 import { PetReport } from "@/lib/types";
-import { MapPin, MessageCircle, ZoomIn, Info, Sparkles, Shield, CheckCircle } from "lucide-react";
+import { MapPin, MessageCircle, ZoomIn, Info, Sparkles, Shield, CheckCircle, Edit3, Eye } from "lucide-react";
 import { useState } from "react";
 import ContactGateModal from "./ContactGateModal";
 import CloseCaseModal from "./CloseCaseModal";
+import EditPetModal from "./EditPetModal";
+import ViewInfoModal from "./ViewInfoModal";
 import { sanitizeDescription } from "@/lib/sanitize";
 
 interface PetCardProps {
   pet: PetReport;
   onFindMatches?: (pet: PetReport) => void;
   onCloseCase?: (petId: string) => void;
+  onUpdatePet?: (updatedPet: PetReport) => void;
 }
 
-export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProps) {
+export default function PetCard({ pet: initialPet, onFindMatches, onCloseCase, onUpdatePet }: PetCardProps) {
+  const [pet, setPet] = useState<PetReport>(initialPet);
   const [showGate, setShowGate] = useState<boolean>(false);
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
   const [showCloseModal, setShowCloseModal] = useState<boolean>(false);
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showViewInfoModal, setShowViewInfoModal] = useState<boolean>(false);
 
   const isLost = pet.report_type === "LOST";
   const badgeColor = isLost
@@ -25,6 +31,11 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
   const badgeText = isLost ? "PERDIDO / BUSCADO" : "ENCONTRADO / RESCATADO";
 
   const fallbackPhoto = "/placeholder-pet.png";
+
+  const handlePetUpdated = (updated: PetReport) => {
+    setPet(updated);
+    if (onUpdatePet) onUpdatePet(updated);
+  };
 
   return (
     <>
@@ -60,7 +71,7 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
         {/* Información Crítica & Descripción Completa */}
         <div className="flex-1 flex flex-col justify-between space-y-3">
           <div className="space-y-2">
-            {/* Título y Código */}
+            {/* Título y Acciones de Gestión */}
             <div className="flex items-start justify-between gap-2">
               <div>
                 <h3 className="font-black text-xl sm:text-2xl text-stone-900 tracking-tight leading-none">
@@ -80,14 +91,30 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs bg-stone-100 text-stone-700 font-mono font-bold px-2.5 py-1 rounded-md border border-stone-200">
+              <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                <span className="text-xs bg-stone-100 text-stone-700 font-mono font-bold px-2 py-1 rounded-md border border-stone-200">
                   {pet.id}
                 </span>
                 <button
+                  onClick={() => setShowViewInfoModal(true)}
+                  title="Ver información completa (Requiere código o solicitud)"
+                  className="text-[11px] bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-2 py-1 rounded-md flex items-center gap-1 transition font-bold cursor-pointer"
+                >
+                  <Eye className="w-3 h-3 text-blue-600" />
+                  <span className="hidden sm:inline">Ver Info</span>
+                </button>
+                <button
+                  onClick={() => setShowEditModal(true)}
+                  title="Editar este reporte (Requiere código o sugerencia)"
+                  className="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2 py-1 rounded-md flex items-center gap-1 transition font-bold cursor-pointer"
+                >
+                  <Edit3 className="w-3 h-3 text-amber-700" />
+                  <span className="hidden sm:inline">Editar</span>
+                </button>
+                <button
                   onClick={() => setShowCloseModal(true)}
                   title="Cerrar reporte / Marcar como reunido"
-                  className="text-[11px] bg-stone-100 hover:bg-emerald-50 text-stone-600 hover:text-emerald-700 border border-stone-200 hover:border-emerald-300 px-2 py-1 rounded-md flex items-center gap-1 transition font-bold"
+                  className="text-[11px] bg-stone-100 hover:bg-emerald-50 text-stone-600 hover:text-emerald-700 border border-stone-200 hover:border-emerald-300 px-2 py-1 rounded-md flex items-center gap-1 transition font-bold cursor-pointer"
                 >
                   <CheckCircle className="w-3 h-3 text-emerald-600" />
                   <span className="hidden sm:inline">Cerrar</span>
@@ -95,7 +122,7 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
               </div>
             </div>
 
-            {/* Ubicación: Protegida para rescatados contra extorsiones / Abierta para perdidos */}
+            {/* Ubicación: Visto por última vez para perdidos / Información privada para rescatados */}
             <div className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border w-fit">
               {isLost ? (
                 <div className="flex items-center gap-1.5 text-amber-800 bg-amber-50/80 border-amber-200/60">
@@ -103,9 +130,9 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
                   <span>Visto por última vez en: <strong>{pet.neighborhood}</strong></span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50/80 border-emerald-200/60">
-                  <Shield className="w-3.5 h-3.5 flex-shrink-0 text-emerald-600" />
-                  <span>En resguardo en Cali (Ubicación protegida por Triaje)</span>
+                <div className="flex items-center gap-1.5 text-stone-700 bg-stone-100 border-stone-200">
+                  <Shield className="w-3.5 h-3.5 flex-shrink-0 text-stone-500" />
+                  <span>Información privada</span>
                 </div>
               )}
             </div>
@@ -129,7 +156,7 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
             {onFindMatches && (
               <button
                 onClick={() => onFindMatches(pet)}
-                className="bg-amber-100/70 hover:bg-amber-100 border border-amber-300 text-amber-900 font-extrabold text-xs py-3 px-3.5 rounded-xl flex items-center justify-center gap-1.5 transition active:scale-[0.98]"
+                className="bg-amber-100/70 hover:bg-amber-100 border border-amber-300 text-amber-900 font-extrabold text-xs py-3 px-3.5 rounded-xl flex items-center justify-center gap-1.5 transition active:scale-[0.98] cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-amber-600" />
                 <span>Coincidencias IA</span>
@@ -138,7 +165,7 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
 
             <button
               onClick={() => setShowGate(true)}
-              className={`flex-1 font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition active:scale-[0.98] ${
+              className={`flex-1 font-extrabold text-xs sm:text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition active:scale-[0.98] cursor-pointer ${
                 isLost
                   ? "bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-md shadow-orange-500/20"
                   : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md shadow-emerald-600/20"
@@ -243,6 +270,25 @@ export default function PetCard({ pet, onFindMatches, onCloseCase }: PetCardProp
             setShowCloseModal(false);
             if (onCloseCase && pet.id) onCloseCase(pet.id);
           }}
+        />
+      )}
+
+      {/* Modal de Edición de Reporte */}
+      {showEditModal && (
+        <EditPetModal
+          pet={pet}
+          onClose={() => setShowEditModal(false)}
+          onSuccess={(updatedPet) => {
+            handlePetUpdated(updatedPet);
+          }}
+        />
+      )}
+
+      {/* Modal de Ver Información Protegida */}
+      {showViewInfoModal && (
+        <ViewInfoModal
+          pet={pet}
+          onClose={() => setShowViewInfoModal(false)}
         />
       )}
     </>

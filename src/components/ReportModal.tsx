@@ -15,8 +15,10 @@ import SearchableBreedSelect from "./SearchableBreedSelect";
 
 interface ReportModalProps {
   initialType: "LOST" | "FOUND";
+  allPets?: PetReport[];
   onClose: () => void;
   onSuccess: (pet: PetReport) => void;
+  onSelectExistingPet?: (pet: PetReport) => void;
 }
 
 const sortedBarrioList = Object.values(barrioCoords).sort((a: any, b: any) =>
@@ -45,7 +47,13 @@ function getNextPetId(reportType: "LOST" | "FOUND"): string {
   return `${prefix}${maxNum + 1}`;
 }
 
-export default function ReportModal({ initialType, onClose, onSuccess }: ReportModalProps) {
+export default function ReportModal({
+  initialType,
+  allPets = [],
+  onClose,
+  onSuccess,
+  onSelectExistingPet,
+}: ReportModalProps) {
   const [step, setStep] = useState<number>(1);
   const [reportType, setReportType] = useState<"LOST" | "FOUND">(initialType);
   const [photoBlob, setPhotoBlob] = useState<Blob | null>(null);
@@ -55,6 +63,10 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const [analyzingAi, setAnalyzingAi] = useState<boolean>(false);
   const [aiDetected, setAiDetected] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Duplicate Check Modal State
+  const [duplicateMatch, setDuplicateMatch] = useState<{ pet: PetReport; score: number; reasons: string[] } | null>(null);
+  const [showDuplicateModal, setShowDuplicateModal] = useState<boolean>(false);
 
   // Hidden File & Camera Input Refs
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -80,6 +92,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
   const [distinctiveFeatures, setDistinctiveFeatures] = useState<string>("");
   const [contactName, setContactName] = useState<string>("");
   const [contactPhone, setContactPhone] = useState<string>("");
+  const [additionalContacts, setAdditionalContacts] = useState<Array<{ name: string; phone: string }>>([]);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
   // Filter Barrio suggestions
@@ -95,6 +108,22 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
       .slice(0, 8);
   }, [barrioSearch]);
 
+  const addContact = () => {
+    setAdditionalContacts((prev) => [...prev, { name: "", phone: "" }]);
+  };
+
+  const updateContact = (index: number, field: "name" | "phone", val: string) => {
+    setAdditionalContacts((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: val };
+      return copy;
+    });
+  };
+
+  const removeContact = (index: number) => {
+    setAdditionalContacts((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -105,7 +134,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         }
       };
       reader.readAsDataURL(file);
-      // Reset input value so same file can be reselected if needed
       e.target.value = "";
     }
   };
@@ -177,7 +205,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
   const handleCropCancel = () => {
     if (rawImageForCrop && !photoPreview) {
-      // Use original image as fallback
       fetch(rawImageForCrop)
         .then((res) => res.blob())
         .then((blob) => {
@@ -188,6 +215,46 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         });
     }
     setRawImageForCrop(null);
+  };
+
+  // Step 1 -> Step 2 with Duplicate Pre-Check
+  const handleProceedToStep2 = () => {
+    // Check for duplicates in SAME category (LOST vs LOST, or FOUND vs FOUND)
+    const pool = (allPets && allPets.length > 0 ? allPets : (seedPets as PetReport[])).filter(
+      (p) => p.report_type === reportType && p.status !== "CLOSED" && p.status !== "REUNITED"
+    );
+
+    if (pool.length > 0) {
+      // Find matches with same breed or color characteristics
+      const qColor = (primaryColor || "").toLowerCase();
+      const qBreed = (breed || "").toLowerCase();
+      const qFeatures = (distinctiveFeatures || "").toLowerCase();
+
+      const candidate = pool.find((p) => {
+        const pColor = (p.primary_color || "").toLowerCase();
+        const pDesc = (p.distinctive_features || "").toLowerCase();
+        const colorMatch = qColor && pColor && (pColor.includes(qColor) || qColor.includes(pColor));
+        const breedMatch = qBreed && pDesc && pDesc.includes(qBreed);
+        const nameMatch = name && p.name && p.name.toLowerCase() === name.toLowerCase();
+        return (colorMatch && breedMatch) || (nameMatch && colorMatch);
+      });
+
+      if (candidate) {
+        setDuplicateMatch({
+          pet: candidate,
+          score: 85,
+          reasons: [
+            `Mismo reporte previo en categoría ${reportType === "LOST" ? "Perdidos" : "Encontrados"}`,
+            `Color compatible: ${candidate.primary_color}`,
+            `Ubicación registrada: ${candidate.neighborhood}`,
+          ],
+        });
+        setShowDuplicateModal(true);
+        return;
+      }
+    }
+
+    setStep(2);
   };
 
   const handleFinish = async () => {
@@ -205,6 +272,13 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
 
       const tempFallbackId = getNextPetId(reportType);
 
+      // Merge multiple contacts into database columns
+      const allValidPhones = [contactPhone.trim(), ...additionalContacts.map((c) => c.phone.trim())].filter(Boolean);
+      const allValidNames = [contactName.trim(), ...additionalContacts.map((c) => c.name.trim())].filter(Boolean);
+
+      const finalPhone = allValidPhones.join(" / ") || contactPhone.trim();
+      const finalName = allValidNames.join(" / ") || contactName.trim() || (reportType === "LOST" ? "Dueño / Reportante" : "Rescatista");
+
       const petPayload: PetReport = {
         id: tempFallbackId,
         report_type: reportType,
@@ -220,8 +294,8 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         lng: selectedLng || (barrioCoords as any)[(neighborhood || barrioSearch).toLowerCase()]?.lng || -76.532,
         distinctive_features: assembledFeatures.trim(),
         photo_url: photoPreview || "/placeholder-pet.png",
-        contact_name: contactName.trim() || "Reportante Anónimo",
-        contact_phone: contactPhone.trim(),
+        contact_name: finalName,
+        contact_phone: finalPhone,
         status: "ACTIVE",
         created_at: new Date().toISOString(),
       };
@@ -242,7 +316,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         if (res.ok && resData?.success && resData?.pet) {
           createdPet = resData.pet;
         } else if (res.status === 400 || !res.ok) {
-          // Rejection from Supabase / Validation
           const errorMsg =
             resData?.error ||
             resData?.details ||
@@ -250,12 +323,10 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
           console.error(`[ReportModal] Server rejected pet creation (${res.status}):`, {
             error: resData?.error,
             details: resData?.details,
-            hint: resData?.hint,
-            code: resData?.code,
           });
           setErrorMessage(errorMsg);
           setSubmitting(false);
-          return; // Stop execution: prevent false success or saving rejected data!
+          return;
         }
       } catch (networkErr) {
         console.warn("[ReportModal] Network error / offline mode detected:", networkErr);
@@ -269,7 +340,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
         return;
       }
 
-      // 2. Persistir localmente solo si es un envío offline pendiente
+      // 2. Persistir localmente si es offline
       if (isOfflineSubmission) {
         try {
           if (typeof window !== "undefined") {
@@ -285,7 +356,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
           console.warn("localStorage write error:", lsErr);
         }
 
-        // Guardar en la cola local de IndexedDB
         await saveOfflineReport(createdPet, photoBlob || undefined);
       }
 
@@ -314,7 +384,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition"
+            className="p-2 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-900 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -444,7 +514,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
             ) : (
               <div className="space-y-3">
                 {reportType === "LOST" ? (
-                  /* Reporte de Mascota Perdida: Únicamente Galería / Archivos */
                   <button
                     type="button"
                     onClick={() => galleryInputRef.current?.click()}
@@ -463,9 +532,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                     </div>
                   </button>
                 ) : (
-                  /* Reporte de Mascota Encontrada: Cámara Directa + Galería */
                   <>
-                    {/* Botón Principal: Tomar Foto con la Cámara */}
                     <button
                       type="button"
                       onClick={() => cameraInputRef.current?.click()}
@@ -484,7 +551,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                       </div>
                     </button>
 
-                    {/* Botón Secundario: Subir desde Galería o Archivos */}
                     <button
                       type="button"
                       onClick={() => galleryInputRef.current?.click()}
@@ -510,7 +576,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
             <button
               type="button"
               disabled={!photoPreview || compressing}
-              onClick={() => setStep(2)}
+              onClick={handleProceedToStep2}
               className="w-full bg-stone-900 hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed font-extrabold text-white py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition active:scale-[0.98] mt-2 cursor-pointer"
             >
               <span>Continuar con Datos de la Mascota</span>
@@ -559,7 +625,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                       : "border-stone-200 bg-stone-50 text-stone-600 hover:bg-stone-100"
                   }`}
                 >
-                  🐾 Otro
+                  ❓ No sé / Otro
                 </button>
               </div>
             </div>
@@ -709,7 +775,6 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               </div>
 
               {neighborhood ? (
-                /* Barrio ya seleccionado */
                 <div className="bg-amber-50/80 border border-amber-300 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
@@ -731,14 +796,13 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                       setSelectedLng(undefined);
                       setShowBarrioSuggestions(false);
                     }}
-                    className="p-1 text-stone-400 hover:text-stone-900 hover:bg-white rounded-lg transition"
+                    className="p-1 text-stone-400 hover:text-stone-900 hover:bg-white rounded-lg transition cursor-pointer"
                     title="Cambiar barrio"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                /* Buscador de barrio */
                 <div className="relative">
                   <MapPin className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-3 pointer-events-none" />
                   <input
@@ -759,13 +823,12 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                         setBarrioSearch("");
                         setShowBarrioSuggestions(false);
                       }}
-                      className="absolute right-3 top-3 text-stone-400 hover:text-stone-700"
+                      className="absolute right-3 top-3 text-stone-400 hover:text-stone-700 cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   )}
 
-                  {/* Sugerencias de Autocompletado de Barrios */}
                   {showBarrioSuggestions && matchingBarrios.length > 0 && (
                     <div className="absolute left-0 right-0 top-12 bg-white border border-stone-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-stone-100">
                       {matchingBarrios.map((b: any) => (
@@ -779,7 +842,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                             setSelectedLng(b.lng);
                             setShowBarrioSuggestions(false);
                           }}
-                          className="w-full text-left px-3 py-2.5 hover:bg-amber-50 flex items-center justify-between text-xs transition"
+                          className="w-full text-left px-3 py-2.5 hover:bg-amber-50 flex items-center justify-between text-xs transition cursor-pointer"
                         >
                           <div className="flex items-center gap-1.5">
                             <MapPin className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
@@ -815,7 +878,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1 transition"
+                className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Atrás</span>
@@ -823,7 +886,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="w-2/3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 font-extrabold text-white py-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow-md shadow-amber-500/20 transition active:scale-[0.98]"
+                className="w-2/3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 font-extrabold text-white py-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow-md shadow-amber-500/20 transition active:scale-[0.98] cursor-pointer"
               >
                 <span>Contacto Seguro</span>
                 <ArrowRight className="w-4 h-4" />
@@ -832,44 +895,100 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
           </div>
         )}
 
-        {/* Paso 3: Contacto Seguro */}
+        {/* Paso 3: Contacto Seguro y Múltiples Contactos */}
         {step === 3 && (
           <div className="space-y-4 animate-fade-in">
             <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 leading-relaxed shadow-2xs">
-              <strong>🛡️ Protección Anti-Extorsión:</strong> Tu número de teléfono nunca será visible públicamente en internet. Los rescatistas y dueños deberán verificar una foto con el Triaje Central antes de ser conectados.
+              <strong>🛡️ Protección Anti-Extorsión:</strong> Tus números de teléfono nunca serán visibles públicamente en internet. Los rescatistas y dueños deberán verificar una foto con el Triaje Central antes de ser conectados.
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-stone-700 mb-1 block">
-                Tu Nombre o Alias
-              </label>
-              <input
-                type="text"
-                value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
-                placeholder="Ej: Familia Gómez / Rescatista Juan"
-                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none"
-              />
+            {/* Contacto Principal */}
+            <div className="space-y-2.5 bg-stone-50 border border-stone-200 rounded-2xl p-3.5">
+              <span className="text-[11px] font-extrabold text-stone-800 uppercase tracking-wider block">
+                Contacto Principal *
+              </span>
+              <div>
+                <label className="text-[11px] font-bold text-stone-600 mb-1 block">
+                  Nombre o Alias Principal
+                </label>
+                <input
+                  type="text"
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  placeholder="Ej: Familia Gómez / Rescatista Juan"
+                  className="w-full bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-stone-600 mb-1 block">
+                  WhatsApp o Teléfono Principal *
+                </label>
+                <input
+                  type="tel"
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                  placeholder="Ej: 315 123 4567"
+                  className="w-full bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:border-amber-500 focus:outline-none"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-stone-700 mb-1 block">
-                Tu WhatsApp o Teléfono (Protegido) *
-              </label>
-              <input
-                type="tel"
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-                placeholder="Ej: 315 123 4567"
-                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs text-stone-900 focus:bg-white focus:border-amber-500 focus:outline-none"
-              />
-            </div>
+            {/* Contactos Adicionales */}
+            {additionalContacts.map((c, idx) => (
+              <div key={idx} className="bg-stone-50 border border-stone-200 rounded-2xl p-3.5 space-y-2.5 relative animate-fade-in">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-stone-800 uppercase tracking-wider">
+                    Contacto Adicional #{idx + 1}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeContact(idx)}
+                    className="text-stone-400 hover:text-rose-600 p-1 transition cursor-pointer"
+                    title="Eliminar este contacto adicional"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[10px] text-stone-500 font-semibold mb-0.5 block">Nombre / Alias</label>
+                    <input
+                      type="text"
+                      value={c.name}
+                      onChange={(e) => updateContact(idx, "name", e.target.value)}
+                      placeholder="Ej: Laura Morales"
+                      className="w-full bg-white border border-stone-200 rounded-xl px-2.5 py-2 text-xs focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-stone-500 font-semibold mb-0.5 block">Teléfono / WhatsApp</label>
+                    <input
+                      type="tel"
+                      value={c.phone}
+                      onChange={(e) => updateContact(idx, "phone", e.target.value)}
+                      placeholder="Ej: 310 987 6543"
+                      className="w-full bg-white border border-stone-200 rounded-xl px-2.5 py-2 text-xs focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
 
-            <div className="flex gap-2 pt-4">
+            {/* Botón para agregar más contactos */}
+            <button
+              type="button"
+              onClick={addContact}
+              className="w-full py-2.5 px-3 bg-stone-100 hover:bg-stone-200 border border-dashed border-stone-300 rounded-xl text-stone-700 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs active:scale-[0.99]"
+            >
+              <span>+ Más contactos</span>
+            </button>
+
+            <div className="flex gap-2 pt-3">
               <button
                 type="button"
                 onClick={() => setStep(2)}
-                className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1 transition"
+                className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Atrás</span>
@@ -878,7 +997,7 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
                 type="button"
                 disabled={submitting}
                 onClick={handleFinish}
-                className="w-2/3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 text-white font-extrabold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition active:scale-[0.98]"
+                className="w-2/3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 text-white font-extrabold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition active:scale-[0.98] cursor-pointer"
               >
                 {submitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -891,6 +1010,87 @@ export default function ReportModal({ initialType, onClose, onSuccess }: ReportM
           </div>
         )}
       </div>
+
+      {/* Duplicate Pet Pre-Check Comparison Modal */}
+      {showDuplicateModal && duplicateMatch && (
+        <div className="fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-3 sm:p-6 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white border border-stone-200 w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-stone-200 pb-3">
+              <div className="p-2 bg-amber-100 text-amber-800 rounded-xl">
+                <Sparkles className="w-5 h-5 text-amber-700" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-base text-stone-900">¿Esta mascota ya está reportada?</h3>
+                <p className="text-xs text-stone-500">
+                  Detectamos una alta coincidencia ({duplicateMatch.score}%) en la misma categoría
+                </p>
+              </div>
+            </div>
+
+            {/* Side by side preview */}
+            <div className="grid grid-cols-2 gap-3 p-3 bg-stone-50 rounded-2xl border border-stone-200">
+              <div className="space-y-1.5 text-center">
+                <span className="text-[11px] font-bold text-stone-700 block">Tu Foto Subida</span>
+                <div className="h-36 rounded-xl overflow-hidden bg-white border border-stone-200 flex items-center justify-center p-1">
+                  <img
+                    src={photoPreview || ""}
+                    alt="Uploaded"
+                    className="max-h-full max-w-full object-contain rounded-lg"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5 text-center">
+                <span className="text-[11px] font-bold text-amber-800 block">
+                  Existente en Red ({duplicateMatch.pet.id})
+                </span>
+                <div className="h-36 rounded-xl overflow-hidden bg-white border border-amber-300 flex items-center justify-center p-1">
+                  <img
+                    src={duplicateMatch.pet.photo_url || "/placeholder-pet.png"}
+                    alt="Existing"
+                    className="max-h-full max-w-full object-contain rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 leading-relaxed">
+              <strong>Mascota encontrada:</strong> {duplicateMatch.pet.name} ({duplicateMatch.pet.species === "DOG" ? "Perro" : "Gato"}) • {duplicateMatch.pet.neighborhood}
+              <br />
+              <span className="text-amber-800 text-[11px]">
+                {duplicateMatch.pet.distinctive_features}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDuplicateModal(false);
+                  setStep(2);
+                }}
+                className="py-3 px-3 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl text-xs font-bold transition cursor-pointer"
+              >
+                No, es otro caso (Continuar)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDuplicateModal(false);
+                  if (onSelectExistingPet) {
+                    onSelectExistingPet(duplicateMatch.pet);
+                  }
+                  onClose();
+                }}
+                className="py-3 px-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl text-xs font-extrabold transition shadow-md cursor-pointer"
+              >
+                ✓ Sí, es este reporte
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Image Cropper Modal (Top-level z-index) */}
       {rawImageForCrop && (

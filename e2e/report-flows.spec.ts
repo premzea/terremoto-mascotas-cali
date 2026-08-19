@@ -99,7 +99,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     const cardId = await newCard.locator("span.font-mono").innerText().catch(() => "");
     if (cardId && /^[BR]\d+$/.test(cardId.trim())) {
       await page.request.post("/api/close-case", {
-        data: { petId: cardId.trim(), passcode: "120905260506", isTest: true },
+        data: { petId: cardId.trim(), passcode: "CALI2026", isTest: true },
       });
     }
   });
@@ -179,13 +179,13 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     const newCard = page.locator(".edge-card").first();
     await expect(newCard).toContainText("ENCONTRADO / RESCATADO");
     await expect(newCard).toContainText("R");
-    await expect(newCard).toContainText("En resguardo en Cali (Ubicación protegida por Triaje)");
+    await expect(newCard).toContainText("Información privada");
 
     // Clean up test record via API to keep database clean
     const cardId = await newCard.locator("span.font-mono").innerText().catch(() => "");
     if (cardId && /^[BR]\d+$/.test(cardId.trim())) {
       await page.request.post("/api/close-case", {
-        data: { petId: cardId.trim(), passcode: "120905260506", isTest: true },
+        data: { petId: cardId.trim(), passcode: "CALI2026", isTest: true },
       });
     }
   });

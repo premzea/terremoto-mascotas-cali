@@ -77,15 +77,13 @@ export default function Home() {
         report_type: typeFilter,
         gender: genderFilter,
         neighborhood: selectedBarrio,
-        search: searchTerm,
       });
       setPets(data);
       if (
         speciesFilter === "ALL" &&
         typeFilter === "ALL" &&
         genderFilter === "ALL" &&
-        selectedBarrio === "ALL" &&
-        !searchTerm
+        selectedBarrio === "ALL"
       ) {
         setAllPets(data);
       }
@@ -98,7 +96,7 @@ export default function Home() {
 
   useEffect(() => {
     loadData();
-  }, [speciesFilter, typeFilter, genderFilter, selectedBarrio, searchTerm]);
+  }, [speciesFilter, typeFilter, genderFilter, selectedBarrio]);
 
   // Live suggestions for Zone/Barrio search
   const zoneSuggestions = useMemo(() => {
@@ -396,14 +394,14 @@ export default function Home() {
             </div>
             <button
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className={`px-3.5 py-2 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition shadow-xs ${
+              className={`px-3.5 py-2 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition shadow-xs cursor-pointer ${
                 showAdvancedFilters || hasActiveAdvancedFilters
                   ? "bg-amber-500 text-white border-amber-500 shadow-amber-500/20"
                   : "bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100"
               }`}
             >
               <SlidersHorizontal className="w-4 h-4" />
-              <span className="hidden sm:inline">Filtros IA</span>
+              <span className="hidden sm:inline">Filtros</span>
               {hasActiveAdvancedFilters && (
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
               )}
@@ -860,6 +858,10 @@ export default function Home() {
                   pet={pet}
                   onFindMatches={(target) => setMatchingTargetPet(target)}
                   onCloseCase={handleClosePetCase}
+                  onUpdatePet={(updatedPet) => {
+                    setPets((prev) => prev.map((p) => (p.id === updatedPet.id ? updatedPet : p)));
+                    setAllPets((prev) => prev.map((p) => (p.id === updatedPet.id ? updatedPet : p)));
+                  }}
                 />
               ))}
             </div>
@@ -871,8 +873,13 @@ export default function Home() {
       {reportModalOpen && (
         <ReportModal
           initialType={reportModalType}
+          allPets={allPets}
           onClose={() => setReportModalOpen(false)}
           onSuccess={handleNewReportCreated}
+          onSelectExistingPet={(existingPet) => {
+            setSearchTerm(existingPet.name || existingPet.id || "");
+            setReportModalOpen(false);
+          }}
         />
       )}
 

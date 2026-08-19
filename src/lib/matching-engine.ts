@@ -188,7 +188,7 @@ export function findBestMatches(
   allPets: PetReport[],
   limit = 5,
   algorithmMode: MatchingAlgorithmMode = "V2_MULTIMODAL",
-  minScoreThreshold = 50
+  minScoreThreshold = 60
 ): MatchResult[] {
   const v2Cache = (visualFeaturesV2 as unknown) as Record<string, PetMetadataV2>;
   const dinoCache = (dinov2Embeddings as unknown) as Record<string, number[]>;

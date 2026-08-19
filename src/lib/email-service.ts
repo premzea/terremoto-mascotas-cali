@@ -240,3 +240,117 @@ export async function sendCaseClosedEmail(petId: string, petName?: string, isTes
 
   return transporter.sendMail(mailOptions);
 }
+
+export async function sendEditRequestEmail(data: {
+  pet: any;
+  suggestedChanges: string;
+  requesterContact?: string;
+  isTest?: boolean;
+}) {
+  const transporter = getTransporter();
+  const recipientEmail = resolveRecipientEmail(data.pet, data.isTest);
+  const isTest = recipientEmail === TEST_NOTIFICATION_EMAIL;
+
+  const mailOptions = {
+    from: `"Búsqueda Animal Cali${isTest ? ' [TEST]' : ''}" <${EMAIL_USER}>`,
+    to: recipientEmail,
+    subject: `${isTest ? '🧪 [TEST] ' : ''}✏️ [SUGERENCIA DE EDICIÓN] Mascota ID ${data.pet.id} (${data.pet.name})`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; background: #f9f9fb; border: 1px solid #e1e1e6; border-radius: 12px; overflow: hidden;">
+        <div style="background: #121214; color: #fff; padding: 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 20px; color: #f59e0b;">Búsqueda Animal Cali</h1>
+          <p style="margin: 5px 0 0 0; font-size: 13px; color: #a1a1aa;">Solicitud de Actualización / Corrección de Datos</p>
+        </div>
+
+        <div style="padding: 20px; color: #18181b;">
+          <div style="background: #fff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+            <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: bold; color: #18181b;">
+              Mascota Referenciada: ${data.pet.name} (ID: ${data.pet.id})
+            </p>
+            <p style="margin: 0; font-size: 12px; color: #71717a;">
+              Tipo: ${data.pet.report_type === 'LOST' ? 'Perdida' : 'Encontrada'} • Barrio: ${data.pet.neighborhood}
+            </p>
+          </div>
+
+          <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+            <p style="margin: 0 0 6px 0; font-size: 13px; font-weight: bold; color: #92400e;">
+              📝 Cambios o correcciones sugeridas:
+            </p>
+            <p style="margin: 0; font-size: 13px; color: #78350f; white-space: pre-wrap; line-height: 1.5;">
+              ${data.suggestedChanges}
+            </p>
+          </div>
+
+          ${data.requesterContact ? `
+            <div style="background: #f4f4f5; border-radius: 8px; padding: 12px; font-size: 12px; color: #52525b;">
+              <strong>Contacto del solicitante:</strong> ${data.requesterContact}
+            </div>
+          ` : ''}
+        </div>
+
+        <div style="background: #f4f4f5; padding: 12px 20px; text-align: center; font-size: 11px; color: #71717a;">
+          Búsqueda Animal Cali • Solicitudes Ciudadanas
+        </div>
+      </div>
+    `,
+  };
+
+  return transporter.sendMail(mailOptions);
+}
+
+export async function sendInfoRequestEmail(data: {
+  pet: any;
+  requestReason: string;
+  requesterContact?: string;
+  isTest?: boolean;
+}) {
+  const transporter = getTransporter();
+  const recipientEmail = resolveRecipientEmail(data.pet, data.isTest);
+  const isTest = recipientEmail === TEST_NOTIFICATION_EMAIL;
+
+  const mailOptions = {
+    from: `"Búsqueda Animal Cali${isTest ? ' [TEST]' : ''}" <${EMAIL_USER}>`,
+    to: recipientEmail,
+    subject: `${isTest ? '🧪 [TEST] ' : ''}👁️ [SOLICITUD DE INFORMACIÓN] Mascota ID ${data.pet.id} (${data.pet.name})`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; background: #f9f9fb; border: 1px solid #e1e1e6; border-radius: 12px; overflow: hidden;">
+        <div style="background: #121214; color: #fff; padding: 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 20px; color: #0284c7;">Búsqueda Animal Cali</h1>
+          <p style="margin: 5px 0 0 0; font-size: 13px; color: #a1a1aa;">Solicitud de Acceso a Información Privada</p>
+        </div>
+
+        <div style="padding: 20px; color: #18181b;">
+          <div style="background: #fff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+            <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: bold; color: #18181b;">
+              Mascota Solicitada: ${data.pet.name} (ID: ${data.pet.id})
+            </p>
+            <p style="margin: 0; font-size: 12px; color: #71717a;">
+              Tipo: ${data.pet.report_type === 'LOST' ? 'Perdida' : 'Encontrada'} • Barrio: ${data.pet.neighborhood}
+            </p>
+          </div>
+
+          <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+            <p style="margin: 0 0 6px 0; font-size: 13px; font-weight: bold; color: #0369a1;">
+              🔍 Motivo por el cual solicita ver la información de contacto / ubicación:
+            </p>
+            <p style="margin: 0; font-size: 13px; color: #075985; white-space: pre-wrap; line-height: 1.5;">
+              ${data.requestReason}
+            </p>
+          </div>
+
+          ${data.requesterContact ? `
+            <div style="background: #f4f4f5; border-radius: 8px; padding: 12px; font-size: 12px; color: #52525b;">
+              <strong>Contacto del solicitante:</strong> ${data.requesterContact}
+            </div>
+          ` : ''}
+        </div>
+
+        <div style="background: #f4f4f5; padding: 12px 20px; text-align: center; font-size: 11px; color: #71717a;">
+          Búsqueda Animal Cali • Solicitudes Ciudadanas
+        </div>
+      </div>
+    `,
+  };
+
+  return transporter.sendMail(mailOptions);
+}

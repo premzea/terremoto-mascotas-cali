@@ -25,7 +25,7 @@ export default function ImageCropperModal({
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
   const [naturalSize, setNaturalSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
 
-  // Handle image load to center it
+  // Handle image load to calculate natural dimensions and base display size
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
     setNaturalSize({ width: img.naturalWidth, height: img.naturalHeight });
@@ -88,7 +88,7 @@ export default function ImageCropperModal({
         e.touches[0].clientY - e.touches[1].clientY
       );
       const factor = dist / touchStartRef.current.dist;
-      setZoom((prev) => Math.min(3.5, Math.max(0.8, prev * (factor > 1 ? 1.03 : 0.97))));
+      setZoom((prev) => Math.min(3.5, Math.max(0.5, prev * (factor > 1 ? 1.03 : 0.97))));
       touchStartRef.current.dist = dist;
     }
   };
@@ -103,15 +103,29 @@ export default function ImageCropperModal({
     setRotation((prev) => (prev + 90) % 360);
   };
 
+  // Calculate base rendered dimensions inside a square box
+  const getBaseDimensions = (boxW: number, boxH: number, natW: number, natH: number) => {
+    if (!natW || !natH) return { width: boxW, height: boxH };
+    const aspect = natW / natH;
+    if (aspect >= 1) {
+      // Landscape or square: fit to width
+      return { width: boxW, height: boxW / aspect };
+    } else {
+      // Portrait: fit to height
+      return { width: boxH * aspect, height: boxH };
+    }
+  };
+
   // Perform Final Crop on Canvas
   const handleCropConfirm = () => {
-    if (!imageRef.current || !containerRef.current) return;
+    if (!imageRef.current || !containerRef.current || !naturalSize.width || !naturalSize.height) return;
 
     const img = imageRef.current;
     const container = containerRef.current;
     const cropBox = container.getBoundingClientRect();
+    const boxSize = Math.min(cropBox.width, cropBox.height);
 
-    // Create high-res canvas (square standard 800x800 for optimal AI vision & UI cards)
+    // Create high-res square canvas (800x800 for optimal AI vision & UI cards)
     const canvas = document.createElement("canvas");
     const cropSize = 800;
     canvas.width = cropSize;
@@ -120,47 +134,39 @@ export default function ImageCropperModal({
 
     if (!ctx) return;
 
-    // Fill background with white/black in case of transparent borders
-    ctx.fillStyle = "#ffffff";
+    // Fill background with clean neutral tone
+    ctx.fillStyle = "#1c1917";
     ctx.fillRect(0, 0, cropSize, cropSize);
 
-    // Calculate transformations
+    // Scale factor from screen CSS pixels to canvas pixels
+    const canvasScale = cropSize / boxSize;
+
+    // Calculate base dimensions on canvas
+    const baseScreen = getBaseDimensions(boxSize, boxSize, naturalSize.width, naturalSize.height);
+    const canvasBaseW = baseScreen.width * canvasScale;
+    const canvasBaseH = baseScreen.height * canvasScale;
+
+    // Apply exact CSS transformation matrix:
+    // 1. Move to canvas center + pan offset (scaled to canvas)
     ctx.save();
-    ctx.translate(cropSize / 2, cropSize / 2);
+    ctx.translate(
+      cropSize / 2 + pan.x * canvasScale,
+      cropSize / 2 + pan.y * canvasScale
+    );
+
+    // 2. Rotate around the centered origin
     ctx.rotate((rotation * Math.PI) / 180);
 
-    // Scaling factor from displayed size to canvas size
-    const boxSize = Math.min(cropBox.width, cropBox.height);
-    const scaleFactor = (cropSize / boxSize) * zoom;
+    // 3. Scale around the centered origin
+    ctx.scale(zoom, zoom);
 
-    // Pan offset in canvas coordinates
-    const isRotated90or270 = rotation === 90 || rotation === 270;
-    let canvasPanX = (pan.x / boxSize) * cropSize;
-    let canvasPanY = (pan.y / boxSize) * cropSize;
-
-    // Adjust pan coordinates for rotation
-    if (rotation === 90) {
-      const temp = canvasPanX;
-      canvasPanX = canvasPanY;
-      canvasPanY = -temp;
-    } else if (rotation === 180) {
-      canvasPanX = -canvasPanX;
-      canvasPanY = -canvasPanY;
-    } else if (rotation === 270) {
-      const temp = canvasPanX;
-      canvasPanX = -canvasPanY;
-      canvasPanY = temp;
-    }
-
-    const drawWidth = naturalSize.width * (boxSize / naturalSize.width) * scaleFactor;
-    const drawHeight = naturalSize.height * (boxSize / naturalSize.width) * scaleFactor;
-
+    // 4. Draw image centered at (0, 0)
     ctx.drawImage(
       img,
-      canvasPanX - drawWidth / 2,
-      canvasPanY - drawHeight / 2,
-      drawWidth,
-      drawHeight
+      -canvasBaseW / 2,
+      -canvasBaseH / 2,
+      canvasBaseW,
+      canvasBaseH
     );
     ctx.restore();
 
@@ -191,20 +197,20 @@ export default function ImageCropperModal({
                 Encuadrar y Recortar Foto
               </h3>
               <p className="text-[11px] text-stone-400">
-                Centra la mascota para un mejor análisis de IA
+                Ajusta y centra la mascota para un mejor reconocimiento
               </p>
             </div>
           </div>
           <button
             onClick={onCancel}
-            className="p-2 hover:bg-stone-800 rounded-full text-stone-400 hover:text-white transition"
+            className="p-2 hover:bg-stone-800 rounded-full text-stone-400 hover:text-white transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Viewport Crop Area */}
-        <div className="relative w-full h-72 sm:h-80 bg-stone-950 flex items-center justify-center overflow-hidden select-none touch-none">
+        <div className="relative w-full h-80 sm:h-96 bg-stone-950 flex items-center justify-center overflow-hidden select-none touch-none">
           {/* Crop Boundary Box Guide */}
           <div
             ref={containerRef}
@@ -215,18 +221,18 @@ export default function ImageCropperModal({
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="relative w-64 h-64 sm:w-72 sm:h-72 border-2 border-amber-400 rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing shadow-[0_0_0_9999px_rgba(0,0,0,0.65)] z-10 flex items-center justify-center"
+            className="relative w-64 h-64 sm:w-72 sm:h-72 border-2 border-amber-400 rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing shadow-[0_0_0_9999px_rgba(0,0,0,0.7)] z-10 flex items-center justify-center bg-stone-900"
           >
             {/* Grid Overlay Lines (Rule of thirds) */}
             <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 z-20">
-              <div className="border-r border-b border-white/25"></div>
-              <div className="border-r border-b border-white/25"></div>
-              <div className="border-b border-white/25"></div>
-              <div className="border-r border-b border-white/25"></div>
-              <div className="border-r border-b border-white/25"></div>
-              <div className="border-b border-white/25"></div>
-              <div className="border-r border-white/25"></div>
-              <div className="border-r border-white/25"></div>
+              <div className="border-r border-b border-white/20"></div>
+              <div className="border-r border-b border-white/20"></div>
+              <div className="border-b border-white/20"></div>
+              <div className="border-r border-b border-white/20"></div>
+              <div className="border-r border-b border-white/20"></div>
+              <div className="border-b border-white/20"></div>
+              <div className="border-r border-b border-white/20"></div>
+              <div className="border-r border-b border-white/20"></div>
               <div></div>
             </div>
 
@@ -238,8 +244,8 @@ export default function ImageCropperModal({
 
             {/* Hint overlay */}
             <div className="absolute bottom-2 inset-x-0 text-center pointer-events-none z-20">
-              <span className="text-[10px] bg-black/60 text-stone-200 px-2 py-0.5 rounded-full border border-white/10 font-medium">
-                Arrastra para mover • Pellizca para zoom
+              <span className="text-[10px] bg-black/70 text-stone-200 px-2.5 py-0.5 rounded-full border border-white/10 font-medium">
+                Arrastra para encuadrar • Usa la barra para zoom
               </span>
             </div>
 
@@ -251,13 +257,14 @@ export default function ImageCropperModal({
               onLoad={handleImageLoad}
               draggable={false}
               style={{
-                transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom}) rotate(${rotation}deg)`,
-                transformOrigin: "center center",
                 maxWidth: "100%",
                 maxHeight: "100%",
+                objectFit: "contain",
+                transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom}) rotate(${rotation}deg)`,
+                transformOrigin: "center center",
                 transition: isDragging ? "none" : "transform 0.08s ease-out",
               }}
-              className="pointer-events-none select-none"
+              className="pointer-events-none select-none flex-shrink-0"
             />
           </div>
         </div>

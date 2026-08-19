@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendNewReportEmail, sendMatchContactEmail } from "@/lib/email-service";
+import { sendNewReportEmail, sendMatchContactEmail, sendEditRequestEmail, sendInfoRequestEmail } from "@/lib/email-service";
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,6 +18,16 @@ export async function POST(req: NextRequest) {
     if (type === "MATCH_CONTACT") {
       await sendMatchContactEmail(data);
       return NextResponse.json({ success: true, message: "Match contact email sent" });
+    }
+
+    if (type === "EDIT_REQUEST") {
+      await sendEditRequestEmail(data);
+      return NextResponse.json({ success: true, message: "Edit request email sent" });
+    }
+
+    if (type === "INFO_REQUEST") {
+      await sendInfoRequestEmail(data);
+      return NextResponse.json({ success: true, message: "Info request email sent" });
     }
 
     return NextResponse.json({ error: "Invalid notification type" }, { status: 400 });

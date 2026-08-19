@@ -24,36 +24,109 @@ export function normalizeSearchText(text: string): string {
 }
 
 /**
+ * Spanish Grammatical Gender and Number Inflection Generator:
+ * Automatically derives masculine, feminine, singular, and plural variations of any adjective or noun.
+ * Examples:
+ * - "partida" -> ["partida", "partido", "partidas", "partidos"]
+ * - "roto" -> ["roto", "rota", "rotos", "rotas"]
+ * - "peludo" -> ["peludo", "peluda", "peludos", "peludas", "peludito", "peludita"]
+ * - "azul" -> ["azul", "azules"]
+ * - "manchado" -> ["manchado", "manchada", "manchados", "manchadas", "mancha", "manchas"]
+ */
+export function getSpanishInflections(word: string): string[] {
+  const norm = normalizeSearchText(word);
+  if (!norm || norm.length < 3) return [norm].filter(Boolean);
+
+  const inflections = new Set<string>([norm]);
+
+  // Words ending in -o / -a / -os / -as (e.g. roto/rota/rotos/rotas, partido/partida/partidos/partidas)
+  if (/[oa]s?$/.test(norm)) {
+    const stem = norm.replace(/[oa]s?$/, "");
+    if (stem.length >= 2) {
+      inflections.add(stem + "o");
+      inflections.add(stem + "a");
+      inflections.add(stem + "os");
+      inflections.add(stem + "as");
+      // Common diminutives
+      inflections.add(stem + "ito");
+      inflections.add(stem + "ita");
+      inflections.add(stem + "itos");
+      inflections.add(stem + "itas");
+    }
+  }
+
+  // Participles ending in -ado/-ada/-idos/-idas
+  if (/[ai]d[oa]s?$/.test(norm)) {
+    const stem = norm.replace(/[ai]d[oa]s?$/, "");
+    if (stem.length >= 2) {
+      inflections.add(stem + "ado");
+      inflections.add(stem + "ada");
+      inflections.add(stem + "ados");
+      inflections.add(stem + "adas");
+      inflections.add(stem + "ido");
+      inflections.add(stem + "ida");
+      inflections.add(stem + "idos");
+      inflections.add(stem + "idas");
+    }
+  }
+
+  // Words ending in consonant (e.g. azul/azules, marron/marrones, gris/grises)
+  if (/[^aeiou]es?$/.test(norm)) {
+    const stem = norm.replace(/es?$/, "");
+    if (stem.length >= 2) {
+      inflections.add(stem);
+      inflections.add(stem + "es");
+      inflections.add(stem + "s");
+      inflections.add(stem + "a");
+      inflections.add(stem + "as");
+      inflections.add(stem + "o");
+      inflections.add(stem + "os");
+    }
+  }
+
+  // Words ending in -e / -es (e.g. grande/grandes, verde/verdes)
+  if (/e[s]?$/.test(norm)) {
+    const stem = norm.replace(/e[s]?$/, "");
+    if (stem.length >= 2) {
+      inflections.add(stem + "e");
+      inflections.add(stem + "es");
+    }
+  }
+
+  return Array.from(inflections);
+}
+
+/**
  * Domain-specific Pet Thesaurus:
  * Groups semantic synonyms across physical features, injuries, anatomy, colors, accessories, etc.
  */
 export const SYNONYM_GROUPS: string[][] = [
   // 1. Cola / Rabo & Condiciones
   ["cola", "rabo", "rabito", "colita"],
-  ["rota", "partida", "fracturada", "quebrada", "doblada", "torcida", "desviada", "chueca"],
-  ["corta", "mocha", "mochada", "cortada", "rabona", "amputada", "sin cola", "mutilada"],
-  ["larga", "peluda", "esponjosa", "tupida", "plumosa", "pompón", "pompon"],
+  ["rota", "roto", "partida", "partido", "fracturada", "fracturado", "quebrada", "quebrado", "doblada", "doblado", "torcida", "torcido", "desviada", "chueca", "chueco"],
+  ["corta", "corto", "mocha", "mocho", "mochada", "mochado", "cortada", "cortado", "rabona", "rabon", "amputada", "amputado", "sin cola", "mutilada", "mutilado"],
+  ["larga", "largo", "peluda", "peludo", "esponjosa", "esponjoso", "tupida", "tupido", "plumosa", "plumoso", "pompon", "pompón"],
 
   // 2. Orejas & Posición / Condición
   ["oreja", "orejas", "orejita", "orejitas"],
-  ["parada", "paradas", "erecta", "erectas", "levantada", "levantadas", "puntiaguda", "puntiagudas", "tiesa", "tiesas"],
-  ["caida", "caidas", "gacha", "gachas", "doblada", "dobladas", "flacida", "flacidas", "largas", "agachada"],
-  ["mocha", "mochas", "cortada", "cortadas", "mutilada", "mutiladas", "mordida", "mordidas", "rasgada", "rasgadas", "rajada", "rajadas", "moche"],
-  ["asimetrica", "asimetricas", "chueca", "chuecas", "una parada", "desigual"],
+  ["parada", "parado", "paradas", "parados", "erecta", "erecto", "levantada", "levantado", "puntiaguda", "puntiagudo", "tiesa", "tieso"],
+  ["caida", "caido", "gacha", "gacho", "doblada", "doblado", "flacida", "flacido", "largas", "agachada"],
+  ["mocha", "mocho", "cortada", "cortado", "mutilada", "mutilado", "mordida", "mordido", "rasgada", "rasgado", "rajada", "rajado"],
+  ["asimetrica", "asimetrico", "chueca", "chueco", "una parada", "desigual"],
 
   // 3. Ojos & Mirada / Defectos visuales
   ["ojo", "ojos", "ojito", "ojitos", "mirada"],
-  ["azul", "azules", "celeste", "celestes", "zarco", "zarcos", "claro", "claros"],
+  ["azul", "azules", "celeste", "celestes", "zarco", "zarca", "claro", "clara", "claros", "claras"],
   ["verde", "verdes", "esmeralda"],
-  ["marron", "marrones", "cafe", "cafes", "castano", "castanos", "castaño", "castaños", "oscuro", "oscuros"],
-  ["miel", "ambar", "dorado", "dorados", "amarillo", "amarillos"],
+  ["marron", "marrones", "cafe", "cafes", "castano", "castana", "castaño", "castaña", "oscuro", "oscura"],
+  ["miel", "ambar", "dorado", "dorada", "amarillo", "amarilla"],
   ["bicolor", "heterocromia", "diferentes", "zarco", "desiguales", "un ojo azul"],
-  ["ciego", "ciega", "tuerto", "tuerta", "catarata", "cataratas", "nube", "nublado", "sin ojo"],
+  ["ciego", "ciega", "tuerto", "tuerta", "catarata", "cataratas", "nube", "nublado", "nublada", "sin ojo"],
 
   // 4. Heridas, Lesiones & Condición Médica
-  ["herido", "herida", "lastimado", "lastimada", "lesionado", "lesionada", "golpeado", "golpeada", "atropellado", "atropellada", "sangrando", "corte", "cortada", "laceracion", "raspado", "raspón", "raspon"],
+  ["herido", "herida", "lastimado", "lastimada", "lesionado", "lesionada", "golpeado", "golpeada", "atropellado", "atropellada", "sangrando", "corte", "cortada", "cortado", "laceracion", "raspado", "raspada", "raspon", "raspón"],
   ["cicatriz", "cicatrices", "marca", "marcas"],
-  ["cojo", "coja", "rengo", "renga", "cojea", "renguea", "pata lastimada", "pata mala", "cojera", "fractura", "fracturado", "fracturada", "entablillado"],
+  ["cojo", "coja", "rengo", "renga", "cojea", "renguea", "pata lastimada", "pata mala", "cojera", "fractura", "fracturado", "fracturada", "entablillado", "entablillada"],
   ["flaco", "flaca", "delgado", "delgada", "desnutrido", "desnutrida", "huesudo", "huesuda", "demacrado", "demacrada"],
   ["gordo", "gorda", "robusto", "robusta", "obeso", "obesa", "rellenito", "rellenita"],
   ["sarna", "sarnoso", "sarnosa", "pelado", "pelada", "sin pelo", "dermatitis", "calvo", "calva", "hongos", "heridas en piel"],
@@ -68,10 +141,10 @@ export const SYNONYM_GROUPS: string[][] = [
   ["sueter", "suéter", "buzo", "camisa", "ropa", "ropita", "chaleco", "vestido"],
 
   // 6. Textura y Largo de Pelaje
-  ["peludo", "peluda", "pelo largo", "largo", "esponjoso", "esponjosa", "lanudo", "lanuda", "abundante", "melena", "melenudo", "crespo", "crespa", "ondulado", "enrulado", "rizado", "chino"],
-  ["pelo corto", "corto", "corta", "raso", "rasa", "liso", "lisa", "cortito", "bajito"],
+  ["peludo", "peluda", "pelo largo", "largo", "larga", "esponjoso", "esponjosa", "lanudo", "lanuda", "abundante", "melena", "melenudo", "crespo", "crespa", "ondulado", "ondulada", "enrulado", "enrulada", "rizado", "rizada", "chino", "china"],
+  ["pelo corto", "corto", "corta", "raso", "rasa", "liso", "lisa", "cortito", "cortita", "bajito"],
   ["chascoso", "chascosa", "chascon", "chascona", "barbudo", "barbuda", "bigotudo", "bigotuda", "mechudo", "mechuda", "terrier", "shaggy", "peludo de cara"],
-  ["calvo", "sin pelo", "lampiño", "lampiña", "pelado"],
+  ["calvo", "calva", "sin pelo", "lampiño", "lampiña", "pelado", "pelada"],
 
   // 7. Manchas & Patrones de Pelaje
   ["manchas", "mancha", "manchado", "manchada", "pintas", "pinta", "pintado", "pintada", "pecas", "pecoso", "pecosa", "lunares", "lunar", "motas", "moteado", "moteada"],
@@ -85,21 +158,21 @@ export const SYNONYM_GROUPS: string[][] = [
   // 8. Colores de Pelaje
   ["negro", "negra", "azabache", "oscuro", "oscura", "prieto", "prieta", "black"],
   ["blanco", "blanca", "nieve", "claro", "clara", "white"],
-  ["cafe", "café", "marron", "marrón", "chocolate", "castano", "castaño", "pardo", "parda", "brown"],
+  ["cafe", "café", "marron", "marrón", "chocolate", "castano", "castana", "castaño", "castaña", "pardo", "parda", "brown"],
   ["amarillo", "amarilla", "dorado", "dorada", "miel", "rubio", "rubia", "canela", "crema", "beige", "arena", "golden", "yellow"],
   ["naranja", "rojo", "roja", "rojizo", "rojiza", "anaranjado", "anaranjada", "ginger", "caramelo", "orange", "red"],
   ["gris", "plomo", "ploma", "plateado", "plateada", "cenizo", "ceniza", "azulado", "azulada", "humo", "gray", "silver"],
 
   // 9. Edad, Tamaño y Género
-  ["cachorro", "cachorra", "bebe", "bebê", "perrito", "perrita", "gatito", "gatita", "pequenito", "pequeñito", "chiquito", "chiquita", "cria", "cría"],
-  ["viejito", "viejita", "anciano", "anciana", "senil", "abuelo", "abuela", "canoso", "canosa", "canas", "hocico blanco", "viejoncito"],
-  ["pequeno", "pequeño", "pequena", "pequeña", "chiquito", "chiquita", "enano", "enana", "mini", "toy", "diminuto"],
+  ["cachorro", "cachorra", "bebe", "bebê", "perrito", "perrita", "gatito", "gatita", "pequenito", "pequeñito", "pequenita", "pequeñita", "chiquito", "chiquita", "cria", "cría"],
+  ["viejito", "viejita", "anciano", "anciana", "senil", "abuelo", "abuela", "canoso", "canosa", "canas", "hocico blanco", "viejoncito", "viejoncita"],
+  ["pequeno", "pequeño", "pequena", "pequeña", "chiquito", "chiquita", "enano", "enana", "mini", "toy", "diminuto", "diminuta"],
   ["mediano", "mediana", "estandar", "promedio"],
   ["grande", "grando", "enorme", "gigante", "alto", "alta", "corpulento", "corpulenta"],
   ["macho", "machito"],
   ["hembra", "hembrita"],
-  ["perro", "perros", "can", "canino", "perrito", "perrita"],
-  ["gato", "gatos", "felino", "michi", "gatito", "gatita", "minino"],
+  ["perro", "perros", "can", "canino", "canina", "perrito", "perrita"],
+  ["gato", "gatos", "felino", "felina", "michi", "gatito", "gatita", "minino", "minina"],
   ["castrado", "esterilizado", "castrada", "esterilizada", "operado", "operada"],
   ["sin castrar", "entero", "entera", "sin esterilizar"],
 
@@ -116,18 +189,28 @@ export const SYNONYM_GROUPS: string[][] = [
   ["persa", "angora"]
 ];
 
-// Map each word to its synonym set for O(1) lookups
+// Map each word (and all its grammatical inflections) to its expanded synonym set for O(1) lookups
 const WORD_TO_SYNONYMS = new Map<string, Set<string>>();
 
 for (const group of SYNONYM_GROUPS) {
-  const normGroup = group.map((w) => normalizeSearchText(w)).filter(Boolean);
-  for (const word of normGroup) {
+  // Expand every word in the group with masculine, feminine, singular, plural
+  const expandedGroup = new Set<string>();
+  for (const rawWord of group) {
+    const inflections = getSpanishInflections(rawWord);
+    for (const inf of inflections) {
+      const norm = normalizeSearchText(inf);
+      if (norm) expandedGroup.add(norm);
+    }
+  }
+
+  const groupArray = Array.from(expandedGroup);
+  for (const word of groupArray) {
     let synSet = WORD_TO_SYNONYMS.get(word);
     if (!synSet) {
       synSet = new Set<string>();
       WORD_TO_SYNONYMS.set(word, synSet);
     }
-    for (const syn of normGroup) {
+    for (const syn of groupArray) {
       if (syn !== word) synSet.add(syn);
     }
   }
@@ -188,7 +271,7 @@ export function searchPetsWithSynonyms(
     const genderNorm = pet.gender === "MACHO" ? "macho machito" : pet.gender === "HEMBRA" ? "hembra hembrita" : "";
     const featuresNorm = normalizeSearchText(pet.distinctive_features || "");
     const colorNorm = normalizeSearchText(`${pet.primary_color || ""} ${pet.secondary_color || ""}`);
-    const neighborhoodNorm = normalizeSearchText(`${pet.neighborhood || ""} ${pet.comuna || ""}`);
+    const neighborhoodNorm = normalizeSearchText(`${pet.neighborhood || ""} ${(pet as any).comuna || ""}`);
     const v2FeaturesNorm = normalizeSearchText((v2.distinctive_features || []).join(" "));
     const v2BreedNorm = normalizeSearchText(v2.breed_likely || "");
     const v2PatternNorm = normalizeSearchText(v2.coat_pattern || "");

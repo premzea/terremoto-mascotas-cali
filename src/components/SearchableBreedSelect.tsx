@@ -176,24 +176,23 @@ export default function SearchableBreedSelect({
         </div>
       )}
 
-      {/* Quick Chips (filtered by current species) */}
+      {/* Quick Option Buttons: Only Criollo and No sé (N/A) */}
       {!value && (
-        <div className="space-y-1 pt-0.5">
-          <span className="text-[10px] text-stone-500 font-medium block">
-            Sugerencias frecuentes de {species === "CAT" ? "gatos" : "perros"}:
-          </span>
-          <div className="flex flex-wrap gap-1.5">
-            {quickChips.map((chip) => (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => handleSelectBreed(chip)}
-                className="text-[10.5px] bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 px-2.5 py-1 rounded-lg border border-stone-200 hover:border-amber-300 transition font-medium cursor-pointer"
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
+        <div className="flex items-center gap-2 pt-1">
+          <button
+            type="button"
+            onClick={() => handleSelectBreed("Criollo / Mestizo")}
+            className="flex-1 py-1.5 px-3 bg-amber-50 hover:bg-amber-100 border border-amber-300/80 rounded-xl text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs active:scale-[0.98] cursor-pointer"
+          >
+            <span>🐾 Criollo / Mestizo</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSelectBreed("N/A")}
+            className="flex-1 py-1.5 px-3 bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-xl text-stone-700 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-2xs active:scale-[0.98] cursor-pointer"
+          >
+            <span>❓ No sé (N/A)</span>
+          </button>
         </div>
       )}
     </div>
