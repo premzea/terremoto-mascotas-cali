@@ -179,7 +179,7 @@ test.describe("Búsqueda Animal Cali - Report Registration Flows", () => {
     const newCard = page.locator(".edge-card").first();
     await expect(newCard).toContainText("ENCONTRADO / RESCATADO");
     await expect(newCard).toContainText("R");
-    await expect(newCard).toContainText("Información privada");
+    await expect(newCard).toContainText("Encontrado en:");
 
     // Clean up test record via API to keep database clean
     const cardId = await newCard.locator("span.font-mono").innerText().catch(() => "");

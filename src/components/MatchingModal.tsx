@@ -115,7 +115,7 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                 {targetPet.name} — {targetPet.species === "DOG" ? "🐶 Perro" : "🐱 Gato"} ({targetPet.primary_color})
               </h4>
               <p className="text-stone-500 mt-0.5">
-                {isLost ? `📍 Última vez visto en: ${targetPet.neighborhood}` : "📍 Rescatado en Cali (Ubicación protegida)"} • ID: {targetPet.id}
+                {isLost ? `📍 Última vez visto en: ${targetPet.neighborhood}` : `📍 Encontrado en: ${targetPet.neighborhood}`} • ID: {targetPet.id}
               </p>
             </div>
           </div>
@@ -190,16 +190,16 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                           </div>
                         </div>
 
-                        {/* Ubicación Protegida para Encontrados */}
+                        {/* Ubicación: Encontrado en / Visto en */}
                         <div className="flex items-center gap-2 text-xs font-semibold mt-2">
                           <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-amber-600" />
                           {isCandidateFound ? (
                             <span className="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                              Bajo resguardo en Cali (Ubicación protegida)
+                              Encontrado en: {m.pet.neighborhood} (a ~{m.distanceKm} km)
                             </span>
                           ) : (
                             <span className="text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                              {m.pet.neighborhood} (a ~{m.distanceKm} km)
+                              Visto en: {m.pet.neighborhood} (a ~{m.distanceKm} km)
                             </span>
                           )}
                         </div>

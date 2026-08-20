@@ -8,7 +8,7 @@ import SplitHero from "@/components/SplitHero";
 import PetCard from "@/components/PetCard";
 import ReportModal from "@/components/ReportModal";
 import MatchingModal from "@/components/MatchingModal";
-import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass, Sparkles, SlidersHorizontal, X, Navigation, Check } from "lucide-react";
+import { Search, Filter, ShieldCheck, MapPin, AlertCircle, RefreshCw, Compass, Sparkles, SlidersHorizontal, X, Navigation, Check, Mail } from "lucide-react";
 import barrioCoords from "@/data/coords_by_barrio.json";
 import rawSeedPets from "@/data/seed_pets.json";
 import visualFeaturesV2 from "@/data/visual_features_v2_cache.json";
@@ -381,6 +381,20 @@ export default function Home() {
 
         {/* 4. Barra de Filtros Barriales y Búsqueda */}
         <div className="p-4 bg-white border-b border-stone-200 space-y-3 shadow-xs">
+          {/* Aviso de Atención y Contacto */}
+          <div className="flex items-center gap-2 px-3.5 py-2 bg-amber-50/90 border border-amber-200/80 rounded-xl text-xs text-amber-950 shadow-2xs">
+            <Mail className="w-3.5 h-3.5 text-amber-700 flex-shrink-0" />
+            <span className="text-[11.5px] leading-snug">
+              Cualquier duda, inquietud o queja, puedes escribir a{" "}
+              <a
+                href="mailto:busquedanimalcali@gmail.com"
+                className="font-extrabold text-amber-900 underline hover:text-amber-950 transition"
+              >
+                busquedanimalcali@gmail.com
+              </a>
+            </span>
+          </div>
+
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="w-4 h-4 absolute left-3 top-3.5 text-stone-400" />

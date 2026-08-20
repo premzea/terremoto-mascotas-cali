@@ -122,7 +122,7 @@ export default function PetCard({ pet: initialPet, onFindMatches, onCloseCase, o
               </div>
             </div>
 
-            {/* Ubicación: Visto por última vez para perdidos / Información privada para rescatados */}
+            {/* Ubicación: Visto por última vez para perdidos / Encontrado en para rescatados */}
             <div className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border w-fit">
               {isLost ? (
                 <div className="flex items-center gap-1.5 text-amber-800 bg-amber-50/80 border-amber-200/60">
@@ -130,9 +130,9 @@ export default function PetCard({ pet: initialPet, onFindMatches, onCloseCase, o
                   <span>Visto por última vez en: <strong>{pet.neighborhood}</strong></span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5 text-stone-700 bg-stone-100 border-stone-200">
-                  <Shield className="w-3.5 h-3.5 flex-shrink-0 text-stone-500" />
-                  <span>Información privada</span>
+                <div className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50/80 border-emerald-200/60">
+                  <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-emerald-600" />
+                  <span>Encontrado en: <strong>{pet.neighborhood}</strong></span>
                 </div>
               )}
             </div>
