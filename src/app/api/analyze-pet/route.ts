@@ -128,8 +128,13 @@ Extract: species, size, fur_length, head_and_muzzle_shape, ear_type, body_build,
 
     const traits = {
       species: parsedJson.species || "DOG",
+      coat_colors: parsedJson.coat_colors || [],
       primary_color: spanishColors || "Deducido por IA",
-      size: parsedJson.size === "SMALL" ? "PEQUEÑO" : parsedJson.size === "LARGE" ? "GRANDE" : "MEDIANO",
+      ear_type: parsedJson.ear_type || "UNKNOWN",
+      eye_color: parsedJson.eye_color || "UNKNOWN",
+      nose_color: parsedJson.nose_color || "UNKNOWN",
+      coat_pattern: parsedJson.coat_pattern || "UNKNOWN",
+      fur_length: parsedJson.fur_length || "UNKNOWN",
       distinctive_marks: (parsedJson.distinctive_features || []).join(". "),
       search_summary: `Pelaje: ${spanishColors || "No especificado"}. ${
         (parsedJson.distinctive_features || []).join(". ")

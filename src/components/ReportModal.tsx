@@ -12,6 +12,7 @@ import { LOCAL_CREATED_PETS_KEY } from "@/lib/data-service";
 import MapLocationPicker from "./MapLocationPicker";
 import ImageCropperModal from "./ImageCropperModal";
 import SearchableBreedSelect from "./SearchableBreedSelect";
+import SearchableEnumSelect, { EnumOption } from "./SearchableEnumSelect";
 
 interface ReportModalProps {
   initialType: "LOST" | "FOUND";
@@ -20,6 +21,69 @@ interface ReportModalProps {
   onSuccess: (pet: PetReport) => void;
   onSelectExistingPet?: (pet: PetReport) => void;
 }
+
+const COLOR_PALETTE = [
+  { id: "BLACK", label: "Negro", bg: "#1f2937", border: "#374151" },
+  { id: "WHITE", label: "Blanco", bg: "#ffffff", text: "#000000", border: "#d1d5db" },
+  { id: "BROWN", label: "Café / Marrón", bg: "#78350f", border: "#92400e" },
+  { id: "GOLDEN_YELLOW", label: "Dorado / Amarillo", bg: "#d97706", border: "#f59e0b" },
+  { id: "ORANGE_RED", label: "Naranja / Rojo", bg: "#ea580c", border: "#f97316" },
+  { id: "GRAY_SILVER", label: "Gris / Plateado", bg: "#6b7280", border: "#9ca3af" },
+  { id: "CREAM", label: "Crema / Beige", bg: "#fef3c7", text: "#78350f", border: "#fde68a" },
+];
+
+const COLOR_NAME_MAP: Record<string, string> = {
+  BLACK: "Negro",
+  WHITE: "Blanco",
+  BROWN: "Café / Marrón",
+  GOLDEN_YELLOW: "Dorado / Amarillo",
+  ORANGE_RED: "Naranja / Rojo",
+  GRAY_SILVER: "Gris / Plateado",
+  CREAM: "Crema / Beige",
+};
+
+const EAR_TYPE_OPTIONS: EnumOption[] = [
+  { id: "ERECT", label: "Paradas / Erectas / Puntiagudas", icon: "🔺" },
+  { id: "FLOPPY", label: "Caídas / Gachas / Dobladas", icon: "🔻" },
+  { id: "SEMI_ERECT", label: "Semi-erectas / Puntas dobladas", icon: "📐" },
+  { id: "UNKNOWN", label: "No se distingue / Sin definir", icon: "❓" },
+];
+
+const EYE_COLOR_OPTIONS: EnumOption[] = [
+  { id: "BROWN", label: "Café / Marrón / Oscuro", icon: "🟤" },
+  { id: "BLUE", label: "Azul / Celeste / Zarco", icon: "🔵" },
+  { id: "GREEN", label: "Verde / Esmeralda", icon: "🟢" },
+  { id: "AMBER", label: "Ámbar / Miel / Amarillo", icon: "🟡" },
+  { id: "HETEROCHROMIA", label: "Heterocromía (Ojos diferentes)", icon: "👁️" },
+  { id: "UNKNOWN", label: "No se distingue / Sin definir", icon: "❓" },
+];
+
+const NOSE_COLOR_OPTIONS: EnumOption[] = [
+  { id: "BLACK", label: "Negra", icon: "⚫" },
+  { id: "PINK", label: "Rosada / Despigmentada", icon: "🌸" },
+  { id: "BROWN", label: "Café / Hígado", icon: "🟤" },
+  { id: "SPOTTED", label: "Manchada / Bicolor / Con pecas", icon: "⚪" },
+  { id: "UNKNOWN", label: "No se distingue / Sin definir", icon: "❓" },
+];
+
+const COAT_PATTERN_OPTIONS: EnumOption[] = [
+  { id: "SOLID", label: "Sólido / Unicolor", icon: "⬛" },
+  { id: "BICOLOR_TUXEDO", label: "Bicolor / Pechera o patitas blancas (Tuxedo)", icon: "👔" },
+  { id: "STRIPED_TABBY", label: "Atigrado / Rayado (Tabby)", icon: "🐅" },
+  { id: "SPOTTED", label: "Manchas / Moteado (Dálmata, etc.)", icon: "🐾" },
+  { id: "PATCHED_CALICO", label: "Calicó / Carey (Tricolor)", icon: "🎨" },
+  { id: "MERLE_BRINDLE", label: "Abigarrado / Brindle / Jaspeado", icon: "🦓" },
+  { id: "POINTED_SIAMESE", label: "Puntas oscuras (Siamés)", icon: "🐱" },
+  { id: "UNKNOWN", label: "No se distingue / Sin definir", icon: "❓" },
+];
+
+const FUR_LENGTH_OPTIONS: EnumOption[] = [
+  { id: "SHORT", label: "Corto / Raso", icon: "🪒" },
+  { id: "MEDIUM", label: "Medio / Estándar", icon: "✂️" },
+  { id: "LONG", label: "Largo / Abundante / Esponjoso", icon: "🦁" },
+  { id: "HAIRLESS", label: "Sin pelo / Lampiño", icon: "🧴" },
+  { id: "UNKNOWN", label: "No se distingue / Sin definir", icon: "❓" },
+];
 
 const sortedBarrioList = Object.values(barrioCoords).sort((a: any, b: any) =>
   a.name.localeCompare(b.name)
@@ -72,7 +136,6 @@ export default function ReportModal({
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
-  // Form Fields
   const [species, setSpecies] = useState<"DOG" | "CAT" | "OTHER">("DOG");
   const [name, setName] = useState<string>("");
   const [gender, setGender] = useState<"MACHO" | "HEMBRA" | "UNKNOWN">("UNKNOWN");
@@ -80,6 +143,14 @@ export default function ReportModal({
   const [breed, setBreed] = useState<string>("");
   const [size, setSize] = useState<"PEQUEÑO" | "MEDIANO" | "GRANDE">("MEDIANO");
   const [primaryColor, setPrimaryColor] = useState<string>("");
+
+  // 6 Visual Characteristics for AI Extraction & User Confirmation
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [earType, setEarType] = useState<string>("UNKNOWN");
+  const [eyeColor, setEyeColor] = useState<string>("UNKNOWN");
+  const [noseColor, setNoseColor] = useState<string>("UNKNOWN");
+  const [coatPattern, setCoatPattern] = useState<string>("UNKNOWN");
+  const [furLength, setFurLength] = useState<string>("UNKNOWN");
   
   // Barrio Search & Map State
   const [neighborhood, setNeighborhood] = useState<string>("");
@@ -172,15 +243,26 @@ export default function ReportModal({
           } else if (detectedSpecies === "DOG" || detectedSpecies === "PERRO") {
             setSpecies("DOG");
           }
-          if (meta.primary_color) {
+
+          // Populate the 6 AI Visual Characteristics (User Confirmed)
+          if (meta.coat_colors && Array.isArray(meta.coat_colors) && meta.coat_colors.length > 0) {
+            setSelectedColors(meta.coat_colors);
+            const spanishList = meta.coat_colors.map((c: string) => COLOR_NAME_MAP[c] || c).join(", ");
+            setPrimaryColor(spanishList);
+          } else if (meta.primary_color) {
             setPrimaryColor(meta.primary_color);
           }
+
+          if (meta.ear_type) setEarType(meta.ear_type);
+          if (meta.eye_color) setEyeColor(meta.eye_color);
+          if (meta.nose_color) setNoseColor(meta.nose_color);
+          if (meta.coat_pattern) setCoatPattern(meta.coat_pattern);
+          if (meta.fur_length) setFurLength(meta.fur_length);
+
           if (meta.breed_likely) {
             setBreed(meta.breed_likely);
           }
-          if (meta.search_summary) {
-            setDistinctiveFeatures(meta.search_summary);
-          } else if (meta.distinctive_marks) {
+          if (meta.distinctive_marks) {
             setDistinctiveFeatures(meta.distinctive_marks);
           }
           setAiDetected(meta.search_summary || `${detectedSpecies === "CAT" ? "Gato" : "Perro"} (${meta.primary_color || ""})`);
@@ -261,8 +343,33 @@ export default function ReportModal({
     setSubmitting(true);
     setErrorMessage(null);
     try {
-      // Build structured features including breed and castration status
+      // Convert selected color IDs to Spanish string
+      const computedColorString = selectedColors.length > 0
+        ? selectedColors.map((c) => COLOR_NAME_MAP[c] || c).join(", ")
+        : primaryColor.trim() || "Deducido por IA";
+
+      // Assemble confirmed traits for distinctive_features & search
+      const confirmedTraitsList: string[] = [];
+      
+      const earOpt = EAR_TYPE_OPTIONS.find((o) => o.id === earType);
+      if (earOpt && earType !== "UNKNOWN") confirmedTraitsList.push(`Orejas: ${earOpt.label.split(" / ")[0]}`);
+
+      const eyeOpt = EYE_COLOR_OPTIONS.find((o) => o.id === eyeColor);
+      if (eyeOpt && eyeColor !== "UNKNOWN") confirmedTraitsList.push(`Ojos: ${eyeOpt.label.split(" / ")[0]}`);
+
+      const noseOpt = NOSE_COLOR_OPTIONS.find((o) => o.id === noseColor);
+      if (noseOpt && noseColor !== "UNKNOWN") confirmedTraitsList.push(`Trufa/Nariz: ${noseOpt.label.split(" / ")[0]}`);
+
+      const patOpt = COAT_PATTERN_OPTIONS.find((o) => o.id === coatPattern);
+      if (patOpt && coatPattern !== "UNKNOWN") confirmedTraitsList.push(`Patrón: ${patOpt.label.split(" / ")[0]}`);
+
+      const furOpt = FUR_LENGTH_OPTIONS.find((o) => o.id === furLength);
+      if (furOpt && furLength !== "UNKNOWN") confirmedTraitsList.push(`Pelaje: ${furOpt.label.split(" / ")[0]}`);
+
       let assembledFeatures = distinctiveFeatures.trim();
+      if (confirmedTraitsList.length > 0) {
+        assembledFeatures = `${confirmedTraitsList.join(". ")}. ${assembledFeatures}`.trim();
+      }
       if (breed.trim()) {
         assembledFeatures = `Raza: ${breed.trim()}. ${assembledFeatures}`;
       }
@@ -285,9 +392,9 @@ export default function ReportModal({
         species,
         name: name.trim() || (reportType === "LOST" ? "Sin nombre" : "Rescatado"),
         gender,
-        primary_color: primaryColor.trim() || "Deducido por IA",
+        primary_color: computedColorString,
         secondary_color: "",
-        pattern: "",
+        pattern: coatPattern !== "UNKNOWN" ? coatPattern : "",
         size,
         neighborhood: neighborhood.trim() || barrioSearch.trim() || "Cali Centro (General)",
         lat: selectedLat || (barrioCoords as any)[(neighborhood || barrioSearch).toLowerCase()]?.lat || 3.4516,
@@ -725,15 +832,124 @@ export default function ReportModal({
               onChange={setBreed}
             />
 
-            {/* Color de Pelaje Deducido por la Máquina */}
-            <div className="p-2.5 bg-amber-50/70 border border-amber-200/70 rounded-xl flex items-center justify-between text-xs">
-              <span className="text-stone-600 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                Color del pelaje (IA):
-              </span>
-              <strong className="text-amber-900 font-bold">
-                {primaryColor || "Deducido automáticamente de la foto"}
-              </strong>
+            {/* Sección de Rasgos Visuales Identificados por la IA — Revisión y Confirmación */}
+            <div className="bg-stone-50/90 border border-stone-200 rounded-2xl p-3.5 space-y-3.5 shadow-2xs">
+              <div className="flex items-center justify-between border-b border-stone-200 pb-2">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 bg-amber-100 rounded-lg text-amber-800">
+                    <Sparkles className="w-4 h-4 text-amber-700" />
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-xs text-stone-900">
+                      Rasgos Visuales Identificados por la IA
+                    </h4>
+                    <p className="text-[10.5px] text-stone-500">
+                      Revisa y ajusta los colores o características antes de guardar:
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 1. Colores de Pelaje con Botones Multiselección */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-stone-700 flex items-center gap-1">
+                    <span>🎨</span>
+                    <span>Colores de Pelaje (puedes marcar varios):</span>
+                  </label>
+                  {selectedColors.length > 0 && (
+                    <span className="text-[10px] text-amber-800 font-bold bg-amber-100 px-2 py-0.5 rounded-full">
+                      {selectedColors.length} seleccionado(s)
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {COLOR_PALETTE.map((color) => {
+                    const isSelected = selectedColors.includes(color.id);
+                    return (
+                      <button
+                        key={color.id}
+                        type="button"
+                        onClick={() => {
+                          const updated = isSelected
+                            ? selectedColors.filter((c) => c !== color.id)
+                            : [...selectedColors, color.id];
+                          setSelectedColors(updated);
+                          const spanishList = updated.map((c) => COLOR_NAME_MAP[c] || c).join(", ");
+                          setPrimaryColor(spanishList);
+                        }}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border shadow-2xs cursor-pointer ${
+                          isSelected
+                            ? "bg-amber-500 text-white border-amber-500 shadow-sm font-extrabold"
+                            : "bg-white text-stone-700 border-stone-200 hover:border-stone-300"
+                        }`}
+                      >
+                        <span
+                          className="w-2.5 h-2.5 rounded-full inline-block border border-black/20"
+                          style={{ backgroundColor: color.bg }}
+                        />
+                        {color.label}
+                        {isSelected && <Check className="w-3 h-3 ml-0.5" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Grid de 5 Selectores de Enums con Buscador */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-stone-200">
+                {/* Tipo de Orejas */}
+                <SearchableEnumSelect
+                  label="Tipo de Orejas"
+                  icon={<span>🔺</span>}
+                  options={EAR_TYPE_OPTIONS}
+                  value={earType}
+                  onChange={setEarType}
+                  placeholder="Seleccionar tipo de orejas..."
+                />
+
+                {/* Color de Ojos */}
+                <SearchableEnumSelect
+                  label="Color de Ojos"
+                  icon={<span>👁️</span>}
+                  options={EYE_COLOR_OPTIONS}
+                  value={eyeColor}
+                  onChange={setEyeColor}
+                  placeholder="Seleccionar color de ojos..."
+                />
+
+                {/* Color de Nariz / Trufa */}
+                <SearchableEnumSelect
+                  label="Color de Nariz / Trufa"
+                  icon={<span>🐽</span>}
+                  options={NOSE_COLOR_OPTIONS}
+                  value={noseColor}
+                  onChange={setNoseColor}
+                  placeholder="Seleccionar color de nariz..."
+                />
+
+                {/* Patrón de Pelaje */}
+                <SearchableEnumSelect
+                  label="Patrón de Pelaje"
+                  icon={<span>✨</span>}
+                  options={COAT_PATTERN_OPTIONS}
+                  value={coatPattern}
+                  onChange={setCoatPattern}
+                  placeholder="Seleccionar patrón..."
+                />
+
+                {/* Largo del Pelaje */}
+                <div className="sm:col-span-2">
+                  <SearchableEnumSelect
+                    label="Largo del Pelaje"
+                    icon={<span>🦁</span>}
+                    options={FUR_LENGTH_OPTIONS}
+                    value={furLength}
+                    onChange={setFurLength}
+                    placeholder="Seleccionar largo de pelo..."
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Barrio / Ubicación en Cali y Jamundí con Búsqueda Escrita */}
