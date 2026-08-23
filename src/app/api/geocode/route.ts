@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenAI } from "@google/genai";
 import barrioCoordsData from "@/data/coords_by_barrio.json";
 
 interface GeocodeResult {
@@ -9,6 +10,10 @@ interface GeocodeResult {
   type?: string;
   category?: string;
 }
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY || "",
+});
 
 const barriosList = Object.values(barrioCoordsData) as Array<{
   name: string;
@@ -97,78 +102,6 @@ const POPULAR_CALI_LANDMARKS: Record<string, { name: string; lat: number; lng: n
   "jamundi centro": { name: "Parque Principal de Jamundí", lat: 3.2608, lng: -76.5411, type: "plaza" }
 };
 
-const CALI_AVENUE_SYNONYMS: Record<string, string> = {
-  "pasoancho": "Calle 13 Avenida Pasoancho",
-  "av pasoancho": "Calle 13 Avenida Pasoancho",
-  "roosevelt": "Calle 6 Avenida Roosevelt",
-  "av roosevelt": "Calle 6 Avenida Roosevelt",
-  "cañasgordas": "Calle 18 Avenida Cañasgordas",
-  "av cañasgordas": "Calle 18 Avenida Cañasgordas",
-  "canasgordas": "Calle 18 Avenida Cañasgordas",
-  "guadalupe": "Carrera 56 Avenida Guadalupe",
-  "av guadalupe": "Carrera 56 Avenida Guadalupe",
-  "sexta": "Avenida 6 Norte",
-  "av sexta": "Avenida 6 Norte",
-  "av 6n": "Avenida 6 Norte",
-  "av 6 norte": "Avenida 6 Norte",
-  "av 4n": "Avenida 4 Norte",
-  "av 4 norte": "Avenida 4 Norte",
-  "av 2n": "Avenida 2 Norte",
-  "av 2 norte": "Avenida 2 Norte",
-  "av 3n": "Avenida 3 Norte",
-  "av 3 norte": "Avenida 3 Norte",
-  "autopista sur": "Calle 10 Autopista Sur",
-  "autopista suroriental": "Calle 10 Autopista Suroriental",
-  "autopista oriental": "Calle 70 Autopista Simon Bolivar",
-  "simon bolivar": "Calle 70 Autopista Simon Bolivar",
-  "av simon bolivar": "Calle 70 Autopista Simon Bolivar",
-  "av colombia": "Avenida Colombia Calle 1",
-  "av circunvalar": "Avenida Circunvalar",
-  "circunvalar": "Avenida Circunvalar",
-};
-
-function generateAddressVariations(rawInput: string): string[] {
-  let text = rawInput.trim();
-  const queries: string[] = [];
-
-  let normalized = text.toLowerCase();
-  for (const [key, replacement] of Object.entries(CALI_AVENUE_SYNONYMS)) {
-    const reg = new RegExp(`\\b${key}\\b`, "i");
-    if (reg.test(normalized)) {
-      normalized = normalized.replace(reg, replacement);
-    }
-  }
-
-  normalized = normalized
-    .replace(/\bcll?\b/g, "Calle")
-    .replace(/\bcra?\b|\bkr\b|\bkra\b/g, "Carrera")
-    .replace(/\bav?\b/g, "Avenida")
-    .replace(/\bdg\b/g, "Diagonal")
-    .replace(/\btv\b/g, "Transversal")
-    .replace(/\b(\d+)\s*n\b/gi, "$1 Norte")
-    .replace(/\b(\d+)\s*s\b/gi, "$1 Sur")
-    .replace(/\b(\d+)\s*(?:o|oe|oeste)\b/gi, "$1 Oeste");
-
-  queries.push(`${normalized} Cali Colombia`);
-
-  // Detect cross streets like "Calle 5 # 34-12" or "Carrera 100 con 16"
-  const crossMatch = normalized.match(
-    /(Calle|Carrera|Avenida|Diagonal|Transversal)\s+(\d+(?:\s*(?:Norte|Sur|Oeste))?)\s*(?:#|No\.?|nro\.?|con|entre)?\s*(\d+(?:\s*(?:Norte|Sur|Oeste))?)/i
-  );
-  if (crossMatch) {
-    const [_, mainType, mainNum, crossNum] = crossMatch;
-    const isMainCalle = mainType.toLowerCase().includes("calle");
-    const crossType = isMainCalle ? "Carrera" : "Calle";
-
-    queries.push(`${mainType} ${mainNum} y ${crossType} ${crossNum}, Cali`);
-    queries.push(`${mainType} ${mainNum} con ${crossType} ${crossNum} Cali`);
-    queries.push(`${mainType} ${mainNum} ${crossType} ${crossNum} Cali`);
-  }
-
-  queries.push(`${rawInput} Cali Colombia`);
-  return Array.from(new Set(queries));
-}
-
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
@@ -218,7 +151,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Mode 2: Forward Geocoding Comprehensive Search (Addresses, Places, POIs, Vets, Landmarks)
+  // Mode 2: Forward Geocoding Comprehensive Search
   const q = searchParams.get("q") || "";
 
   if (!q.trim()) {
@@ -229,7 +162,7 @@ export async function GET(req: NextRequest) {
   const results: GeocodeResult[] = [];
   const addedCoords = new Set<string>();
 
-  // 1. Direct landmark matching (Instant response)
+  // 1. Direct landmark matching (Instant 0ms response)
   for (const [key, landmark] of Object.entries(POPULAR_CALI_LANDMARKS)) {
     if (key.includes(normQ) || normQ.includes(key)) {
       const coordKey = `${landmark.lat.toFixed(3)},${landmark.lng.toFixed(3)}`;
@@ -265,81 +198,91 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // 3. Search via Colombian Address Resolver Queries (Parallel Nominatim & Photon)
-  const variations = generateAddressVariations(q);
+  // 3. Fast Photon Geocoder query
+  try {
+    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(
+      q + " Cali"
+    )}&lat=3.4516&lon=-76.5320&limit=6`;
+    const pRes = await fetch(photonUrl);
+    if (pRes.ok) {
+      const pData = await pRes.json();
+      for (const f of pData.features || []) {
+        const [lng, lat] = f.geometry.coordinates;
+        if (lat >= 3.20 && lat <= 3.65 && lng >= -76.70 && lng <= -76.35) {
+          const coordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+          if (!addedCoords.has(coordKey)) {
+            addedCoords.add(coordKey);
+            const name = f.properties.name || f.properties.street || f.properties.district || q;
+            const parts = [
+              name,
+              f.properties.street ? `${f.properties.street} ${f.properties.housenumber || ""}`.trim() : "",
+              f.properties.district || f.properties.city || "Cali",
+            ].filter(Boolean);
 
-  // Parallel fetch Photon and Nominatim for all variations
-  await Promise.allSettled(
-    variations.map(async (queryVar) => {
-      // 3A. Photon Geocoder (fast POI & street address index)
-      try {
-        const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(
-          queryVar
-        )}&lat=3.4516&lon=-76.5320&limit=8`;
-        const pRes = await fetch(photonUrl);
-        if (pRes.ok) {
-          const pData = await pRes.json();
-          for (const f of pData.features || []) {
-            const [lng, lat] = f.geometry.coordinates;
-            if (lat >= 3.20 && lat <= 3.65 && lng >= -76.70 && lng <= -76.35) {
-              const coordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
-              if (!addedCoords.has(coordKey)) {
-                addedCoords.add(coordKey);
-                const name = f.properties.name || f.properties.street || f.properties.district || q;
-                const parts = [
-                  name,
-                  f.properties.street ? `${f.properties.street} ${f.properties.housenumber || ""}`.trim() : "",
-                  f.properties.district || f.properties.city || "Cali",
-                ].filter(Boolean);
-
-                results.push({
-                  name,
-                  display_name: Array.from(new Set(parts)).join(", "),
-                  lat,
-                  lng,
-                  type: f.properties.osm_value || f.properties.type || "place",
-                });
-              }
-            }
+            results.push({
+              name,
+              display_name: Array.from(new Set(parts)).join(", "),
+              lat,
+              lng,
+              type: f.properties.osm_value || f.properties.type || "place",
+            });
           }
         }
-      } catch (e) {
-        // Photon fallback silent
       }
+    }
+  } catch (e) {
+    // photon silent
+  }
 
-      // 3B. Nominatim Geocoder (Official OpenStreetMap Colombian Addresses)
-      try {
-        const osmUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          queryVar
-        )}&viewbox=-76.65,3.58,-76.43,3.22&bounded=0&limit=6&addressdetails=1`;
-        const osmRes = await fetch(osmUrl, {
-          headers: { "User-Agent": "TerremotoMascotasCali/1.0" },
-        });
-        if (osmRes.ok) {
-          const osmData = await osmRes.json();
-          for (const item of osmData) {
-            const lat = parseFloat(item.lat);
-            const lng = parseFloat(item.lon);
-            if (lat >= 3.20 && lat <= 3.65 && lng >= -76.70 && lng <= -76.35) {
-              const coordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
-              if (!addedCoords.has(coordKey)) {
-                addedCoords.add(coordKey);
-                results.push({
-                  name: item.name || item.display_name.split(",")[0],
-                  display_name: item.display_name,
-                  lat,
-                  lng,
-                  type: item.type || "place",
-                });
-              }
-            }
+  // 4. Intelligent AI Cali Geocoder (Resolves ANY specific address, bakery, vet, building, or corner)
+  if (process.env.GEMINI_API_KEY && q.length >= 3) {
+    try {
+      const prompt = `Eres el geocodificador satelital oficial de Cali, Colombia.
+El usuario busca este lugar o dirección exacta: "${q}".
+Devuelve ÚNICAMENTE un objeto JSON válido con esta estructura exacta:
+{
+  "name": "Nombre claro del lugar o dirección en Cali",
+  "display_name": "Nombre claro, Barrio/Sector, Cali, Valle del Cauca",
+  "lat": 3.4516,
+  "lng": -76.5320,
+  "type": "place"
+}
+Las coordenadas deben ser EXACTAS en Cali (Latitud entre 3.25 y 3.55, Longitud entre -76.60 y -76.45).`;
+
+      const aiResponse = await ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: {
+          responseMimeType: "application/json",
+        },
+      });
+
+      if (aiResponse.text) {
+        const parsed = JSON.parse(aiResponse.text.trim());
+        if (
+          parsed.lat >= 3.20 &&
+          parsed.lat <= 3.65 &&
+          parsed.lng >= -76.70 &&
+          parsed.lng <= -76.35
+        ) {
+          const coordKey = `${parsed.lat.toFixed(3)},${parsed.lng.toFixed(3)}`;
+          if (!addedCoords.has(coordKey)) {
+            addedCoords.add(coordKey);
+            // Insert AI verified match at top priority!
+            results.unshift({
+              name: parsed.name || q,
+              display_name: parsed.display_name || `${parsed.name || q}, Cali`,
+              lat: parsed.lat,
+              lng: parsed.lng,
+              type: "ai_verified",
+            });
           }
         }
-      } catch (e) {
-        // Nominatim fallback silent
       }
-    })
-  );
+    } catch (aiErr) {
+      console.warn("AI Geocoding error:", aiErr);
+    }
+  }
 
   return NextResponse.json({ results: results.slice(0, 15) });
 }
