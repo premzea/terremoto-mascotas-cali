@@ -41,7 +41,7 @@ const petMetadataSchema: Schema = {
     },
     eye_color: {
       type: Type.STRING,
-      enum: ["BROWN", "BLUE", "GREEN", "AMBER", "HETEROCHROMIA", "UNKNOWN"],
+      enum: ["BLACK", "BROWN", "BLUE", "GREEN", "AMBER", "HETEROCHROMIA", "UNKNOWN"],
     },
     nose_color: {
       type: Type.STRING,
@@ -50,7 +50,7 @@ const petMetadataSchema: Schema = {
     distinctive_features: {
       type: Type.ARRAY,
       items: { type: Type.STRING },
-      description: "Max 3 unique visible traits or accessories",
+      description: "Max 3 unique visible traits or accessories in Spanish (ej: manchas en el pecho, collar rojo)",
     },
   },
   required: ["species", "coat_colors", "coat_pattern"],
@@ -61,9 +61,9 @@ const COLOR_TRANSLATION: Record<string, string> = {
   WHITE: "Blanco",
   BROWN: "Café / Marrón",
   GOLDEN_YELLOW: "Dorado / Amarillo",
+  ORANGE_RED: "Naranja / Rojo",
   GRAY_SILVER: "Gris / Plateado",
   CREAM: "Crema / Beige",
-  ORANGE_RED: "Naranja / Rojizo",
 };
 
 export async function POST(req: NextRequest) {
@@ -93,6 +93,10 @@ export async function POST(req: NextRequest) {
     const ai = new GoogleGenAI({ apiKey });
     const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
+    const promptText = `Analyze this pet photo according to the strict Enum schema.
+Extract: species, fur_length, ear_type, all visible coat_colors (array), coat_pattern, eye_color, nose_color, and up to 3 distinctive_features.
+IMPORTANT: All distinctive_features MUST BE WRITTEN STRICTLY IN SPANISH (español), e.g. "mancha blanca en el pecho", "patas blancas", "trufa rosada", "máscara negra", "collar azul", "pecho blanco", etc.`;
+
     let response;
     try {
       response = await ai.models.generateContent({
@@ -108,8 +112,7 @@ export async function POST(req: NextRequest) {
                 },
               },
               {
-                text: `Analyze this pet photo according to the strict Enum schema.
-Extract: species, fur_length, ear_type, all visible coat_colors (array), coat_pattern, eye_color, nose_color, and up to 3 distinctive_features.`,
+                text: promptText,
               },
             ],
           },
@@ -135,8 +138,7 @@ Extract: species, fur_length, ear_type, all visible coat_colors (array), coat_pa
                 },
               },
               {
-                text: `Analyze this pet photo according to the strict Enum schema.
-Extract: species, fur_length, ear_type, all visible coat_colors (array), coat_pattern, eye_color, nose_color, and up to 3 distinctive_features.`,
+                text: promptText,
               },
             ],
           },

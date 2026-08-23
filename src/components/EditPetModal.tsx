@@ -59,7 +59,8 @@ const EAR_TYPE_OPTIONS: EnumOption[] = [
 ];
 
 const EYE_COLOR_OPTIONS: EnumOption[] = [
-  { id: "BROWN", label: "Café / Marrón / Oscuro", icon: "🟤" },
+  { id: "BLACK", label: "Negro / Muy Oscuro", icon: "⚫" },
+  { id: "BROWN", label: "Café / Marrón", icon: "🟤" },
   { id: "BLUE", label: "Azul / Celeste / Zarco", icon: "🔵" },
   { id: "GREEN", label: "Verde / Esmeralda", icon: "🟢" },
   { id: "AMBER", label: "Ámbar / Miel / Amarillo", icon: "🟡" },
