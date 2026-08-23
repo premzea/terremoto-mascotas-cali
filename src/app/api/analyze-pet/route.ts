@@ -93,31 +93,61 @@ export async function POST(req: NextRequest) {
     const ai = new GoogleGenAI({ apiKey });
     const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
 
-    const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              inlineData: {
-                mimeType,
-                data: cleanBase64,
+    let response;
+    try {
+      response = await ai.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                inlineData: {
+                  mimeType,
+                  data: cleanBase64,
+                },
               },
-            },
-            {
-              text: `Analyze this pet photo according to the strict Enum schema.
-Extract: species, size, fur_length, head_and_muzzle_shape, ear_type, body_build, all visible coat_colors (array), coat_pattern, eye_color, nose_color, and up to 3 distinctive_features.`,
-            },
-          ],
+              {
+                text: `Analyze this pet photo according to the strict Enum schema.
+Extract: species, fur_length, ear_type, all visible coat_colors (array), coat_pattern, eye_color, nose_color, and up to 3 distinctive_features.`,
+              },
+            ],
+          },
+        ],
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: petMetadataSchema,
+          temperature: 0.0,
         },
-      ],
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: petMetadataSchema,
-        temperature: 0.0,
-      },
-    });
+      });
+    } catch (primaryErr) {
+      console.warn("Primary model gemini-3.6-flash error, trying fallback gemini-3.5-flash-lite:", primaryErr);
+      response = await ai.models.generateContent({
+        model: "gemini-3.5-flash-lite",
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                inlineData: {
+                  mimeType,
+                  data: cleanBase64,
+                },
+              },
+              {
+                text: `Analyze this pet photo according to the strict Enum schema.
+Extract: species, fur_length, ear_type, all visible coat_colors (array), coat_pattern, eye_color, nose_color, and up to 3 distinctive_features.`,
+              },
+            ],
+          },
+        ],
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: petMetadataSchema,
+          temperature: 0.0,
+        },
+      });
+    }
 
     const parsedJson = JSON.parse(response.text || "{}");
     
