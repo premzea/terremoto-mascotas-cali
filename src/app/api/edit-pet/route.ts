@@ -38,7 +38,10 @@ export async function POST(req: NextRequest) {
     if (updatedFields.gender !== undefined) safeUpdates.gender = updatedFields.gender;
     if (updatedFields.size !== undefined) safeUpdates.size = updatedFields.size;
     if (updatedFields.primary_color !== undefined) safeUpdates.primary_color = updatedFields.primary_color.trim();
+    if (updatedFields.pattern !== undefined) safeUpdates.pattern = updatedFields.pattern.trim();
     if (updatedFields.neighborhood !== undefined) safeUpdates.neighborhood = updatedFields.neighborhood.trim();
+    if (typeof updatedFields.lat === "number" && !isNaN(updatedFields.lat)) safeUpdates.lat = updatedFields.lat;
+    if (typeof updatedFields.lng === "number" && !isNaN(updatedFields.lng)) safeUpdates.lng = updatedFields.lng;
     if (updatedFields.distinctive_features !== undefined) safeUpdates.distinctive_features = updatedFields.distinctive_features.trim();
     if (updatedFields.contact_name !== undefined) safeUpdates.contact_name = updatedFields.contact_name.trim();
     if (updatedFields.contact_phone !== undefined) safeUpdates.contact_phone = updatedFields.contact_phone.trim();

@@ -16,6 +16,7 @@ import {
   GraduationCap,
   Bus,
   Map,
+  Layers,
   Edit2,
 } from "lucide-react";
 import barrioCoordsData from "@/data/coords_by_barrio.json";
@@ -77,7 +78,7 @@ function getPlaceIcon(type?: string) {
     case "transport":
       return <Bus className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />;
     default:
-      return <MapPin className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />;
+      return <MapPin className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" />;
   }
 }
 
@@ -91,6 +92,7 @@ export default function MapLocationPicker({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
+  const tileLayerRef = useRef<any>(null);
 
   const [selectedLat, setSelectedLat] = useState<number>(initialLat || 3.4516);
   const [selectedLng, setSelectedLng] = useState<number>(initialLng || -76.532);
@@ -98,6 +100,7 @@ export default function MapLocationPicker({
     initialBarrio || getClosestBarrio(initialLat || 3.4516, initialLng || -76.532)
   );
 
+  const [mapType, setMapType] = useState<"google_road" | "google_satellite" | "osm">("google_road");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PlaceResult[]>([]);
   const [searching, setSearching] = useState(false);
@@ -132,7 +135,35 @@ export default function MapLocationPicker({
     }
   };
 
-  // Initialize Leaflet Map
+  // Change Map Tile Layer
+  const setTileLayerType = async (type: "google_road" | "google_satellite" | "osm") => {
+    if (!mapInstanceRef.current) return;
+    const L = (await import("leaflet")).default;
+
+    if (tileLayerRef.current) {
+      mapInstanceRef.current.removeLayer(tileLayerRef.current);
+    }
+
+    let layerUrl = "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}";
+    let maxZoom = 20;
+
+    if (type === "google_satellite") {
+      layerUrl = "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"; // Hybrid satellite + roads
+    } else if (type === "osm") {
+      layerUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+      maxZoom = 19;
+    }
+
+    const newLayer = L.tileLayer(layerUrl, {
+      attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>',
+      maxZoom,
+    }).addTo(mapInstanceRef.current);
+
+    tileLayerRef.current = newLayer;
+    setMapType(type);
+  };
+
+  // Initialize Map with Google Maps Tiles
   useEffect(() => {
     let isMounted = true;
 
@@ -140,6 +171,7 @@ export default function MapLocationPicker({
       if (typeof window === "undefined" || !mapContainerRef.current) return;
       const L = (await import("leaflet")).default;
 
+      // Modern red Google Maps style pin
       const customIcon = L.icon({
         iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
         iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -156,10 +188,15 @@ export default function MapLocationPicker({
           15
         );
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-          maxZoom: 19,
-        }).addTo(map);
+        const googleRoadLayer = L.tileLayer(
+          "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+          {
+            attribution: '&copy; <a href="https://maps.google.com">Google Maps</a>',
+            maxZoom: 20,
+          }
+        ).addTo(map);
+
+        tileLayerRef.current = googleRoadLayer;
 
         const marker = L.marker([selectedLat, selectedLng], {
           draggable: true,
@@ -264,11 +301,11 @@ export default function MapLocationPicker({
       } else {
         setPasteError(
           data.error ||
-            "No pudimos detectar coordenadas en el enlace. Asegúrate de copiar el enlace completo de Google Maps o escribir coordenadas tipo: 3.4516, -76.5320"
+            "No pudimos detectar coordenadas en el enlace. Asegúrate de copiar el enlace de Google Maps o escribir coordenadas tipo: 3.4516, -76.5320"
         );
       }
     } catch (err: any) {
-      setPasteError("Error de conexión al procesar el enlace.");
+      setPasteError("Error al procesar el enlace de Google Maps.");
     } finally {
       setResolvingLink(false);
     }
@@ -314,7 +351,7 @@ export default function MapLocationPicker({
       },
       (err) => {
         setGettingGPS(false);
-        alert("No se pudo obtener la señal GPS. Puedes buscar el lugar en la barra o abrir Google Maps.");
+        alert("No se pudo obtener la señal GPS.");
         console.warn("GPS error:", err);
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -331,8 +368,8 @@ export default function MapLocationPicker({
   };
 
   return (
-    <div className="fixed inset-0 bg-stone-900/75 z-[70] flex items-center justify-center p-2 sm:p-4 backdrop-blur-xs animate-fade-in">
-      <div className="bg-white border border-stone-200 w-full max-w-2xl rounded-3xl overflow-hidden flex flex-col h-[94vh] sm:h-[86vh] text-stone-900 shadow-2xl relative">
+    <div className="fixed inset-0 bg-stone-900/80 z-[70] flex items-center justify-center p-2 sm:p-4 backdrop-blur-xs animate-fade-in">
+      <div className="bg-white border border-stone-200 w-full max-w-2xl rounded-3xl overflow-hidden flex flex-col h-[94vh] sm:h-[88vh] text-stone-900 shadow-2xl relative">
         {/* Header */}
         <div className="p-3.5 sm:p-4 border-b border-stone-200 flex items-center justify-between bg-amber-50/80">
           <div className="flex items-center gap-2.5">
@@ -341,10 +378,10 @@ export default function MapLocationPicker({
             </div>
             <div>
               <h3 className="font-black text-base text-stone-900">
-                Ubicación Exacta de la Mascota
+                Seleccionar Ubicación Exacta en Google Maps
               </h3>
               <p className="text-xs text-stone-600">
-                Abre Google Maps, busca el punto exacto y pégalo aquí con 1 clic
+                Toca cualquier punto del mapa, busca un sitio o pega un enlace de Google Maps
               </p>
             </div>
           </div>
@@ -356,45 +393,14 @@ export default function MapLocationPicker({
           </button>
         </div>
 
-        {/* Google Maps Direct Integration Banner */}
-        <div className="p-2.5 sm:p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200/80 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2 text-blue-950 font-bold">
-            <Map className="w-4 h-4 text-blue-600 flex-shrink-0" />
-            <span>¿Prefieres buscar en Google Maps?</span>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            {/* Step 1: Open Google Maps */}
-            <a
-              href="https://www.google.com/maps/search/Cali,+Colombia/@3.4516,-76.532,14z"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-3 py-1.5 rounded-xl shadow-xs transition cursor-pointer"
-            >
-              <span>1. Abrir Google Maps</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
-
-            {/* Step 2: Paste Link / Coords */}
-            <button
-              type="button"
-              onClick={() => setShowPasteModal(true)}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 bg-white hover:bg-blue-100 text-blue-900 border border-blue-300 font-extrabold px-3 py-1.5 rounded-xl shadow-2xs transition cursor-pointer"
-            >
-              <ClipboardPaste className="w-3.5 h-3.5 text-blue-600" />
-              <span>2. Pegar Ubicación</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Live Search Bar & Action Buttons */}
-        <div className="p-3 bg-stone-50 border-b border-stone-200 space-y-2 relative z-[2000]">
+        {/* Action Bar: Google Maps Search & Quick Tools */}
+        <div className="p-2.5 sm:p-3 bg-stone-50 border-b border-stone-200 space-y-2 relative z-[2000]">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3 pointer-events-none" />
               <input
                 type="text"
-                placeholder="Busca un lugar o pega un enlace de Google Maps aquí..."
+                placeholder="Busca dirección o sitio (Ej: Parque del Perro, Unicentro, Calle 5 # 34...)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white border border-stone-200 rounded-xl pl-9 pr-8 py-2.5 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 shadow-2xs"
@@ -412,13 +418,24 @@ export default function MapLocationPicker({
               ) : null}
             </div>
 
-            {/* GPS Locate Button */}
+            {/* Paste Link Button */}
+            <button
+              type="button"
+              onClick={() => setShowPasteModal(true)}
+              className="bg-white hover:bg-amber-50 text-stone-800 border border-stone-200 hover:border-amber-300 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-2xs whitespace-nowrap cursor-pointer"
+              title="Pegar enlace o coordenadas de Google Maps"
+            >
+              <ClipboardPaste className="w-3.5 h-3.5 text-blue-600" />
+              <span className="hidden sm:inline">Pegar Enlace</span>
+            </button>
+
+            {/* GPS Button */}
             <button
               type="button"
               onClick={handleGetCurrentLocation}
               disabled={gettingGPS}
               className="bg-white hover:bg-amber-50 text-amber-800 border border-stone-200 hover:border-amber-300 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-2xs whitespace-nowrap cursor-pointer"
-              title="Obtener ubicación GPS actual de tu celular"
+              title="Obtener GPS actual"
             >
               {gettingGPS ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-600" />
@@ -429,12 +446,9 @@ export default function MapLocationPicker({
             </button>
           </div>
 
-          {/* Autocomplete Dropdown */}
+          {/* Autocomplete Results */}
           {searchResults.length > 0 && (
             <div className="absolute left-3 right-3 top-14 bg-white border border-stone-200 rounded-2xl shadow-2xl z-[3000] max-h-60 overflow-y-auto divide-y divide-stone-100 animate-fade-in">
-              <div className="p-2 bg-stone-50 text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                Sitios y Lugares Encontrados:
-              </div>
               {searchResults.map((place, i) => (
                 <button
                   key={i}
@@ -462,18 +476,46 @@ export default function MapLocationPicker({
           )}
         </div>
 
-        {/* Map Container */}
+        {/* Map View */}
         <div className="flex-1 w-full relative z-[10]">
           <div ref={mapContainerRef} className="w-full h-full min-h-[280px]" />
 
-          {/* Floating Current Location Pill with Editable Exact Name */}
-          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-white/95 backdrop-blur-md border border-stone-200 rounded-2xl p-3 z-[1500] flex flex-col gap-2 shadow-xl max-w-md">
+          {/* Map Layer Switcher: Google Road vs Google Satellite */}
+          <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md border border-stone-200 rounded-xl p-1 z-[1500] flex items-center gap-1 shadow-md">
+            <button
+              type="button"
+              onClick={() => setTileLayerType("google_road")}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ${
+                mapType === "google_road"
+                  ? "bg-amber-500 text-white shadow-2xs font-extrabold"
+                  : "text-stone-600 hover:bg-stone-100"
+              }`}
+            >
+              <Map className="w-3 h-3" />
+              <span>Mapa</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTileLayerType("google_satellite")}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 ${
+                mapType === "google_satellite"
+                  ? "bg-amber-500 text-white shadow-2xs font-extrabold"
+                  : "text-stone-600 hover:bg-stone-100"
+              }`}
+            >
+              <Layers className="w-3 h-3" />
+              <span>Satélite</span>
+            </button>
+          </div>
+
+          {/* Selected Location Banner with Editable Details */}
+          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-white/95 backdrop-blur-md border border-stone-200 rounded-2xl p-3 z-[1500] flex flex-col gap-1.5 shadow-xl max-w-md">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
                 <div className="text-xs">
                   <span className="text-stone-500 block text-[10px] uppercase font-bold">
-                    Lugar o Dirección Exacta Registrada:
+                    Punto Exacto en Google Maps:
                   </span>
                   {isEditingAddress ? (
                     <div className="flex items-center gap-1.5 mt-1">
@@ -501,27 +543,25 @@ export default function MapLocationPicker({
                         type="button"
                         onClick={() => setIsEditingAddress(true)}
                         className="text-stone-400 hover:text-amber-700 p-0.5"
-                        title="Personalizar nombre o dirección de este punto"
+                        title="Editar nombre"
                       >
                         <Edit2 className="w-3 h-3" />
                       </button>
                     </div>
                   )}
                   <span className="text-[10.5px] text-stone-500 font-mono block mt-0.5">
-                    Coordenadas exactas: {selectedLat.toFixed(5)}, {selectedLng.toFixed(5)}
+                    GPS: {selectedLat.toFixed(5)}, {selectedLng.toFixed(5)}
                   </span>
                 </div>
               </div>
 
-              {/* Direct Google Maps Link */}
               <a
                 href={`https://www.google.com/maps?q=${selectedLat},${selectedLng}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl transition flex-shrink-0"
-                title="Abrir este punto en Google Maps"
+                className="text-[11px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 bg-blue-50 border border-blue-200 px-2 py-1 rounded-xl transition flex-shrink-0"
               >
-                <span>Ver en Maps</span>
+                <span>Ver Maps</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
@@ -530,8 +570,11 @@ export default function MapLocationPicker({
 
         {/* Footer Actions */}
         <div className="p-3.5 sm:p-4 border-t border-stone-200 bg-stone-50 flex items-center justify-between gap-3">
-          <div className="text-xs text-stone-500 hidden sm:block">
-            📍 GPS: {selectedLat.toFixed(5)}, {selectedLng.toFixed(5)}
+          <div className="text-xs text-stone-600 font-medium hidden sm:block">
+            📍 Coordenadas exactas guardadas:{" "}
+            <strong className="font-mono text-stone-900">
+              {selectedLat.toFixed(5)}, {selectedLng.toFixed(5)}
+            </strong>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
@@ -547,12 +590,12 @@ export default function MapLocationPicker({
               className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 transition shadow-md shadow-amber-500/20 active:scale-[0.98] cursor-pointer"
             >
               <Check className="w-4 h-4" />
-              <span>Confirmar Este Punto</span>
+              <span>Guardar Esta Ubicación Exacta</span>
             </button>
           </div>
         </div>
 
-        {/* Modal: Pegar enlace o coordenadas de Google Maps */}
+        {/* Modal: Pegar enlace de Google Maps */}
         {showPasteModal && (
           <div className="absolute inset-0 bg-stone-900/60 z-[4000] flex items-center justify-center p-4 backdrop-blur-xs animate-fade-in">
             <div className="bg-white border border-stone-200 w-full max-w-md rounded-3xl p-5 shadow-2xl space-y-3.5">
@@ -560,7 +603,7 @@ export default function MapLocationPicker({
                 <div className="flex items-center gap-2">
                   <ClipboardPaste className="w-4 h-4 text-blue-600" />
                   <h4 className="font-extrabold text-sm text-stone-900">
-                    Pegar Ubicación de Google Maps
+                    Pegar Enlace de Google Maps
                   </h4>
                 </div>
                 <button
@@ -571,14 +614,9 @@ export default function MapLocationPicker({
                 </button>
               </div>
 
-              <div className="space-y-2 text-xs text-stone-600 leading-relaxed">
-                <p>
-                  1. En Google Maps, toca <strong>Compartir</strong> $\rightarrow$ <strong>Copiar enlace</strong> (o copia las coordenadas).
-                </p>
-                <p>
-                  2. Pégalo aquí o pulsa el botón para pegarlo automáticamente del portapapeles:
-                </p>
-              </div>
+              <p className="text-xs text-stone-600 leading-relaxed">
+                Pega cualquier enlace de Google Maps (de celular o navegador) o coordenadas:
+              </p>
 
               <form
                 onSubmit={(e) => {
@@ -592,7 +630,7 @@ export default function MapLocationPicker({
                     value={pastedLink}
                     onChange={(e) => setPastedLink(e.target.value)}
                     rows={3}
-                    placeholder="Pega aquí el enlace (https://maps.app.goo.gl/... o 3.4516, -76.5320)"
+                    placeholder="Ej: https://maps.app.goo.gl/... o 3.4358, -76.5469"
                     className="w-full bg-stone-50 border border-stone-200 rounded-2xl p-3 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-blue-500 focus:bg-white"
                     autoFocus
                   />
@@ -630,7 +668,7 @@ export default function MapLocationPicker({
                     ) : (
                       <MapPin className="w-3.5 h-3.5" />
                     )}
-                    <span>Ubicar en el Mapa</span>
+                    <span>Fijar en Mapa</span>
                   </button>
                 </div>
               </form>
