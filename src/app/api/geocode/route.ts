@@ -54,10 +54,15 @@ const POPULAR_CALI_LANDMARKS: Record<string, { name: string; lat: number; lng: n
   "parque de las banderas": { name: "Parque de las Banderas / Panamericano", lat: 3.4312, lng: -76.5414, type: "park" },
   "parque de la caña": { name: "Parque de la Caña de Azúcar", lat: 3.4608, lng: -76.5054, type: "park" },
   "parque de la retreta": { name: "Parque de la Retreta (Paseo Bolívar)", lat: 3.4542, lng: -76.5344, type: "park" },
+  "parque del gato": { name: "Monumento El Gato del Río", lat: 3.4503, lng: -76.5398, type: "landmark" },
+  "el gato del rio": { name: "Monumento El Gato del Río", lat: 3.4503, lng: -76.5398, type: "landmark" },
+  "gato de tejada": { name: "Monumento El Gato del Río", lat: 3.4503, lng: -76.5398, type: "landmark" },
   "boulevard del rio": { name: "Boulevard del Río Cali", lat: 3.4536, lng: -76.5341, type: "landmark" },
   "bulevar del rio": { name: "Boulevard del Río Cali", lat: 3.4536, lng: -76.5341, type: "landmark" },
   "cristo rey": { name: "Monumento a Cristo Rey", lat: 3.4361, lng: -76.5647, type: "landmark" },
   "las tres cruces": { name: "Cerro de las Tres Cruces", lat: 3.4682, lng: -76.5489, type: "landmark" },
+  "la ermita": { name: "Iglesia La Ermita", lat: 3.4539, lng: -76.5320, type: "place_of_worship" },
+  "iglesia la ermita": { name: "Iglesia La Ermita", lat: 3.4539, lng: -76.5320, type: "place_of_worship" },
   "zoologico de cali": { name: "Zoológico de Cali", lat: 3.4485, lng: -76.5591, type: "zoo" },
   "zoologico": { name: "Zoológico de Cali", lat: 3.4485, lng: -76.5591, type: "zoo" },
   "terminal": { name: "Terminal de Transportes de Cali (MiTerminal)", lat: 3.4665, lng: -76.5235, type: "transport" },
@@ -141,7 +146,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Mode 2: Forward Geocoding Search
+  // Mode 2: Forward Geocoding Comprehensive Search (Places, Businesses, Vets, Streets)
   const q = searchParams.get("q") || "";
 
   if (!q.trim()) {
@@ -188,12 +193,50 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // 3. Fallback to OpenStreetMap Geocoder
-  if (results.length < 5 && q.length >= 3) {
+  // 3. Global POI & Place Search (Photon Geocoder API with Cali coordinates bias)
+  try {
+    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(
+      q + " Cali"
+    )}&lat=3.4516&lon=-76.5320&limit=12`;
+
+    const res = await fetch(photonUrl);
+    if (res.ok) {
+      const data = await res.json();
+      for (const f of data.features || []) {
+        const [lng, lat] = f.geometry.coordinates;
+        // Bounding box filter for Cali, Jamundi & surrounding Valle area
+        if (lat >= 3.20 && lat <= 3.65 && lng >= -76.70 && lng <= -76.35) {
+          const coordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+          if (!addedCoords.has(coordKey)) {
+            addedCoords.add(coordKey);
+            const name = f.properties.name || f.properties.street || f.properties.district || q;
+            const parts = [
+              name,
+              f.properties.street ? `${f.properties.street} ${f.properties.housenumber || ""}`.trim() : "",
+              f.properties.district || f.properties.city || "Cali",
+            ].filter(Boolean);
+
+            results.push({
+              name,
+              display_name: Array.from(new Set(parts)).join(", "),
+              lat,
+              lng,
+              type: f.properties.osm_value || f.properties.type || "place",
+            });
+          }
+        }
+      }
+    }
+  } catch (photonErr) {
+    console.warn("Photon POI geocoder error:", photonErr);
+  }
+
+  // 4. OpenStreetMap Nominatim Search (Street Level & Addresses)
+  if (results.length < 8 && q.length >= 3) {
     try {
       const osmUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
         q + " Cali Colombia"
-      )}&viewbox=-76.65,3.58,-76.43,3.22&bounded=0&limit=5`;
+      )}&viewbox=-76.65,3.58,-76.43,3.22&bounded=0&limit=10&addressdetails=1`;
 
       const osmRes = await fetch(osmUrl, {
         headers: {
@@ -206,23 +249,25 @@ export async function GET(req: NextRequest) {
         for (const item of osmData) {
           const lat = parseFloat(item.lat);
           const lng = parseFloat(item.lon);
-          const coordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
-          if (!addedCoords.has(coordKey)) {
-            addedCoords.add(coordKey);
-            results.push({
-              name: item.name || item.display_name.split(",")[0],
-              display_name: item.display_name,
-              lat,
-              lng,
-              type: item.type || "place",
-            });
+          if (lat >= 3.20 && lat <= 3.65 && lng >= -76.70 && lng <= -76.35) {
+            const coordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+            if (!addedCoords.has(coordKey)) {
+              addedCoords.add(coordKey);
+              results.push({
+                name: item.name || item.display_name.split(",")[0],
+                display_name: item.display_name,
+                lat,
+                lng,
+                type: item.type || "place",
+              });
+            }
           }
         }
       }
     } catch (e) {
-      console.warn("External geocoder fallback error:", e);
+      console.warn("Nominatim fallback error:", e);
     }
   }
 
-  return NextResponse.json({ results: results.slice(0, 8) });
+  return NextResponse.json({ results: results.slice(0, 12) });
 }
