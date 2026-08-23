@@ -9,7 +9,7 @@ export type MatchingAlgorithmMode = "V2_MULTIMODAL" | "V1_CLASSIC";
 export interface MatchResult {
   pet: PetReport;
   score: number; // 0 to 100
-  distanceKm: number;
+  distanceKm: number | null;
   reasons: string[];
   visualSummary?: string | null;
   algorithmUsed?: MatchingAlgorithmMode;
@@ -38,10 +38,17 @@ export interface PetMetadataV2 {
   distinctive_features?: string[];
 }
 
-// Haversine distance in km
-export function calculateDistanceKm(lat1?: number, lon1?: number, lat2?: number, lon2?: number): number {
-  if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) {
-    return 5.0;
+// Haversine distance in km (returns null if coordinates are unknown/invalid)
+export function calculateDistanceKm(lat1?: number | null, lon1?: number | null, lat2?: number | null, lon2?: number | null): number | null {
+  if (
+    lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined ||
+    lat1 === null || lon1 === null || lat2 === null || lon2 === null ||
+    isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2) ||
+    (lat1 === 0 && lon1 === 0) || (lat2 === 0 && lon2 === 0) ||
+    lat1 < 1.0 || lat1 > 6.0 || lon1 < -78.0 || lon1 > -74.0 ||
+    lat2 < 1.0 || lat2 > 6.0 || lon2 < -78.0 || lon2 > -74.0
+  ) {
+    return null;
   }
 
   const R = 6371;
@@ -403,10 +410,10 @@ export function findBestMatches(
     if (normTargetBarrio && normCandidateBarrio && (normTargetBarrio === normCandidateBarrio || normTargetBarrio.includes(normCandidateBarrio) || normCandidateBarrio.includes(normTargetBarrio))) {
       score += 20;
       reasons.push(`📍 Mismo barrio: ${candidate.neighborhood}`);
-    } else if (distanceKm <= 2.0) {
+    } else if (distanceKm !== null && distanceKm <= 2.0) {
       score += 15;
       reasons.push(`📍 A solo ${distanceKm} km en ${candidate.neighborhood}`);
-    } else if (distanceKm <= 4.5) {
+    } else if (distanceKm !== null && distanceKm <= 4.5) {
       score += 8;
       reasons.push(`📍 En zona cercana (${distanceKm} km)`);
     }

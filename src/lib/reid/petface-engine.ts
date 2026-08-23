@@ -427,12 +427,13 @@ export function scorePetReIDPair(
     candidate.canonicalAttributes
   );
 
-  // 5. Geographic Plausibility
+  // 5. Geographic Plausibility (use neutral 10km if distance cannot be determined)
   const distanceKm = calculateDistanceKm(target.lat, target.lng, candidate.lat, candidate.lng);
-  const geoPlausibility = calculateGeospatialPlausibility(distanceKm);
+  const distanceForFormula = distanceKm !== null ? distanceKm : 10.0;
+  const geoPlausibility = calculateGeospatialPlausibility(distanceForFormula);
 
   // 6. Temporal Plausibility
-  const temporalPlausibility = calculateTemporalPlausibility(48, distanceKm);
+  const temporalPlausibility = calculateTemporalPlausibility(48, distanceForFormula);
 
   // -------------------------------------------------------------
   // DYNAMIC WEIGHT ALLOCATION
@@ -442,16 +443,16 @@ export function scorePetReIDPair(
   let effectivePetfaceWeight = weights.petfaceWeight;
   let effectiveClipWeight = weights.clipVisualWeight;
   let effectiveAttrWeight = weights.attributeWeight;
-  let effectiveGeoWeight = weights.geospatialWeight;
+  let effectiveGeoWeight = distanceKm !== null ? weights.geospatialWeight : 0.05;
   let effectiveTempWeight = weights.temporalWeight;
 
   if (!hasBothFaces) {
     // Redistribute the 0.35 PetFace weight
     const redistributed = effectivePetfaceWeight;
     effectivePetfaceWeight = 0;
-    effectiveClipWeight += redistributed * 0.5; // +0.175
-    effectiveAttrWeight += redistributed * 0.35; // +0.1225
-    effectiveGeoWeight += redistributed * 0.15; // +0.0525
+    effectiveClipWeight += redistributed * 0.55; // +0.1925
+    effectiveAttrWeight += redistributed * 0.40; // +0.14
+    effectiveGeoWeight += redistributed * 0.05; // minimal geo
   }
 
   // Compute composite score (0.0 to 1.0)
@@ -497,7 +498,7 @@ export function scorePetReIDPair(
     reasons.push(`👁️ Similitud visual de cuerpo (${Math.round(clipSim * 100)}%)`);
   }
   reasons.push(...matchedReasons);
-  if (distanceKm <= 3.0) {
+  if (distanceKm !== null && distanceKm <= 3.0) {
     reasons.push(`📍 A solo ${distanceKm} km en ${candidate.neighborhood || "la zona"}`);
   }
 

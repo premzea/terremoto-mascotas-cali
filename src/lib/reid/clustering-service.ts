@@ -46,7 +46,7 @@ export function clusterPetObservations(
         candidate.features.lat,
         candidate.features.lng
       );
-      if (distance > maxGeoDistanceKm) continue;
+      if (distance !== null && distance > maxGeoDistanceKm) continue;
 
       // Pairwise match score
       const match = scorePetReIDPair(current.features, candidate.features, candidate.report);

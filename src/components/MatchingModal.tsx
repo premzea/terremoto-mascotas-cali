@@ -190,16 +190,22 @@ export default function MatchingModal({ targetPet, allPets, onClose }: MatchingM
                           </div>
                         </div>
 
-                        {/* Ubicación: Encontrado en / Visto en */}
+                        {/* Ubicación: Encontrado en / Visto en con indicación explícita de distancia */}
                         <div className="flex items-center gap-2 text-xs font-semibold mt-2">
                           <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-amber-600" />
                           {isCandidateFound ? (
                             <span className="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                              Encontrado en: {m.pet.neighborhood} (a ~{m.distanceKm} km)
+                              Encontrado en: {m.pet.neighborhood || "Cali"}
+                              {m.distanceKm !== null && m.distanceKm !== undefined
+                                ? ` (a ~${m.distanceKm} km)`
+                                : " (Distancia: N/A - no especificada)"}
                             </span>
                           ) : (
                             <span className="text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                              Visto en: {m.pet.neighborhood} (a ~{m.distanceKm} km)
+                              Visto en: {m.pet.neighborhood || "Cali"}
+                              {m.distanceKm !== null && m.distanceKm !== undefined
+                                ? ` (a ~${m.distanceKm} km)`
+                                : " (Distancia: N/A - no especificada)"}
                             </span>
                           )}
                         </div>

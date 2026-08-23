@@ -82,7 +82,7 @@ export interface MultimodalMatchScoreResult {
     geoPlausibility: number; // 0 to 1
     temporalPlausibility: number; // 0 to 1
   };
-  distanceKm: number;
+  distanceKm: number | null;
   reasons: string[];
   isClusterMatch?: boolean;
   clusterMembersCount?: number;
