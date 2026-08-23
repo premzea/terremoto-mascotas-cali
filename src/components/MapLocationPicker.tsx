@@ -16,7 +16,7 @@ import {
   GraduationCap,
   Bus,
   Map,
-  Compass,
+  Edit2,
 } from "lucide-react";
 import barrioCoordsData from "@/data/coords_by_barrio.json";
 
@@ -46,7 +46,6 @@ interface MapLocationPickerProps {
 
 const barriosList = Object.values(barrioCoordsData) as BarrioInfo[];
 
-// Helper to find closest barrio name from lat/lng
 function getClosestBarrio(lat: number, lng: number): string {
   let minDistance = Infinity;
   let closest = "Cali Centro";
@@ -107,6 +106,31 @@ export default function MapLocationPicker({
   const [pastedLink, setPastedLink] = useState("");
   const [pasteError, setPasteError] = useState<string | null>(null);
   const [resolvingLink, setResolvingLink] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
+
+  // Reverse geocode to exact address/place
+  const updateLocationCoordinates = async (lat: number, lng: number, explicitName?: string) => {
+    setSelectedLat(lat);
+    setSelectedLng(lng);
+
+    if (explicitName) {
+      setSelectedBarrio(explicitName);
+    } else {
+      try {
+        const res = await fetch(`/api/geocode?lat=${lat}&lng=${lng}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.neighborhood) {
+            setSelectedBarrio(data.neighborhood);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn("Reverse geocoding error:", err);
+      }
+      setSelectedBarrio(getClosestBarrio(lat, lng));
+    }
+  };
 
   // Initialize Leaflet Map
   useEffect(() => {
@@ -144,19 +168,13 @@ export default function MapLocationPicker({
 
         marker.on("dragend", (e: any) => {
           const { lat, lng } = e.target.getLatLng();
-          setSelectedLat(lat);
-          setSelectedLng(lng);
-          const nearest = getClosestBarrio(lat, lng);
-          setSelectedBarrio(nearest);
+          updateLocationCoordinates(lat, lng);
         });
 
         map.on("click", (e: any) => {
           const { lat, lng } = e.latlng;
           marker.setLatLng([lat, lng]);
-          setSelectedLat(lat);
-          setSelectedLng(lng);
-          const nearest = getClosestBarrio(lat, lng);
-          setSelectedBarrio(nearest);
+          updateLocationCoordinates(lat, lng);
         });
 
         mapInstanceRef.current = map;
@@ -208,10 +226,7 @@ export default function MapLocationPicker({
 
   // Select place from live autocomplete
   const handleSelectPlace = (place: PlaceResult) => {
-    setSelectedLat(place.lat);
-    setSelectedLng(place.lng);
-    const nearestBarrio = getClosestBarrio(place.lat, place.lng);
-    setSelectedBarrio(nearestBarrio);
+    updateLocationCoordinates(place.lat, place.lng, place.display_name || place.name);
     setSearchQuery(place.name);
     setSearchResults([]);
 
@@ -237,10 +252,7 @@ export default function MapLocationPicker({
 
       const data = await res.json();
       if (res.ok && data.success && data.lat && data.lng) {
-        setSelectedLat(data.lat);
-        setSelectedLng(data.lng);
-        const nearest = getClosestBarrio(data.lat, data.lng);
-        setSelectedBarrio(nearest);
+        await updateLocationCoordinates(data.lat, data.lng);
         setShowPasteModal(false);
         setPastedLink("");
         setSearchQuery("");
@@ -291,10 +303,7 @@ export default function MapLocationPicker({
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
 
-        setSelectedLat(lat);
-        setSelectedLng(lng);
-        const nearest = getClosestBarrio(lat, lng);
-        setSelectedBarrio(nearest);
+        updateLocationCoordinates(lat, lng);
         setSearchQuery("");
         setSearchResults([]);
 
@@ -457,27 +466,65 @@ export default function MapLocationPicker({
         <div className="flex-1 w-full relative z-[10]">
           <div ref={mapContainerRef} className="w-full h-full min-h-[280px]" />
 
-          {/* Floating Current Location Pill */}
-          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-white/95 backdrop-blur-md border border-stone-200 rounded-2xl p-3 z-[1500] flex items-center justify-between gap-3 shadow-lg">
-            <div className="flex items-center gap-2.5">
-              <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
-              <div className="text-xs">
-                <span className="text-stone-500 block text-[10px] uppercase font-bold">Barrio / Punto:</span>
-                <strong className="text-stone-900 font-extrabold text-sm">{selectedBarrio}</strong>
+          {/* Floating Current Location Pill with Editable Exact Name */}
+          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-white/95 backdrop-blur-md border border-stone-200 rounded-2xl p-3 z-[1500] flex flex-col gap-2 shadow-xl max-w-md">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="text-xs">
+                  <span className="text-stone-500 block text-[10px] uppercase font-bold">
+                    Lugar o Dirección Exacta Registrada:
+                  </span>
+                  {isEditingAddress ? (
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <input
+                        type="text"
+                        value={selectedBarrio}
+                        onChange={(e) => setSelectedBarrio(e.target.value)}
+                        className="border border-amber-400 bg-white rounded-lg px-2 py-1 text-xs font-bold text-stone-900 focus:outline-none w-full"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingAddress(false)}
+                        className="bg-amber-500 text-white px-2 py-1 rounded-lg text-xs font-bold"
+                      >
+                        OK
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      <strong className="text-stone-900 font-extrabold text-sm block">
+                        {selectedBarrio}
+                      </strong>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingAddress(true)}
+                        className="text-stone-400 hover:text-amber-700 p-0.5"
+                        title="Personalizar nombre o dirección de este punto"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                  <span className="text-[10.5px] text-stone-500 font-mono block mt-0.5">
+                    Coordenadas exactas: {selectedLat.toFixed(5)}, {selectedLng.toFixed(5)}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            {/* Direct Google Maps Link */}
-            <a
-              href={`https://www.google.com/maps?q=${selectedLat},${selectedLng}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl transition"
-              title="Abrir este punto en Google Maps"
-            >
-              <span>Ver en Maps</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
+              {/* Direct Google Maps Link */}
+              <a
+                href={`https://www.google.com/maps?q=${selectedLat},${selectedLng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl transition flex-shrink-0"
+                title="Abrir este punto en Google Maps"
+              >
+                <span>Ver en Maps</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
           </div>
         </div>
 

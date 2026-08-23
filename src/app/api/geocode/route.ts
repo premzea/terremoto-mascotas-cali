@@ -26,6 +26,23 @@ function normalize(str: string): string {
     .trim();
 }
 
+function getClosestBarrioName(lat: number, lng: number): string {
+  let minDistance = Infinity;
+  let closest = "Cali Centro";
+
+  for (const b of barriosList) {
+    const dLat = b.lat - lat;
+    const dLng = b.lng - lng;
+    const dist = dLat * dLat + dLng * dLng;
+    if (dist < minDistance) {
+      minDistance = dist;
+      closest = b.name;
+    }
+  }
+
+  return closest;
+}
+
 // Popular landmark shortcuts in Cali for instant 0ms responses
 const POPULAR_CALI_LANDMARKS: Record<string, { name: string; lat: number; lng: number; type: string }> = {
   "chipichape": { name: "Centro Comercial Chipichape", lat: 3.4754, lng: -76.5273, type: "mall" },
@@ -77,6 +94,54 @@ const POPULAR_CALI_LANDMARKS: Record<string, { name: string; lat: number; lng: n
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+
+  // Mode 1: Reverse Geocoding from precise Lat/Lng
+  if (searchParams.has("lat") && searchParams.has("lng")) {
+    const lat = parseFloat(searchParams.get("lat")!);
+    const lng = parseFloat(searchParams.get("lng")!);
+
+    if (!isNaN(lat) && !isNaN(lng)) {
+      const closestBarrio = getClosestBarrioName(lat, lng);
+      let specificAddress = "";
+
+      try {
+        const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+        const res = await fetch(reverseUrl, {
+          headers: { "User-Agent": "TerremotoMascotasCali/1.0" },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const addr = data.address || {};
+          const road = addr.road || addr.street || addr.pedestrian || "";
+          const houseNumber = addr.house_number || "";
+          const neighbourhood = addr.neighbourhood || addr.suburb || closestBarrio;
+          const poi = addr.amenity || addr.shop || addr.building || addr.tourism || "";
+
+          const parts: string[] = [];
+          if (poi) parts.push(poi);
+          if (road) parts.push(houseNumber ? `${road} #${houseNumber}` : road);
+          if (neighbourhood && !parts.some((p) => p.toLowerCase().includes(neighbourhood.toLowerCase()))) {
+            parts.push(neighbourhood);
+          }
+
+          specificAddress = parts.length > 0 ? parts.join(", ") : (data.name || closestBarrio);
+        }
+      } catch (err) {
+        console.warn("Reverse geocode error, using fallback barrio:", err);
+      }
+
+      const finalLocationName = specificAddress || closestBarrio;
+      return NextResponse.json({
+        success: true,
+        neighborhood: finalLocationName,
+        barrio: closestBarrio,
+        lat,
+        lng,
+      });
+    }
+  }
+
+  // Mode 2: Forward Geocoding Search
   const q = searchParams.get("q") || "";
 
   if (!q.trim()) {
@@ -123,10 +188,9 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // 3. Fallback to OpenStreetMap Geocoder (Nominatim with Cali bounding box) if fewer than 5 results
+  // 3. Fallback to OpenStreetMap Geocoder
   if (results.length < 5 && q.length >= 3) {
     try {
-      // Bounding box for Cali and Jamundi: viewbox=-76.65,3.58,-76.43,3.22 (bounded=1)
       const osmUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
         q + " Cali Colombia"
       )}&viewbox=-76.65,3.58,-76.43,3.22&bounded=0&limit=5`;
