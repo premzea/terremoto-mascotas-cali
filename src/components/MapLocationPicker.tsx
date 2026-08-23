@@ -93,6 +93,7 @@ export default function MapLocationPicker({
   const mapInstanceRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const tileLayerRef = useRef<any>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedLat, setSelectedLat] = useState<number>(initialLat || 3.4516);
   const [selectedLng, setSelectedLng] = useState<number>(initialLng || -76.532);
@@ -148,7 +149,7 @@ export default function MapLocationPicker({
     let maxZoom = 20;
 
     if (type === "google_satellite") {
-      layerUrl = "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"; // Hybrid satellite + roads
+      layerUrl = "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}";
     } else if (type === "osm") {
       layerUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
       maxZoom = 19;
@@ -163,6 +164,77 @@ export default function MapLocationPicker({
     setMapType(type);
   };
 
+  // Auto-detect clipboard on return from Google Maps
+  useEffect(() => {
+    const handleWindowFocus = async () => {
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (
+            text &&
+            text.length > 5 &&
+            (/maps\.google|goo\.gl|http.*map/i.test(text) ||
+              /^(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)$/.test(text.trim()))
+          ) {
+            handleResolveUrlOrCoords(text);
+          }
+        }
+      } catch {
+        // Silent if clipboard permission not granted
+      }
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    return () => window.removeEventListener("focus", handleWindowFocus);
+  }, []);
+
+  // Google Places Autocomplete SDK loader if API Key is configured
+  useEffect(() => {
+    const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (!googleApiKey || typeof window === "undefined") return;
+
+    const loadGooglePlaces = () => {
+      if ((window as any).google?.maps?.places && searchInputRef.current) {
+        const autocomplete = new (window as any).google.maps.places.Autocomplete(
+          searchInputRef.current,
+          {
+            componentRestrictions: { country: "co" },
+            bounds: new (window as any).google.maps.LatLngBounds(
+              new (window as any).google.maps.LatLng(3.2, -76.7),
+              new (window as any).google.maps.LatLng(3.65, -76.35)
+            ),
+            fields: ["geometry", "name", "formatted_address"],
+          }
+        );
+
+        autocomplete.addListener("place_changed", () => {
+          const place = autocomplete.getPlace();
+          if (place.geometry?.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            updateLocationCoordinates(lat, lng, place.formatted_address || place.name);
+
+            if (mapInstanceRef.current && markerRef.current) {
+              mapInstanceRef.current.setView([lat, lng], 17);
+              markerRef.current.setLatLng([lat, lng]);
+            }
+          }
+        });
+      }
+    };
+
+    if (!(window as any).google?.maps?.places) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&language=es`;
+      script.async = true;
+      script.defer = true;
+      script.onload = loadGooglePlaces;
+      document.head.appendChild(script);
+    } else {
+      loadGooglePlaces();
+    }
+  }, []);
+
   // Initialize Map with Google Maps Tiles
   useEffect(() => {
     let isMounted = true;
@@ -171,7 +243,6 @@ export default function MapLocationPicker({
       if (typeof window === "undefined" || !mapContainerRef.current) return;
       const L = (await import("leaflet")).default;
 
-      // Modern red Google Maps style pin
       const customIcon = L.icon({
         iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
         iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -237,7 +308,6 @@ export default function MapLocationPicker({
       return;
     }
 
-    // Check if input looks like a Google Maps link or coordinates
     if (/maps\.google|goo\.gl|http|\d+\.\d+.*[,\s]+\d+\.\d+/.test(searchQuery)) {
       handleResolveUrlOrCoords(searchQuery);
       return;
@@ -261,7 +331,7 @@ export default function MapLocationPicker({
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Select place from live autocomplete
+  // Select place from autocomplete
   const handleSelectPlace = (place: PlaceResult) => {
     updateLocationCoordinates(place.lat, place.lng, place.display_name || place.name);
     setSearchQuery(place.name);
@@ -309,6 +379,13 @@ export default function MapLocationPicker({
     } finally {
       setResolvingLink(false);
     }
+  };
+
+  // Open Google Maps Search in external tab
+  const handleOpenGoogleMapsSearch = () => {
+    const query = searchQuery.trim() || "Cali Colombia";
+    const url = `https://www.google.com/maps/search/${encodeURIComponent(query + " Cali Colombia")}/@${selectedLat},${selectedLng},16z`;
+    window.open(url, "_blank");
   };
 
   // Paste directly from clipboard
@@ -378,10 +455,10 @@ export default function MapLocationPicker({
             </div>
             <div>
               <h3 className="font-black text-base text-stone-900">
-                Seleccionar Ubicación Exacta en Google Maps
+                Ubicación Exacta de la Mascota
               </h3>
               <p className="text-xs text-stone-600">
-                Toca cualquier punto del mapa, busca un sitio o pega un enlace de Google Maps
+                Busca cualquier dirección, toca el mapa o abre Google Maps
               </p>
             </div>
           </div>
@@ -399,10 +476,16 @@ export default function MapLocationPicker({
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3 pointer-events-none" />
               <input
+                ref={searchInputRef}
                 type="text"
-                placeholder="Busca dirección o sitio (Ej: Parque del Perro, Unicentro, Calle 5 # 34...)"
+                placeholder="Escribe dirección, barrio o negocio (Ej: Cl 5 # 34-12, Av 6N, Unicentro...)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchResults.length === 0) {
+                    handleOpenGoogleMapsSearch();
+                  }
+                }}
                 className="w-full bg-white border border-stone-200 rounded-xl pl-9 pr-8 py-2.5 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 shadow-2xs"
               />
               {searching || resolvingLink ? (
@@ -418,15 +501,15 @@ export default function MapLocationPicker({
               ) : null}
             </div>
 
-            {/* Paste Link Button */}
+            {/* Direct Google Maps Search Button */}
             <button
               type="button"
-              onClick={() => setShowPasteModal(true)}
-              className="bg-white hover:bg-amber-50 text-stone-800 border border-stone-200 hover:border-amber-300 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-2xs whitespace-nowrap cursor-pointer"
-              title="Pegar enlace o coordenadas de Google Maps"
+              onClick={handleOpenGoogleMapsSearch}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow-xs whitespace-nowrap cursor-pointer"
+              title="Buscar en Google Maps en pestaña externa"
             >
-              <ClipboardPaste className="w-3.5 h-3.5 text-blue-600" />
-              <span className="hidden sm:inline">Pegar Enlace</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Google Maps</span>
             </button>
 
             {/* GPS Button */}
@@ -448,7 +531,17 @@ export default function MapLocationPicker({
 
           {/* Autocomplete Results */}
           {searchResults.length > 0 && (
-            <div className="absolute left-3 right-3 top-14 bg-white border border-stone-200 rounded-2xl shadow-2xl z-[3000] max-h-60 overflow-y-auto divide-y divide-stone-100 animate-fade-in">
+            <div className="absolute left-3 right-3 top-14 bg-white border border-stone-200 rounded-2xl shadow-2xl z-[3000] max-h-64 overflow-y-auto divide-y divide-stone-100 animate-fade-in">
+              <div className="p-2 bg-stone-50 text-[11px] font-bold text-stone-500 uppercase tracking-wider flex items-center justify-between">
+                <span>Resultados Encontrados:</span>
+                <button
+                  type="button"
+                  onClick={handleOpenGoogleMapsSearch}
+                  className="text-blue-600 hover:underline font-bold text-[11px] flex items-center gap-1"
+                >
+                  <span>Buscar en Google Maps ↗</span>
+                </button>
+              </div>
               {searchResults.map((place, i) => (
                 <button
                   key={i}
@@ -515,7 +608,7 @@ export default function MapLocationPicker({
                 <MapPin className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
                 <div className="text-xs">
                   <span className="text-stone-500 block text-[10px] uppercase font-bold">
-                    Punto Exacto en Google Maps:
+                    Punto Exacto Fijado:
                   </span>
                   {isEditingAddress ? (
                     <div className="flex items-center gap-1.5 mt-1">
