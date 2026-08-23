@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   MapPin,
   Navigation,
@@ -15,6 +15,8 @@ import {
   Cross,
   GraduationCap,
   Bus,
+  Map,
+  Compass,
 } from "lucide-react";
 import barrioCoordsData from "@/data/coords_by_barrio.json";
 
@@ -62,40 +64,6 @@ function getClosestBarrio(lat: number, lng: number): string {
   return closest;
 }
 
-// Parse coordinates or Google Maps URLs
-function extractCoordsFromText(text: string): { lat: number; lng: number } | null {
-  const trimmed = text.trim();
-
-  // Pattern 1: Direct coordinates like "3.4516, -76.5320" or "3.4516 -76.5320"
-  const coordsRegex = /^(-?\d{1,2}\.\d+)[,\s]+(-?\d{1,3}\.\d+)$/;
-  const coordsMatch = trimmed.match(coordsRegex);
-  if (coordsMatch) {
-    const lat = parseFloat(coordsMatch[1]);
-    const lng = parseFloat(coordsMatch[2]);
-    if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-      return { lat, lng };
-    }
-  }
-
-  // Pattern 2: Google Maps URL with @lat,lng or ?q=lat,lng
-  // e.g. https://www.google.com/maps/@3.4358,-76.5469,15z
-  // e.g. https://www.google.com/maps/place/.../@3.4358,-76.5469
-  // e.g. https://www.google.com/maps?q=3.4358,-76.5469
-  const gmapsAtRegex = /@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/;
-  const gmapsAtMatch = trimmed.match(gmapsAtRegex);
-  if (gmapsAtMatch) {
-    return { lat: parseFloat(gmapsAtMatch[1]), lng: parseFloat(gmapsAtMatch[2]) };
-  }
-
-  const gmapsQRegex = /[?&]q=(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/;
-  const gmapsQMatch = trimmed.match(gmapsQRegex);
-  if (gmapsQMatch) {
-    return { lat: parseFloat(gmapsQMatch[1]), lng: parseFloat(gmapsQMatch[2]) };
-  }
-
-  return null;
-}
-
 function getPlaceIcon(type?: string) {
   switch (type) {
     case "mall":
@@ -138,6 +106,7 @@ export default function MapLocationPicker({
   const [showPasteModal, setShowPasteModal] = useState(false);
   const [pastedLink, setPastedLink] = useState("");
   const [pasteError, setPasteError] = useState<string | null>(null);
+  const [resolvingLink, setResolvingLink] = useState(false);
 
   // Initialize Leaflet Map
   useEffect(() => {
@@ -213,6 +182,12 @@ export default function MapLocationPicker({
       return;
     }
 
+    // Check if input looks like a Google Maps link or coordinates
+    if (/maps\.google|goo\.gl|http|\d+\.\d+.*[,\s]+\d+\.\d+/.test(searchQuery)) {
+      handleResolveUrlOrCoords(searchQuery);
+      return;
+    }
+
     const timer = setTimeout(async () => {
       setSearching(true);
       try {
@@ -246,28 +221,59 @@ export default function MapLocationPicker({
     }
   };
 
-  // Paste Google Maps link or coordinates
-  const handleProcessPastedLocation = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  // Resolve link or coordinates via server endpoint
+  const handleResolveUrlOrCoords = async (textToProcess: string) => {
+    if (!textToProcess.trim()) return;
+
+    setResolvingLink(true);
     setPasteError(null);
 
-    const coords = extractCoordsFromText(pastedLink);
-    if (coords) {
-      setSelectedLat(coords.lat);
-      setSelectedLng(coords.lng);
-      const nearest = getClosestBarrio(coords.lat, coords.lng);
-      setSelectedBarrio(nearest);
-      setShowPasteModal(false);
-      setPastedLink("");
+    try {
+      const res = await fetch("/api/resolve-maps-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: textToProcess.trim() }),
+      });
 
-      if (mapInstanceRef.current && markerRef.current) {
-        mapInstanceRef.current.setView([coords.lat, coords.lng], 16);
-        markerRef.current.setLatLng([coords.lat, coords.lng]);
+      const data = await res.json();
+      if (res.ok && data.success && data.lat && data.lng) {
+        setSelectedLat(data.lat);
+        setSelectedLng(data.lng);
+        const nearest = getClosestBarrio(data.lat, data.lng);
+        setSelectedBarrio(nearest);
+        setShowPasteModal(false);
+        setPastedLink("");
+        setSearchQuery("");
+
+        if (mapInstanceRef.current && markerRef.current) {
+          mapInstanceRef.current.setView([data.lat, data.lng], 16);
+          markerRef.current.setLatLng([data.lat, data.lng]);
+        }
+      } else {
+        setPasteError(
+          data.error ||
+            "No pudimos detectar coordenadas en el enlace. Asegúrate de copiar el enlace completo de Google Maps o escribir coordenadas tipo: 3.4516, -76.5320"
+        );
       }
-    } else {
-      setPasteError(
-        "No pudimos detectar coordenadas en el texto o enlace. Asegúrate de copiar el enlace completo de Google Maps o escribir coordenadas tipo: 3.4516, -76.5320"
-      );
+    } catch (err: any) {
+      setPasteError("Error de conexión al procesar el enlace.");
+    } finally {
+      setResolvingLink(false);
+    }
+  };
+
+  // Paste directly from clipboard
+  const handlePasteFromClipboard = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          setPastedLink(text);
+          handleResolveUrlOrCoords(text);
+        }
+      }
+    } catch (err) {
+      console.warn("Clipboard read permission denied:", err);
     }
   };
 
@@ -299,7 +305,7 @@ export default function MapLocationPicker({
       },
       (err) => {
         setGettingGPS(false);
-        alert("No se pudo obtener la señal GPS. Puedes buscar el lugar en la barra o tocar el mapa.");
+        alert("No se pudo obtener la señal GPS. Puedes buscar el lugar en la barra o abrir Google Maps.");
         console.warn("GPS error:", err);
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -317,19 +323,19 @@ export default function MapLocationPicker({
 
   return (
     <div className="fixed inset-0 bg-stone-900/75 z-[70] flex items-center justify-center p-2 sm:p-4 backdrop-blur-xs animate-fade-in">
-      <div className="bg-white border border-stone-200 w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col h-[92vh] sm:h-[84vh] text-stone-900 shadow-2xl relative">
+      <div className="bg-white border border-stone-200 w-full max-w-2xl rounded-3xl overflow-hidden flex flex-col h-[94vh] sm:h-[86vh] text-stone-900 shadow-2xl relative">
         {/* Header */}
-        <div className="p-3.5 sm:p-4 border-b border-stone-200 flex items-center justify-between bg-amber-50/70">
+        <div className="p-3.5 sm:p-4 border-b border-stone-200 flex items-center justify-between bg-amber-50/80">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-amber-100 text-amber-800 rounded-xl border border-amber-300 shadow-2xs">
+            <div className="p-2 bg-amber-100 text-amber-800 rounded-2xl border border-amber-300 shadow-2xs">
               <MapPin className="w-5 h-5 text-amber-700" />
             </div>
             <div>
               <h3 className="font-black text-base text-stone-900">
-                Ubicación de la Mascota
+                Ubicación Exacta de la Mascota
               </h3>
               <p className="text-xs text-stone-600">
-                Busca lugares conocidos (parques, centros comerciales, avenidas) o pega un enlace de Google Maps
+                Abre Google Maps, busca el punto exacto y pégalo aquí con 1 clic
               </p>
             </div>
           </div>
@@ -341,19 +347,50 @@ export default function MapLocationPicker({
           </button>
         </div>
 
-        {/* Live Search Bar & Google Maps Actions */}
+        {/* Google Maps Direct Integration Banner */}
+        <div className="p-2.5 sm:p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200/80 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2 text-blue-950 font-bold">
+            <Map className="w-4 h-4 text-blue-600 flex-shrink-0" />
+            <span>¿Prefieres buscar en Google Maps?</span>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            {/* Step 1: Open Google Maps */}
+            <a
+              href="https://www.google.com/maps/search/Cali,+Colombia/@3.4516,-76.532,14z"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-3 py-1.5 rounded-xl shadow-xs transition cursor-pointer"
+            >
+              <span>1. Abrir Google Maps</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+
+            {/* Step 2: Paste Link / Coords */}
+            <button
+              type="button"
+              onClick={() => setShowPasteModal(true)}
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 bg-white hover:bg-blue-100 text-blue-900 border border-blue-300 font-extrabold px-3 py-1.5 rounded-xl shadow-2xs transition cursor-pointer"
+            >
+              <ClipboardPaste className="w-3.5 h-3.5 text-blue-600" />
+              <span>2. Pegar Ubicación</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Live Search Bar & Action Buttons */}
         <div className="p-3 bg-stone-50 border-b border-stone-200 space-y-2 relative z-[2000]">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-stone-400 absolute left-3 top-3 pointer-events-none" />
               <input
                 type="text"
-                placeholder="Busca como en Google Maps (Ej: Parque del Perro, Chipichape, Univalle, Calle 5...)"
+                placeholder="Busca un lugar o pega un enlace de Google Maps aquí..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white border border-stone-200 rounded-xl pl-9 pr-8 py-2.5 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 shadow-2xs"
               />
-              {searching ? (
+              {searching || resolvingLink ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-600 absolute right-3 top-3" />
               ) : searchQuery ? (
                 <button
@@ -366,24 +403,13 @@ export default function MapLocationPicker({
               ) : null}
             </div>
 
-            {/* Paste Google Maps Link Button */}
-            <button
-              type="button"
-              onClick={() => setShowPasteModal(true)}
-              className="bg-white hover:bg-amber-50 text-stone-800 border border-stone-200 hover:border-amber-300 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-2xs whitespace-nowrap cursor-pointer"
-              title="Pegar enlace o coordenadas de Google Maps"
-            >
-              <ClipboardPaste className="w-3.5 h-3.5 text-amber-600" />
-              <span className="hidden sm:inline">Pegar Google Maps</span>
-            </button>
-
             {/* GPS Locate Button */}
             <button
               type="button"
               onClick={handleGetCurrentLocation}
               disabled={gettingGPS}
               className="bg-white hover:bg-amber-50 text-amber-800 border border-stone-200 hover:border-amber-300 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-2xs whitespace-nowrap cursor-pointer"
-              title="Obtener ubicación GPS actual"
+              title="Obtener ubicación GPS actual de tu celular"
             >
               {gettingGPS ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-600" />
@@ -394,11 +420,11 @@ export default function MapLocationPicker({
             </button>
           </div>
 
-          {/* Autocomplete Dropdown - Works like Google Maps Search */}
+          {/* Autocomplete Dropdown */}
           {searchResults.length > 0 && (
             <div className="absolute left-3 right-3 top-14 bg-white border border-stone-200 rounded-2xl shadow-2xl z-[3000] max-h-60 overflow-y-auto divide-y divide-stone-100 animate-fade-in">
               <div className="p-2 bg-stone-50 text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                Lugares y Sitios Encontrados:
+                Sitios y Lugares Encontrados:
               </div>
               {searchResults.map((place, i) => (
                 <button
@@ -419,7 +445,7 @@ export default function MapLocationPicker({
                     </div>
                   </div>
                   <span className="text-[10px] text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/80 font-semibold flex-shrink-0 ml-2">
-                    Ver en mapa ↗
+                    Fijar punto 📍
                   </span>
                 </button>
               ))}
@@ -429,10 +455,10 @@ export default function MapLocationPicker({
 
         {/* Map Container */}
         <div className="flex-1 w-full relative z-[10]">
-          <div ref={mapContainerRef} className="w-full h-full min-h-[300px]" />
+          <div ref={mapContainerRef} className="w-full h-full min-h-[280px]" />
 
           {/* Floating Current Location Pill */}
-          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-white/95 backdrop-blur-md border border-stone-200 rounded-xl p-3 z-[1500] flex items-center justify-between gap-3 shadow-lg">
+          <div className="absolute top-3 left-3 right-3 sm:right-auto bg-white/95 backdrop-blur-md border border-stone-200 rounded-2xl p-3 z-[1500] flex items-center justify-between gap-3 shadow-lg">
             <div className="flex items-center gap-2.5">
               <MapPin className="w-4 h-4 text-amber-600 flex-shrink-0" />
               <div className="text-xs">
@@ -446,10 +472,10 @@ export default function MapLocationPicker({
               href={`https://www.google.com/maps?q=${selectedLat},${selectedLng}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg transition"
-              title="Abrir punto en Google Maps"
+              className="text-[11px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-xl transition"
+              title="Abrir este punto en Google Maps"
             >
-              <span>Abrir Google Maps</span>
+              <span>Ver en Maps</span>
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
@@ -482,10 +508,10 @@ export default function MapLocationPicker({
         {/* Modal: Pegar enlace o coordenadas de Google Maps */}
         {showPasteModal && (
           <div className="absolute inset-0 bg-stone-900/60 z-[4000] flex items-center justify-center p-4 backdrop-blur-xs animate-fade-in">
-            <div className="bg-white border border-stone-200 w-full max-w-md rounded-2xl p-5 shadow-2xl space-y-3.5">
+            <div className="bg-white border border-stone-200 w-full max-w-md rounded-3xl p-5 shadow-2xl space-y-3.5">
               <div className="flex items-center justify-between border-b border-stone-200 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <ClipboardPaste className="w-4 h-4 text-amber-600" />
+                  <ClipboardPaste className="w-4 h-4 text-blue-600" />
                   <h4 className="font-extrabold text-sm text-stone-900">
                     Pegar Ubicación de Google Maps
                   </h4>
@@ -498,19 +524,40 @@ export default function MapLocationPicker({
                 </button>
               </div>
 
-              <p className="text-xs text-stone-600 leading-relaxed">
-                Copia el enlace de compartir o las coordenadas desde Google Maps y pégalo aquí para ubicar el punto al instante:
-              </p>
+              <div className="space-y-2 text-xs text-stone-600 leading-relaxed">
+                <p>
+                  1. En Google Maps, toca <strong>Compartir</strong> $\rightarrow$ <strong>Copiar enlace</strong> (o copia las coordenadas).
+                </p>
+                <p>
+                  2. Pégalo aquí o pulsa el botón para pegarlo automáticamente del portapapeles:
+                </p>
+              </div>
 
-              <form onSubmit={handleProcessPastedLocation} className="space-y-3">
-                <textarea
-                  value={pastedLink}
-                  onChange={(e) => setPastedLink(e.target.value)}
-                  rows={3}
-                  placeholder="Ej: https://maps.app.goo.gl/... o 3.4358, -76.5469"
-                  className="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 focus:bg-white"
-                  autoFocus
-                />
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleResolveUrlOrCoords(pastedLink);
+                }}
+                className="space-y-3"
+              >
+                <div className="relative">
+                  <textarea
+                    value={pastedLink}
+                    onChange={(e) => setPastedLink(e.target.value)}
+                    rows={3}
+                    placeholder="Pega aquí el enlace (https://maps.app.goo.gl/... o 3.4516, -76.5320)"
+                    className="w-full bg-stone-50 border border-stone-200 rounded-2xl p-3 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-blue-500 focus:bg-white"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handlePasteFromClipboard}
+                    className="absolute right-2.5 bottom-3 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-lg text-[11px] font-bold transition flex items-center gap-1 cursor-pointer"
+                  >
+                    <ClipboardPaste className="w-3 h-3" />
+                    <span>Pegar Portapapeles</span>
+                  </button>
+                </div>
 
                 {pasteError && (
                   <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-[11px] leading-snug">
@@ -522,16 +569,21 @@ export default function MapLocationPicker({
                   <button
                     type="button"
                     onClick={() => setShowPasteModal(false)}
-                    className="w-1/3 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-bold transition cursor-pointer"
+                    className="w-1/3 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-bold transition cursor-pointer"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    disabled={!pastedLink.trim()}
-                    className="w-2/3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl text-xs font-extrabold transition shadow-sm cursor-pointer disabled:opacity-50"
+                    disabled={resolvingLink || !pastedLink.trim()}
+                    className="w-2/3 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-extrabold transition shadow-sm cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
                   >
-                    Ubicar en el Mapa
+                    {resolvingLink ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <MapPin className="w-3.5 h-3.5" />
+                    )}
+                    <span>Ubicar en el Mapa</span>
                   </button>
                 </div>
               </form>
